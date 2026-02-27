@@ -1,0 +1,90 @@
+Created at 17:08:57 on 20260204 Wed by Guanglin Du.
+
+The 15-episode playlist URL:
+https://www.youtube.com/watch?v=xOxN_7coIDw&list=PLpyspNLjzwBlobEvnZzyWP8I-ORQcq4IO
+
+
+(1/15) Build a Full-Stack Social Network with Django and Vue 3: From Idea to Launch
+=============================================================================================
+https://www.youtube.com/watch?v=xOxN_7coIDw&list=PLpyspNLjzwBlobEvnZzyWP8I-ORQcq4IO&index=1
+
+0:00 Overview
+1:50 Create a new Vue 3 project (See Readme-xfrontend-20260204.txt)
+ - 5:30 Install Axios
+ - 6:45 Install Tailwind CSS
+ - 10:20 Make sure everything is running
+10:38 Set up the app.vue file (Menu, etc)
+17:02 Create static sign up page
+25:35 Create static log in page
+28:53 Create static feed page
+44:54 Create static messages page
+53:46 Create static search page
+1:05:48 Create the toast component
+
+By far, IMHO, this series has been the most comprehensive and detailed tutorials about Vue.js 3 + Django + DRF combo though only a small portion might be outdated, such as the configuration and installation of the Tailwind CSS. BTW, Stein used the Options API instead of the new Composition API introduced in Vue.js 3. Thank you a ton for your contribution, dear Stein.
+
+
+(2/15) Build a Full-Stack Social Network with Django and Vue 3: From Idea to Launch | Part 2
+=============================================================================================
+https://www.youtube.com/watch?v=NmQyX1D5hqo&list=PLpyspNLjzwBlobEvnZzyWP8I-ORQcq4IO&t=0s
+
+0:00 Overview
+0:15 Set up the backend
+0:40 Create a virtual environment
+ - 1:42 Install Django
+ - 2:15 Install djangorestframework (rest_framework, DRF)
+ - 2:45 Install djangorestframework-simplejwt (rest_framework_simplejwt)
+ - 3:08 Install Pillow (handling images)
+3:37 Create a Django project
+5:16 Set up everything ( A bigger task!)
+ - 5:24 Config for JWT (settings and URLs)
+ - 6:10 Config for DRF (and at 9:30)
+ - 8:40 Config for csrf and cors (and at 10:00)
+11:50 Create app for custom user model (remember uuid)
+ - 17:45 Add to settings
+ - 18:52 Configure JWT URLs
+21:20 Make it possible to sign up (The key part to couple the frontend with the backend. Need time to digest!😜)
+ - 21:30 Implement verification, reset/forgot the password and the similar (Comes later in the course)
+ - 21:45 backend work (api.py)
+ - 27:55 frontend work (SignupView.vue)
+34:01 Make it possible to log in (Get and refresh the token, a Pinia store user.js, etc.)
+ - 34:20 Modify SignupView.vue to add the AXIOS package, the client to convey info between the two ends
+ - 43:30 Fix the signing up bug in SignupView.vue
+ - 44:35 Modify App.vue to add the Toast.vue
+ - 46:50 Enter the Django shell to check if the user exists
+ - 47:40 Modify LoginView.vue to test logging in
+ - 52:50 Create the /api/login/ API in the backend
+ - 54:00 Fix the 401 Unauthorized error
+ - 57:00 Make our logging in persist after page-refreshing in App.vue
+1:02:40 Fix buttons in menu when authenticated
+
+
+(3/15) Build a Full-Stack Social Network with Django and Vue 3: From Idea to Launch | Part 3
+=============================================================================================
+
+Create app for posts
+- Database model (remember uuid)
+- Set up serializers
+- View / URLs
+- Get a test feed
+Make it possible to add text posts
+Make it possible to view a profile
+Set up friendships (model changes)
+
+
+
+ 
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+

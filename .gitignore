@@ -1,0 +1,37 @@
+# Files & folders
+.DS_Store
+.stignore
+*.pyc
+*.sw?
+# VSCode workspace file
+*.code-workspace
+README_private.md
+
+# Test coverage reports
+frontend/coverage
+backend/.coverage
+
+# Possible IDE settings
+.idea/
+.vscode/
+.mypy_cache/
+.pytest_cache/
+.stfolder/
+
+# Ignores any directory at any level. The trailing / matters!
+__pycache__/
+node_modules/
+
+# Frequently changing files
+backend/db.sqlite3
+backend/media/
+**/migrations/*.py
+!**/migrations/__init__.py
+
+# Temporary folders & files
+tmp/
+temp/
+
+# Ignores Tauri build output which can be large!
+frontend/src-tauri/target/
+backend/tests/report.html
