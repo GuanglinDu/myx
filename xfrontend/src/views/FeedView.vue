@@ -1,6 +1,34 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+import { onMounted } from 'vue';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import PeopleYouMayKnow from '@/components/PeopleYouMayKnow.vue';
 import TrendsComponent from '@/components/TrendsComponent.vue';
+
+interface Post {
+  id: string;
+  body: string;
+  attachments: string[];
+  created_at: string;
+  created_by: string;
+}
+
+let posts = ref<Post[]>([]);
+
+function getFeed(): void {
+  axios.get('/api/posts/')
+    .then((response: AxiosResponse) => {
+      console.log('data', response.data);
+      posts = response.data;
+    })
+    .catch((error: any) => {
+      console.error('Error fetching feed:', error);
+    });
+}
+
+onMounted(() => {
+  getFeed();
+});
 </script>
 
 <template>
@@ -10,7 +38,7 @@ import TrendsComponent from '@/components/TrendsComponent.vue';
       <div class="p-4 bg-white border border-gray-200
                   text-center rounded-lg">
         <img
-          src="@/assets/Adrian-200x200px.png"
+          src="@/assets/Brian-200x200px.png"
           alt="avatar"
           class="rounded-full"
         />
@@ -55,10 +83,10 @@ import TrendsComponent from '@/components/TrendsComponent.vue';
       <!-- 1/2 Start of a post with an image-->
       <div class="p-4 bg-white border border-gray-200 rounded-lg">
         <!-- The avatar, name, & how long has the post published -->
-        <div class="mb-6 flex items-center justify-between">
+        <div class="mb-6 flex justify-between">
           <div class="flex items-center space-x-2">
             <img
-              src="@/assets/Adrian-100x100px.png"
+              src="@/assets/Brian-100x100px.png"
               class="w-[40px] rounded-full"
             />
             <p><strong>Code With Guanglin</strong></p>
@@ -139,7 +167,7 @@ import TrendsComponent from '@/components/TrendsComponent.vue';
         <div class="mb-6 flex items-center justify-between">
           <div class="flex items-center space-x6-">
             <img
-              src="@/assets/Adrian-100x100px.png"
+              src="@/assets/Brian-100x100px.png"
               class="w-[40px] rounded-full"
             />
             <p><strong>Code With Guanglin</strong></p>

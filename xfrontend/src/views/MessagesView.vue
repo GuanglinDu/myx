@@ -10,7 +10,7 @@
         <div class="flex items-center justify-between">
           <div class="flex items-center space-x-1">
             <img
-              src="@/assets/Adrian-40x40px.png"
+              src="@/assets/Brian-40x40px.png"
               alt="avatar"
               class="w-[40px] rounded-full"
             />
@@ -25,7 +25,7 @@
         <div class="flex items-center justify-between">
           <div class="flex items-center space-x-1">
             <img
-              src="@/assets/Adrian-40x40px.png"
+              src="@/assets/Brian-40x40px.png"
               alt="avatar"
               class="w-[40px] rounded-full"
             />
@@ -40,7 +40,7 @@
         <div class="flex items-center justify-between">
           <div class="flex items-center space-x-1">
             <img
-              src="@/assets/Adrian-40x40px.png"
+              src="@/assets/Brian-40x40px.png"
               alt="avatar"
               class="w-[40px] rounded-full"
             />
@@ -69,7 +69,7 @@
           </div>
           <div class="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300">
             <img
-              src="@/assets/Adrian-40x40px.png"
+              src="@/assets/Brian-40x40px.png"
               class="w-[40px] rounded-full"
             />
           </div>
@@ -87,7 +87,7 @@
           </div>
           <div class="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300">
             <img
-              src="@/assets/Adrian-40x40px.png"
+              src="@/assets/Brian-40x40px.png"
               class="w-[40px] rounded-full"
             />
           </div>
@@ -97,7 +97,7 @@
         <div class="flex flex-row space justify-start p-4">
           <div class="flex-shrink-0 h-10 w-10 rounded-full">
             <img
-              src="@/assets/Brian-40x40px.png"
+              src="@/assets/Adrian-40x40px.png"
               class="w-[40px] rounded-full"
             />
           </div>
@@ -115,7 +115,7 @@
         <div class="flex flex-row space justify-start p-4">
           <div class="flex-shrink-0 h-10 w-10 rounded-full">
             <img
-              src="@/assets/Brian-40x40px.png"
+              src="@/assets/Adrian-40x40px.png"
               class="w-[40px] rounded-full"
             />
           </div>

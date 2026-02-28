@@ -94,6 +94,7 @@ INSTALLED_APPS: list[str] = [
     'rest_framework_simplejwt',
     'corsheaders',
     'account',
+    'post',
 ]
 
 MIDDLEWARE: list[str] = [

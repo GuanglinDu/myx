@@ -8,15 +8,16 @@
 README_private.md
 
 # Test coverage reports
-frontend/coverage
-backend/.coverage
+xfrontend/coverage
+xbackend/.coverage
 
-# Possible IDE settings
+# Possible IDE settings (at any directory level)
 .idea/
 .vscode/
 .mypy_cache/
 .pytest_cache/
 .stfolder/
+.theia/
 
 # Ignores any directory at any level. The trailing / matters!
 __pycache__/

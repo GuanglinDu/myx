@@ -27,7 +27,7 @@ import TrendsComponent from '@/components/TrendsComponent.vue';
         <!-- Result 1 -->
         <div class="p-4 text-center bg-gray-100 rounded-lg">
           <img
-            src="@/assets/Adrian-200x200px.png"
+            src="@/assets/Brian-200x200px.png"
             alt="avatar"
             class="rounded-full"
           />
@@ -43,7 +43,7 @@ import TrendsComponent from '@/components/TrendsComponent.vue';
         <!-- Result 2 -->
         <div class="p-4 text-center bg-gray-100 rounded-lg">
           <img
-            src="@/assets/Adrian-200x200px.png"
+            src="@/assets/Brian-200x200px.png"
             alt="avatar"
             class="rounded-full"
           />
@@ -59,7 +59,7 @@ import TrendsComponent from '@/components/TrendsComponent.vue';
         <!-- Result 3 -->
         <div class="p-4 text-center bg-gray-100 rounded-lg">
           <img
-            src="@/assets/Adrian-200x200px.png"
+            src="@/assets/Brian-200x200px.png"
             alt="avatar"
             class="rounded-full"
           />
@@ -75,7 +75,7 @@ import TrendsComponent from '@/components/TrendsComponent.vue';
         <!-- Result 4 -->
         <div class="p-4 text-center bg-gray-100 rounded-lg">
           <img
-            src="@/assets/Adrian-200x200px.png"
+            src="@/assets/Brian-200x200px.png"
             alt="avatar"
             class="rounded-full"
           />
@@ -91,7 +91,7 @@ import TrendsComponent from '@/components/TrendsComponent.vue';
         <!-- Result 5 -->
         <div class="p-4 text-center bg-gray-100 rounded-lg">
           <img
-            src="@/assets/Adrian-200x200px.png"
+            src="@/assets/Brian-200x200px.png"
             alt="avatar"
             class="rounded-full"
           />
@@ -112,7 +112,7 @@ import TrendsComponent from '@/components/TrendsComponent.vue';
         <div class="mb-6 flex items-center justify-between">
           <div class="flex items-center space-x6-">
             <img
-              src="@/assets/Adrian-100x100px.png"
+              src="@/assets/Brian-100x100px.png"
               class="w-[40px] rounded-full"
             />
             <p><strong>Code With Guanglin</strong></p>

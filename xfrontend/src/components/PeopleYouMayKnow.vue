@@ -9,7 +9,7 @@
     <div class="flex items-center justify-between">
       <div class="flex items-center space-x-1">
         <img
-          src="@/assets/Adrian-40x40px.png"
+          src="@/assets/Brian-40x40px.png"
           alt="avatar"
           class="w-[40px] rounded-full"
         />
@@ -30,7 +30,7 @@
     <div class="flex items-center justify-between">
       <div class="flex items-center space-x-1">
         <img
-          src="@/assets/Adrian-40x40px.png"
+          src="@/assets/Brian-40x40px.png"
           alt="avatar"
           class="w-[40px] rounded-full"
         />
@@ -51,7 +51,7 @@
     <div class="flex items-center justify-between">
       <div class="flex items-center space-x-1">
         <img
-          src="@/assets/Adrian-40x40px.png"
+          src="@/assets/Brian-40x40px.png"
           alt="avatar"
           class="w-[40px] rounded-full"
         />

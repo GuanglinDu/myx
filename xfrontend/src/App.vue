@@ -94,7 +94,7 @@ if (token) {
           <template v-if="userStore.user.isAuthenticated">
             <a href="#">
               <img
-                src="@/assets/Adrian-40x40px.png"
+                src="@/assets/Brian-40x40px.png"
                 alt="avatar"
                 class="rounded-full"
               />
