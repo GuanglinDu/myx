@@ -92,13 +92,15 @@ if (token) {
         <!-- https://i.pravatar.cc/40?img=70 is blocked! -->
         <div class="menu-right">
           <template v-if="userStore.user.isAuthenticated">
-            <a href="#">
+            <RouterLink
+              :to="{'name': 'profile', params: { id: userStore.user.id }}"
+              class="flex items-center space-x-2">
               <img
                 src="@/assets/Brian-40x40px.png"
                 alt="avatar"
                 class="rounded-full"
               />
-            </a>
+            </RouterLink>
           </template>
           <template v-else>
             <RouterLink

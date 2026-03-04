@@ -1,31 +1,33 @@
-# Files & folders
+# Files in any directory level
 .DS_Store
 .stignore
 *.pyc
 *.sw?
-# VSCode workspace file
+# The IDE workspace files
 *.code-workspace
+*.theia-workspace
 README_private.md
 
-# Test coverage reports
-xfrontend/coverage
-xbackend/.coverage
+# Test coverage reports at any directory level
+**/coverage
+**/.coverage
 
-# Possible IDE settings (at any directory level)
+# Possible IDE settings at any directory level
+# The trailing / ensures that only directories are ignored.
 .idea/
 .vscode/
+.theia/
 .mypy_cache/
 .pytest_cache/
 .stfolder/
-.theia/
 
 # Ignores any directory at any level. The trailing / matters!
 __pycache__/
 node_modules/
 
 # Frequently changing files
-xbackend/db.sqlite3
-xbackend/media/
+**/db.sqlite3
+**/media/
 **/migrations/*.py
 !**/migrations/__init__.py
 
@@ -34,5 +36,5 @@ tmp/
 temp/
 
 # Ignores Tauri build output which can be large!
-xfrontend/src-tauri/target/
-xbackend/tests/report.html
+**/src-tauri/target/
+**/tests/report.html

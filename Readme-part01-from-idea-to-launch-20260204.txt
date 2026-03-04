@@ -1,4 +1,4 @@
-Build a Full-Stack Social Network with Django and Vue 3: From Idea to Launch | Part 1
+Build a Full-Stack Social Network with Django and Vue 3: From Idea to Launch | Part 1/16
 =============================================================================================
 https://www.youtube.com/watch?v=xOxN_7coIDw&list=PLpyspNLjzwBlobEvnZzyWP8I-ORQcq4IO&index=1
 

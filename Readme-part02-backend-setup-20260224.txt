@@ -1,5 +1,5 @@
-(1/10) Build a Full-Stack Social Network with Django and Vue 3 | Part 2 - The backend setup
-============================================================================================
+(1/10) Build a Full-Stack Social Network with Django and Vue 3 | Part 2/16 - The backend setup
+===============================================================================================
 https://www.youtube.com/watch?v=NmQyX1D5hqo&t=1700s
 
 0:00 Overview

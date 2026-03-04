@@ -1,7 +1,19 @@
 export interface User {
+  id: string;
   name: string;
   email: string;
-  password1: string,
-  password2: string,  
+  avatar: string;
+  friends_count: number;
+  posts_count: number;
+  is_active: boolean;
+  is_superuser: boolean;
+  is_staff: boolean;
 };
 
+export interface Post {
+  id: string;
+  body: string;
+  attachments: string[];
+  created_at: string;
+  created_by: string;
+};

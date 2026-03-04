@@ -1,10 +1,10 @@
 Created at 17:08:57 on 20260204 Wed by Guanglin Du.
 
-The 15-episode playlist URL:
+The 16-episode playlist URL:
 https://www.youtube.com/watch?v=xOxN_7coIDw&list=PLpyspNLjzwBlobEvnZzyWP8I-ORQcq4IO
 
 
-(1/15) Build a Full-Stack Social Network with Django and Vue 3: From Idea to Launch
+(1/16) Build a Full-Stack Social Network with Django and Vue 3: From Idea to Launch
 =============================================================================================
 https://www.youtube.com/watch?v=xOxN_7coIDw&list=PLpyspNLjzwBlobEvnZzyWP8I-ORQcq4IO&index=1
 
@@ -24,7 +24,7 @@ https://www.youtube.com/watch?v=xOxN_7coIDw&list=PLpyspNLjzwBlobEvnZzyWP8I-ORQcq
 By far, IMHO, this series has been the most comprehensive and detailed tutorials about Vue.js 3 + Django + DRF combo though only a small portion might be outdated, such as the configuration and installation of the Tailwind CSS. BTW, Stein used the Options API instead of the new Composition API introduced in Vue.js 3. Thank you a ton for your contribution, dear Stein.
 
 
-(2/15) Build a Full-Stack Social Network with Django and Vue 3: From Idea to Launch | Part 2
+(2/16) Build a Full-Stack Social Network with Django and Vue 3: From Idea to Launch | Part 2
 =============================================================================================
 https://www.youtube.com/watch?v=NmQyX1D5hqo&list=PLpyspNLjzwBlobEvnZzyWP8I-ORQcq4IO&t=0s
 
@@ -59,7 +59,7 @@ https://www.youtube.com/watch?v=NmQyX1D5hqo&list=PLpyspNLjzwBlobEvnZzyWP8I-ORQcq
 1:02:40 Fix buttons in menu when authenticated
 
 
-(3/15) Build a Full-Stack Social Network with Django and Vue 3: From Idea to Launch | Part 3
+(3/16) Build a Full-Stack Social Network with Django and Vue 3: From Idea to Launch | Part 3
 =============================================================================================
 
 Create app for posts

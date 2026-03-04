@@ -1,5 +1,7 @@
 # An X-like Demo App following Code With Stein on YouTube
 
+* [Build a Full-Stack Social Network with Django and Vue 3](https://www.youtube.com/watch?v=xOxN_7coIDw&list=PLpyspNLjzwBlobEvnZzyWP8I-ORQcq4IO)
+
 ## xfrontend - Vue.js 3 + TypeScript + Tailwind CSS
 
 ```shell
@@ -14,7 +16,7 @@ cd xbackend
 pip install -r requirements.txt -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple
 ```
 
-Altenatively, setting the local PyPi mirror permanently makes things easier
+* Altenatively, setting the local PyPi mirror permanently makes things easier
 
 ```shell
 pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple

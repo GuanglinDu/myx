@@ -95,6 +95,7 @@ INSTALLED_APPS: list[str] = [
     'corsheaders',
     'account',
     'post',
+    'search',    
 ]
 
 MIDDLEWARE: list[str] = [

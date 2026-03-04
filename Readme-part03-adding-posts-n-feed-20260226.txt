@@ -1,5 +1,5 @@
-(1/10) Adding posts/feed - Build a Full-Stack Social Network with Django and Vue 3 | Part 3
-============================================================================================
+(1/10) Adding posts/feed - Build a Full-Stack Social Network with Django and Vue 3 | Part 3/16
+==============================================================================================
 https://www.youtube.com/watch?v=qM8WhgvbZDI&list=PLpyspNLjzwBlobEvnZzyWP8I-ORQcq4IO&index=3
 
 0:00 Create app post (python manage.py startapp post)
@@ -7,9 +7,10 @@ https://www.youtube.com/watch?v=qM8WhgvbZDI&list=PLpyspNLjzwBlobEvnZzyWP8I-ORQcq
  - 7:05 Set up serializers
  - 9:50 View and URLs
  - 14:32 Get a test feed and show in the frontend (Your own posts; Create a superuser)
-13:37 Make it possible to add text posts
-13:37 Make it possible to view a profile
-13:37 Set up friendships (model changes)
+30:30 Make it possible to add text posts
+
+33:37 Make it possible to view a profile
+33:37 Set up friendships (model changes)
 
 
 (2/10) Create app post

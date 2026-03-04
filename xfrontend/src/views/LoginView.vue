@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import $router from '@/router/index.ts'
+import { useRouter } from 'vue-router';
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { useUserStore } from '@/stores/user';
 
 const userStore = useUserStore();
+const $router = useRouter();
 
 interface LoginCredentials {
   email: string;
@@ -28,7 +29,7 @@ let errors: Array<string> = [];
 //   return config;
 // });
 
-async function submitForm(): Promise<any> {
+async function submitForm(): Promise<void> {
   errors = [];
 
   if (form.email === "") {
@@ -65,7 +66,7 @@ async function submitForm(): Promise<any> {
       .then((response) => {
         userStore.setUserInfo(response.data);
 
-        $router.push("/feed");
+        $router.push("/feed"); // dynamic routing
       })
       .catch((error) => {
         console.log("error", error);
