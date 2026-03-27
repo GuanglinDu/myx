@@ -38,3 +38,13 @@ temp/
 # Ignores Tauri build output which can be large!
 **/src-tauri/target/
 **/tests/report.html
+
+# Created by Claude Code
+logs/
+
+# Python silk
+xbackend/static/
+
+# Conda environment activation scripts
+xbackend/start_conda.bat
+xbackend/start_conda.ps1

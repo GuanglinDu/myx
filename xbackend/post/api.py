@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from rest_framework.request import Request
 from rest_framework.decorators import (api_view, authentication_classes,
                                        permission_classes)
-from account.models import User
+from account.models import User, FriendshipRequest
 from account.serializers import UserSerializer
 from .models import Post
 from .serializers import PostSerializer
@@ -25,9 +25,39 @@ def post_list_profile(request: Request, id: uuid.UUID) -> JsonResponse:
     posts_serializer: PostSerializer = PostSerializer(posts, many=True)
     user_serializer: UserSerializer = UserSerializer(user)
 
+    # Determine friendship status if user is authenticated
+    friendship_status: str = 'none'
+    request_id: str = ''
+    if request.user.is_authenticated:
+        if str(request.user.id) == str(id):
+            friendship_status = 'self'
+        elif request.user.friends.filter(pk=id).exists():
+            friendship_status = 'friends'
+        else:
+            # Check if they sent us a request
+            pending_request: FriendshipRequest | None = FriendshipRequest.objects.filter(
+                created_for=request.user,
+                created_by=user,
+                status=FriendshipRequest.SENT
+            ).first()
+            if pending_request:
+                friendship_status = 'pending'
+                request_id = str(pending_request.id)
+            else:
+                # Check if we sent them a request
+                sent_request: FriendshipRequest | None = FriendshipRequest.objects.filter(
+                    created_for=user,
+                    created_by=request.user,
+                    status=FriendshipRequest.SENT
+                ).first()
+                if sent_request:
+                    friendship_status = 'request_sent'
+
     return JsonResponse({
         'user': user_serializer.data,
-        'posts': posts_serializer.data
+        'posts': posts_serializer.data,
+        'friendship_status': friendship_status,
+        'request_id': request_id
     }, safe=False)
 
 

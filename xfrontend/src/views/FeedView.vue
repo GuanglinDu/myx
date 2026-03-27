@@ -159,6 +159,7 @@ onMounted(() => {
       </div>
       <!-- 2/2 End of the post with an image -->
 
+
       <div
         class="p-4 bg-white border border-gray-200 rounded-lg"
         v-for="post in posts"

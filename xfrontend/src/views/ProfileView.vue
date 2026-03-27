@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { onMounted } from 'vue';
-import { useRoute, onBeforeRouteUpdate } from 'vue-router';
+import { useRoute } from 'vue-router';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import PeopleYouMayKnow from '@/components/PeopleYouMayKnow.vue';
 import TrendsComponent from '@/components/TrendsComponent.vue';
@@ -15,6 +15,15 @@ const $route = useRoute();
 const user = ref<User>({} as User);
 const posts = ref<Post[]>([]);
 const body = ref<string>('');
+const friendshipStatus =
+  ref<'none' | 'pending' | 'request_sent' | 'friends' | 'self'>('none');
+const requestId = ref<string>('');
+const isSendingRequest = ref<boolean>(false);
+const isProcessingRequest = ref<boolean>(false);
+
+const isOwnProfile = computed(() => {
+  return userStore.user.id === user.value.id;
+});
 
 async function getFeed(): Promise<void> {
   await axios
@@ -24,9 +33,69 @@ async function getFeed(): Promise<void> {
 
       posts.value = response.data.posts;
       user.value = response.data.user;
+      friendshipStatus.value = response.data.friendship_status || 'none';
+      requestId.value = response.data.request_id || '';
     })
     .catch((error: any) => {
       console.error('Error fetching feed:', error);
+    });
+}
+
+async function sendFriendshipRequest(): Promise<void> {
+  if (isSendingRequest.value || friendshipStatus.value !== 'none') return;
+
+  isSendingRequest.value = true;
+  await axios
+    .post(`/api/friends/send/${$route.params.id}/`)
+    .then((response: AxiosResponse) => {
+      console.log('Friendship request sent:', response.data);
+      
+      friendshipStatus.value = 'request_sent';
+       // Update user data to reflect new friendship status
+      // user.value = response.data.user;
+    })
+    .catch((error: any) => {
+      console.error('Error sending friendship request:', error);
+    })
+    .finally(() => {
+      isSendingRequest.value = false;
+    });
+}
+
+async function acceptFriendshipRequest(): Promise<void> {
+  if (!requestId.value || isProcessingRequest.value) return;
+
+  isProcessingRequest.value = true;
+  await axios
+    .post(`/api/friends/accept/${requestId.value}/`)
+    .then((response: AxiosResponse) => {
+      console.log('Friendship request accepted:', response.data);
+      friendshipStatus.value = 'friends';
+    })
+    .catch((error: any) => {
+      console.error('Error accepting friendship request:', error);
+    })
+    .finally(() => {
+      isProcessingRequest.value = false;
+    });
+}
+
+async function rejectFriendshipRequest(): Promise<void> {
+  if (!requestId.value || isProcessingRequest.value) return;
+
+  isProcessingRequest.value = true;
+  await axios
+    .post(`/api/friends/reject/${requestId.value}/`)
+    .then((response: AxiosResponse) => {
+      console.log('Friendship request rejected:', response.data);
+      friendshipStatus.value = 'none';
+      requestId.value = '';
+    })
+    .catch((error: any) => {
+      console.error('Error rejecting friendship request:', error);
+    })
+    .finally(() => {
+      isProcessingRequest.value = false;
     });
 }
 
@@ -51,12 +120,8 @@ onMounted(() => {
   getFeed();
 });
 
-// TODO: Cannot work
-onBeforeRouteUpdate(async (to, from) => {
-  console.log('Route is changing from', from.name, 'to', to.name);
-  if (from.name === to.name) {
-    getFeed();
-  }
+watch(() => $route.params.id, () => {
+  getFeed();
 });
 </script>
 
@@ -78,8 +143,69 @@ onBeforeRouteUpdate(async (to, from) => {
         <p><strong>{{ user.name }}</strong></p>
 
         <div class="mt-6 flex space-x-8 justify-around">
-          <p class="text-xs text-gray-500">182 friends</p>
-          <p class="text-xs text-gray-500">120 posts</p>
+          <RouterLink
+            :to="{name: 'friends', params: {user_id: user.id}}"
+            class="text-xs text-gray-500"
+          >
+            {{ user.friends_count || 0 }} friends
+          </RouterLink>
+          <p class="text-xs text-gray-500">
+            {{ user.posts_count || 0 }} posts
+          </p>
+        </div>
+
+        <!-- Sends friend request -->
+        <div class="mt-6" v-if="!isOwnProfile">
+          <!-- If not friends, show send button -->
+          <button
+            v-if="friendshipStatus === 'none'"
+            @click="sendFriendshipRequest"
+            :disabled="isSendingRequest"
+            class="inline-block p-3 bg-purple-600 text-white text-sm
+                   rounded-lg hover:bg-purple-700 disabled:opacity-50"
+          >
+            {{ isSendingRequest ? 'Sending...' : 'Send friendship request' }}
+          </button>
+
+          <!-- If request already sent -->
+          <button
+            v-else-if="friendshipStatus === 'request_sent'"
+            disabled
+            class="inline-block p-3 bg-gray-400 text-white text-sm
+                   rounded-lg cursor-not-allowed"
+          >
+            Request sent
+          </button>
+
+          <!-- If pending request from them -->
+          <div v-else-if="friendshipStatus === 'pending'" class="flex space-x-2">
+            <button
+              @click="acceptFriendshipRequest"
+              :disabled="isProcessingRequest"
+              class="flex-1 p-3 bg-green-600 text-white text-sm
+                     rounded-lg hover:bg-green-700 disabled:opacity-50"
+            >
+              {{ isProcessingRequest ? 'Processing...' : 'Accept' }}
+            </button>
+            <button
+              @click="rejectFriendshipRequest"
+              :disabled="isProcessingRequest"
+              class="flex-1 p-3 bg-red-500 text-white text-sm
+                     rounded-lg hover:bg-red-600 disabled:opacity-50"
+            >
+              Reject
+            </button>
+          </div>
+
+          <!-- If already friends -->
+          <button
+            v-else-if="friendshipStatus === 'friends'"
+            disabled
+            class="inline-block p-3 bg-green-600 text-white text-sm
+                   rounded-lg cursor-not-allowed"
+          >
+            Friends
+          </button>
         </div>
       </div>
     </div>

@@ -6,7 +6,7 @@ from account.models import User
 
 
 class PostAttachment(models.Model):
-    id: str = models.UUIDField(
+    id: uuid.UUID = models.UUIDField(
         primary_key=True, default=uuid.uuid4, editable=False)
     image: str = models.ImageField(upload_to='post_attachments')
     created_by: User = models.ForeignKey(
@@ -14,7 +14,8 @@ class PostAttachment(models.Model):
          on_delete=models.CASCADE)
 
 
-# django.db.models.fields.related_descriptors.create_forward_many_to_many_manager.<locals>.ManyRelatedManager
+# django.db.models.fields.related_descriptors
+#     .create_forward_many_to_many_manager.<locals>.ManyRelatedManager
 class Post(models.Model):
     id: uuid.UUID = models.UUIDField(primary_key=True, default=uuid.uuid4,
                                      editable=False)

@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-
+import os
 from datetime import timedelta
 from pathlib import Path, PosixPath, WindowsPath
 
@@ -82,6 +82,7 @@ CSRF_TRUSTED_ORIGINS: list[str] = [
 # Tells Django to use our custom user model instead of the built-in one
 AUTH_USER_MODEL = 'account.User'
 
+# https://github.com/jazzband/django-silk
 INSTALLED_APPS: list[str] = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -93,9 +94,10 @@ INSTALLED_APPS: list[str] = [
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
+    'silk',
     'account',
     'post',
-    'search',    
+    'search',
 ]
 
 MIDDLEWARE: list[str] = [
@@ -103,6 +105,7 @@ MIDDLEWARE: list[str] = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',    
     'django.middleware.common.CommonMiddleware',
+    "silk.middleware.SilkyMiddleware",    
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -158,13 +161,17 @@ AUTH_PASSWORD_VALIDATORS: dict[str, str] = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 LANGUAGE_CODE: str = 'en-us'
-TIME_ZONE: str = 'UTC'
+# TIME_ZONE: str = 'UTC'
+TIME_ZONE: str = 'Asia/Shanghai'
+# TIME_ZONE: str = 'Asia/Chongqing'
 USE_I18N: bool = True
 USE_TZ: bool = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 STATIC_URL: str = 'static/'
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

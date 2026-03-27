@@ -33,8 +33,6 @@ from django.contrib.auth.models import (AbstractBaseUser, PermissionsMixin,
                                         UserManager)
 from django.db import models
 from django.db.models.fields.files import ImageFieldFile
-# django.db.models.fields.related_descriptors
-#     .create_forward_many_to_many_manager.<locals>.ManyRelatedManager
 
 
 class CustomUserManager(UserManager):
@@ -62,9 +60,11 @@ class CustomUserManager(UserManager):
         return self._create_user(name, email, password, **extra_fields)
 
 
+# django.db.models.fields.related_descriptors
+#     .create_forward_many_to_many_manager.<locals>.ManyRelatedManager
 class User(AbstractBaseUser, PermissionsMixin):
-    id: str = models.UUIDField(primary_key=True, default=uuid.uuid4,
-                               editable=False)
+    id: uuid.UUID = models.UUIDField(primary_key=True, default=uuid.uuid4,
+                                     editable=False)
     email: str = models.EmailField(unique=True)
     name: str = models.CharField(max_length=255, blank=True, default='')
     avatar: ImageFieldFile = models.ImageField(upload_to='avatars', blank=True,
@@ -112,14 +112,17 @@ class FriendshipRequest(models.Model):
         (REJECTED, 'Rejected'),
     )
 
-    id: str = models.UUIDField(primary_key=True, default=uuid.uuid4,
-                               editable=False)
+    # The models.ForeignKey field in Django's model system defines a
+    # many-to-one relationship between two models.
+    id: uuid.UUID = models.UUIDField(primary_key=True, default=uuid.uuid4,
+                                     editable=False)
     created_for: "User" = models.ForeignKey(
         User, related_name='received_friendshiprequests',
         on_delete=models.CASCADE)
-    created_at: datetime = models.DateTimeField(auto_now_add=True)
     created_by: "User" = models.ForeignKey(
         User, related_name='created_friendshiprequests',
         on_delete=models.CASCADE)
     status: str = models.CharField(max_length=20, choices=STATUS_CHOICES,
                                    default=SENT)
+    created_at: datetime = models.DateTimeField(auto_now_add=True)
+    # updated_at: datetime = models.DateTimeField(auto_now=True)

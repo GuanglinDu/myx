@@ -13,9 +13,16 @@ Class-based views
 Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
+
+Python Silk (vs Python Debug Toolbar)
+https://github.com/jazzband/django-silk
+Before using:
+ - python manage.py migrate
+ - python manage.py collectstatic
 """
 from django.contrib import admin
 from django.urls import include, path, URLPattern, URLResolver
+from . import settings
 
 urlpatterns: list[ URLPattern | URLResolver] = [
     path('admin/', admin.site.urls),
@@ -23,3 +30,5 @@ urlpatterns: list[ URLPattern | URLResolver] = [
     path('api/posts/', include('post.urls')),
     path('api/search/', include('search.urls')),
 ]
+
+urlpatterns += [path('silk/', include('silk.urls', namespace='silk'))]
