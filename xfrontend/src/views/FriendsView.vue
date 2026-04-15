@@ -13,7 +13,7 @@ const $route = useRoute();
 
 const user = ref<User>({} as User);
 const friends = ref<User[]>([]);
-const friendshipRequests = ref([] as any);
+const friendshipRequests = ref<User[]>([]);
 
 async function getFriends(): Promise<void> {
   await axios
@@ -64,8 +64,46 @@ onMounted(() => {
       </div>
     </div>
 
+    <!-- Friend list
+    Page 116/287, 5.3.4 Router template components, Vue.js 3 Design Patterns
+    and Best Practices, Pablo David Garaguso, 2023
+
+    <RouterLink :to="{name: 'search', params: {text:'abc' }}" >Search</RouterLink>
+    
+    The preceding params attribute will be rendered as a URI with the
+      ?text=abc query string (HTTP request URL query string).
+    
+    As we mentioned, if the route has the props attribute active and the
+    receiving component has defined a prop of the same name, the value will
+    be automatically assigned.
+    -->
     <div class="main-center col-span-2 space-y-4">
-      Friend list here.
+      <!-- Ignores empty users array -->
+      <div
+        v-if="friendshipRequests.length"
+        class="p-4 bg-white border border-gray-200 rounded-lg
+               grid grid-cols-4 gap-4"
+      >
+        <div
+          class="p-4 text-center bg-gray-100 rounded-lg"
+          v-for="user in friendshipRequests"
+          :key="user.id"
+        >
+          <img
+            src="@/assets/Brian-200x200px.png"
+            alt="avatar"
+            class="rounded-full"
+          />
+          
+          <p>
+            <strong>
+              <RouterLink :to="{ name: 'profile', params: { id: user.id } }">
+                {{ user.name }}
+              </RouterLink>
+            </strong>
+          </p>
+        </div>
+      </div>
     </div>
 
     <!-- (3/3) The main-right column: PeopleYouMayKnow & Trends --> 

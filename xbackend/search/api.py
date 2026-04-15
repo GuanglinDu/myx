@@ -10,7 +10,7 @@ from post.models import Post
 from post.serializers import PostSerializer
 
 
-# Double underscore in Django - Google AI Overview
+# 1. Double underscore in Django - Google AI Overview
 # 
 # In Django, the double underscore (__), often pronounced "dunder," has a
 # special meaning within the Object-Relational Mapper (ORM). It serves as
@@ -28,7 +28,7 @@ from post.serializers import PostSerializer
 # code. Example: 
 # To find all Car objects with an Engine made by a specific company, you
 # would use:
-# cars = Car.objects.filter(engine__engine_make__company_name="something")
+#   cars = Car.objects.filter(engine__engine_make__company_name="something")
 # Here, engine__engine_make__company_name tells Django to look at the
 # engine relationship, then the engine_make relationship within that, and 
 # finally filter by the company_name field.
@@ -40,7 +40,12 @@ from post.serializers import PostSerializer
 #   field__icontains: case-insensitive containment test.
 #   field__year: extracts the year part from a date/datetime field. 
 # Django's ORM internally splits the query string by __ to generate the
-# appropriate SQL WHERE clauses and JOIN statements. 
+# appropriate SQL WHERE clauses and JOIN statements.
+# 
+# 2. How to create a Django JsonResponse object? - Google AI Overview
+# The Django JsonResponse class automatically serializes a Python
+# dictionary into a JSON string and sets the Content-Type header to
+# application/json.
 @api_view(['POST'])
 def search(request: Request) -> JsonResponse:
     data: dict | list = request.data

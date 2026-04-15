@@ -19,7 +19,7 @@ urlpatterns: list[ URLPattern | URLResolver] = [
          name='reject_friendship_request'),
     path('friends/status/<uuid:user_id>/', api.get_friendship_status,
          name='get_friendship_status'),
-    path('friends/requests/', api.get_friendship_requests,
-          name='get_friendship_requests'),
     path('friends/<uuid:user_id>/', api.friends, name='friends'),
+    path('friends/<uuid:user_id>/requests/', api.get_friendship_requests,
+          name='get_friendship_requests'),
 ]

@@ -12,4 +12,6 @@ https://www.youtube.com/watch?v=V4SDOq5WvS4&list=PLpyspNLjzwBlobEvnZzyWP8I-ORQcq
  - 18:20 Add a RouterLink to FriendView.vue in ProfileView.vue
  - 21:00 Retrieve the friend list in account/api.py
  - 25:30 Modify account/urls.py to add the friends URL
+ - 26:35 List the friends in FriendsView.vue
  
+ .sync-conflict-

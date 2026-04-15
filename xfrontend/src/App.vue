@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import axios from 'axios';
+import { createAvatar } from '@dicebear/core';
+import { adventurer } from '@dicebear/collection';
 import ToastComponent from '@/components/ToastComponent.vue';
 import NotificationsComponent from '@/components/NotificationsComponent.vue';
 import { useUserStore } from '@/stores/user';
@@ -7,6 +10,13 @@ import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
 
 userStore.initStore();
+
+const avatarDataUri = computed(() =>
+  createAvatar(adventurer, {
+    seed: userStore.user.id,
+    size: 40,
+  }).toDataUri()
+);
 
 // Makes the login persistent
 const token: string = userStore.user.access;
@@ -85,7 +95,7 @@ if (token) {
               :to="{'name': 'profile', params: { id: userStore.user.id }}"
               class="flex items-center space-x-2">
               <img
-                src="@/assets/Brian-40x40px.png"
+                :src="avatarDataUri"
                 alt="avatar"
                 class="rounded-full"
               />

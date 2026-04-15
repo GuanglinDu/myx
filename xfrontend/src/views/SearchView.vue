@@ -6,7 +6,6 @@ import TrendsComponent from '@/components/TrendsComponent.vue';
 import FeedItem from './FeedItem.vue';
 import type { Post, User } from '@/types/custom_types';
 
-
 const query = ref<string>('');
 const users = ref<Array<User>>([]);
 const posts = ref<Array<Post>>([]);

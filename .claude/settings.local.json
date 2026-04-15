@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(TZ='Asia/Shanghai' date '+%Y-%m-%d %H:%M:%S %Z')",
+      "Bash(python -c \"import graphify\")",
+      "Bash(pip install:*)",
+      "Bash(python -c \"import sys; open\\('.graphify_python', 'w'\\).write\\(sys.executable\\)\")",
+      "Bash(graphify claude:*)",
+      "WebSearch",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:www.npmjs.com)",
+      "Bash(python:*)",
+      "Bash(claude --version)",
+      "Bash(claude code:*)",
+      "Bash(gh release:*)"
+    ]
+  }
+}

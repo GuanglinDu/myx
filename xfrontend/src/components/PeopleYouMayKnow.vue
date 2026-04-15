@@ -1,3 +1,6 @@
+<script setup lang="ts">
+</script>
+
 <template>
 <div class="p-4 bg-white border border-gray-200 space-y-2
             text-center rounded-lg">

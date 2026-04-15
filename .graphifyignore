@@ -1,0 +1,12 @@
+# .graphifyignore
+vendor/
+node_modules/
+dist/
+*.generated.py
+
+.stfolder/
+graphify-out/
+.stignore
+tmp/
+temp/
+README.local.md

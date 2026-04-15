@@ -6,7 +6,7 @@
 # The IDE workspace files
 *.code-workspace
 *.theia-workspace
-README_private.md
+README.local.md
 
 # Test coverage reports at any directory level
 **/coverage
@@ -48,3 +48,7 @@ xbackend/static/
 # Conda environment activation scripts
 xbackend/start_conda.bat
 xbackend/start_conda.ps1
+
+# Graphify output
+graphify-out/
+

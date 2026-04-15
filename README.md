@@ -54,16 +54,19 @@ python manage.py runserver 0.0.0.0:8001
 ## Poupulate the DB with fake data
 
 ### The default args with 50 formations, 5 workspaces, & 20 projects
+
 ```shell
 python manage.py seed_db
 ```
 
 ### Use your custom counts
+
 ```shell
 python manage.py seed_db  --formations=500 --workspaces=10 --projects=50
 ```
 
 ### Clear the populated formations, workspaces, & projects
+
 ```shell
 python manage.py seed_db --clear
 ```
@@ -96,8 +99,10 @@ pytest --cov
 ```shell
 npm install -D vitest @vue/test-utils happy-dom @testing-library/vue @pinia/testing
 ```
+
 Note:
- - vitest is for unit-testing plain JS/TS;
- - @vue/test-utils is for unit-testing the components;
- - @testing-library/vue is for unit-testing composables;
- - Happy DOM is designed to work seamlessly with testing frameworks. It allows developers to simulate a DOM environment for running unit tests for front-end projects without relying on a browser.
+
+- vitest is for unit-testing plain JS/TS;
+- @vue/test-utils is for unit-testing the components;
+- @testing-library/vue is for unit-testing composables;
+- Happy DOM is designed to work seamlessly with testing frameworks. It allows developers to simulate a DOM environment for running unit tests for front-end projects without relying on a browser.

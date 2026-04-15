@@ -1,36 +1,47 @@
 <script setup lang="ts">
+import { computed } from 'vue';
+import { createAvatar } from '@dicebear/core';
+import { adventurer } from '@dicebear/collection';
 import type { Post } from '@/types/custom_types';
 
 const $props = defineProps<{
   post: Post;
 }>();
+
+// Generate the avatar as a Data URI
+const avatarDataUri = computed(() => 
+  createAvatar(adventurer, {
+    seed: $props.post.created_by.id,
+    size: 128,
+  }).toDataUri()
+);
 </script>
 
 <template>
-    <!-- The avatar, name, & how long has the post been published? -->
-    <div class="mb-6 flex justify-between">
+  <!-- The avatar, name, & how long has the post been published? -->
+  <div class="mb-6 flex justify-between">
     <div class="flex space-x-1 justify-between">
-    <img
-        src="@/assets/Brian-100x100px.png"
-        class="w-[40px] rounded-full"
-    />
-    <p>
+      <img
+        :src="avatarDataUri"
+        alt="User Avatar"
+        class="w-[40px] rounded-full" />
+      <p>
         <strong>
         <RouterLink
-            :to="{ name: 'profile', params: { id: post.created_by.id } }"
+          :to="{ name: 'profile', params: { id: post.created_by.id } }"
         >
             {{ post.created_by.name }}
         </RouterLink>
         </strong>
-    </p>
+      </p>
     </div>
     <p class="text-gray-600">{{ post.created_at_formatted }} ago</p>
-    </div>
+  </div>
 
-    <!-- The textual body -->
-    <p>{{ post.body }}</p>
+  <!-- The textual body -->
+  <p>{{ post.body }}</p>
 
-    <div class="my-6 flex justify-between">
+  <div class="my-6 flex justify-between">
     <div class="flex space-x-6">
     <!-- Count of likes -->
     <div class="flex items-center space-x-2">

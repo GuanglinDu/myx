@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
 import { onMounted } from 'vue';
-import { useRoute } from 'vue-router';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import { createAvatar } from '@dicebear/core';
+import { adventurer } from '@dicebear/collection';
 import PeopleYouMayKnow from '@/components/PeopleYouMayKnow.vue';
 import TrendsComponent from '@/components/TrendsComponent.vue';
 import FeedItem from './FeedItem.vue';
@@ -10,7 +11,10 @@ import { useUserStore } from '@/stores/user';
 import type { Post, User } from '@/types/custom_types';
 
 const userStore = useUserStore();
-const $route = useRoute();
+
+const props = defineProps({
+  id: { type: String, required: true }
+});
 
 const user = ref<User>({} as User);
 const posts = ref<Post[]>([]);
@@ -25,9 +29,17 @@ const isOwnProfile = computed(() => {
   return userStore.user.id === user.value.id;
 });
 
+// Generate the avatar as a Data URI
+const avatarDataUri = computed(() => 
+  createAvatar(adventurer, {
+    seed: props.id,
+    size: 128,
+  }).toDataUri()
+);
+
 async function getFeed(): Promise<void> {
   await axios
-    .get(`/api/posts/profile/${$route.params.id}/`)
+    .get(`/api/posts/profile/${props.id}/`)
     .then((response: AxiosResponse) => {
       console.log('data', response.data);
 
@@ -41,12 +53,15 @@ async function getFeed(): Promise<void> {
     });
 }
 
+// We expect to receive an 'id' prop of type string, which represents the
+// ID of the user whose profile we want to display. This id is passed via
+// the route parameters. See src/router/index.ts for the route definition.
 async function sendFriendshipRequest(): Promise<void> {
   if (isSendingRequest.value || friendshipStatus.value !== 'none') return;
 
   isSendingRequest.value = true;
   await axios
-    .post(`/api/friends/send/${$route.params.id}/`)
+    .post(`/api/friends/send/${props.id}/`)
     .then((response: AxiosResponse) => {
       console.log('Friendship request sent:', response.data);
       
@@ -109,7 +124,6 @@ async function submitForm(): Promise<void> {
       // posts.value.push(response.data);    // appended to the end
       posts.value.unshift(response.data); // appended to the start
       body.value = '';
-      // getFeed();
     })
     .catch((error: any) => {
       console.error('Error creating post:', error);
@@ -120,7 +134,7 @@ onMounted(() => {
   getFeed();
 });
 
-watch(() => $route.params.id, () => {
+watch(() => props.id, () => {
   getFeed();
 });
 </script>
@@ -131,11 +145,12 @@ watch(() => $route.params.id, () => {
     <div class="main-left col-span-1">
       <div class="p-4 bg-white border border-gray-200
                   text-center rounded-lg">
-        <img
+        <!-- <img
           src="@/assets/Brian-200x200px.png"
           alt="avatar"
           class="rounded-full"
-        />
+        /> -->
+        <img :src="avatarDataUri" alt="User Avatar" />
         
         <!-- the logged-in user's name vs any user's name
           <p><strong>{{ userStore.user.name }}</strong></p>
