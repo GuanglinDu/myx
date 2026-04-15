@@ -1,10 +1,19 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import axios from 'axios';
+import { createAvatar } from '@dicebear/core';
+import { adventurer } from '@dicebear/collection';
 import PeopleYouMayKnow from '@/components/PeopleYouMayKnow.vue';
 import TrendsComponent from '@/components/TrendsComponent.vue';
 import FeedItem from './FeedItem.vue';
 import type { Post, User } from '@/types/custom_types';
+
+function getAvatarUri(userId: string): string {
+  return createAvatar(adventurer, {
+    seed: userId,
+    size: 128,
+  }).toDataUri();
+}
 
 const query = ref<string>('');
 const users = ref<Array<User>>([]);
@@ -12,17 +21,15 @@ const posts = ref<Array<Post>>([]);
 
 async function submitForm(): Promise<void> {
   console.log('submitForm:', query.value);
-  
-  await axios
-    .post('/api/search/', { query: query.value })
-    .then(response => {
-        console.log('Search results:', response.data);
-        users.value = response.data.users;
-        posts.value = response.data.posts;
-    })
-    .catch(error => {
-      console.error('Errorh:', error);
-    })
+
+  try {
+    const response = await axios.post('/api/search/', { query: query.value });
+    console.log('Search results:', response.data);
+    users.value = response.data.users;
+    posts.value = response.data.posts;
+  } catch (error) {
+    console.error('Error:', error);
+  }
 }
 </script>
 
@@ -30,6 +37,7 @@ async function submitForm(): Promise<void> {
   <div class="max-w-7xl mx-auto grid grid-cols-4 gap-4 ">
     <!-- The main left columns -->
     <div class="main-left col-span-3 space-y-4">
+    
       <!-- The search div -->
       <div class="bg-white border border-gray-200 rounded-lg">
         <form @submit.prevent="submitForm" class="p-4 flex space-x-4">
@@ -71,7 +79,7 @@ async function submitForm(): Promise<void> {
           :key="user.id"
         >
           <img
-            src="@/assets/Brian-200x200px.png"
+            :src="getAvatarUri(user.id)"
             alt="avatar"
             class="rounded-full"
           />

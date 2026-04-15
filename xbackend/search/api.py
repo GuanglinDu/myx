@@ -10,7 +10,7 @@ from post.models import Post
 from post.serializers import PostSerializer
 
 
-# 1. Double underscore in Django - Google AI Overview
+# (1/2) Double underscore in Django - Google AI Overview
 # 
 # In Django, the double underscore (__), often pronounced "dunder," has a
 # special meaning within the Object-Relational Mapper (ORM). It serves as
@@ -22,7 +22,7 @@ from post.serializers import PostSerializer
 # exclude(), get(), and order_by(), where it allows you to perform complex
 # lookups and join across related models. 
 # 
-# (1/2) Relationship Traversal: It is used to access fields of a related
+# (1.1/2) Relationship Traversal: It is used to access fields of a related
 # model via a ForeignKey, ManyToManyField, or OneToOneField. This works
 # similarly to chaining together properties with a dot in regular Python
 # code. Example: 
@@ -33,7 +33,7 @@ from post.serializers import PostSerializer
 # engine relationship, then the engine_make relationship within that, and 
 # finally filter by the company_name field.
 
-# (2/2) Field Lookups: The part after the last double underscore specifies
+# (2.1/2) Field Lookups: The part after the last double underscore specifies
 # a type of comparison or lookup (e.g., "less than," "case-insensitive
 # contains," etc.).Examples of common lookups:
 #   field__lte: less than or equal to.
@@ -42,7 +42,7 @@ from post.serializers import PostSerializer
 # Django's ORM internally splits the query string by __ to generate the
 # appropriate SQL WHERE clauses and JOIN statements.
 # 
-# 2. How to create a Django JsonResponse object? - Google AI Overview
+# (2/2) How to create a Django JsonResponse object? - Google AI Overview
 # The Django JsonResponse class automatically serializes a Python
 # dictionary into a JSON string and sets the Content-Type header to
 # application/json.

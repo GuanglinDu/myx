@@ -4,9 +4,23 @@ node_modules/
 dist/
 *.generated.py
 
-.stfolder/
+*.pyc
+__pycache__/
+
 graphify-out/
+.stfolder/
 .stignore
 tmp/
 temp/
 README.local.md
+
+# Possible IDE settings at any directory level
+# The trailing / ensures that only directories are ignored.
+.idea/
+.vscode/
+.theia/
+.mypy_cache/
+.pytest_cache/
+
+# DB
+**/db.sqlite3
