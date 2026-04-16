@@ -12,6 +12,30 @@ from .models import User, FriendshipRequest
 from .serializers import UserSerializer, FriendshipRequestSerializer
 
 
+# Appended at 10:40:46 on 20260416 Thu by Guanglin Du.
+# How HTTP Requests Are Created & Processed in Django REST Framework (DRF)
+# - doubao
+# 1. The DRF Request fixes big weaknesses of Django’s raw request:
+# - Unifies all input data into one place (request.data)
+# - Automatically parses JSON, form data, files
+# - Handles authentication cleanly
+# - Gives you better error handling
+# 
+# 2. Key Properties of the DRF Request Object (You Use These Daily!)
+# Property	        Purpose
+# request.method	HTTP method: GET, POST, PUT, etc.
+# request.data	Parsed body data (JSON/form data) → replaces Django’s
+#                request.POST/request.body
+# request.query_params	Query parameters (?page=1&search=test) → replaces
+#                       request.GET
+# request.headers	HTTP headers (Authorization, Content-Type)
+# request.user	Authenticated user (from token/session)
+# request.auth	Authentication token (JWT, etc.)
+# 
+# 3. Demos (JSON body parsed automatically)
+# token: str = request.headers.get('Authorization')
+# request.query_params.get('page') = parsed query string (e.g., ?page=2)
+# request.data.get('email') = parsed request body (JSON/form)
 @api_view(['GET'])
 def me(request: Request):
     return JsonResponse({
@@ -102,7 +126,8 @@ def send_friendship_request(request: Request,
 
 
 @api_view(['POST'])
-def accept_friendship_request(request: Request, request_id: uuid.UUID) -> JsonResponse:
+def accept_friendship_request(request: Request,
+                              request_id: uuid.UUID) -> JsonResponse:
     """Accept a friendship request."""
     user: User = request.user
 

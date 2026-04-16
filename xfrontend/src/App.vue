@@ -40,7 +40,7 @@ if (token) {
           class="menu-center flex space-x-12"
           v-if="userStore.user.isAuthenticated"
         >
-          <a href="#" class="text-purple-700">
+          <RouterLink to="/feed" class="text-purple-700">
             <svg xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -52,7 +52,7 @@ if (token) {
                 stroke-linejoin="round"
                 d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
             </svg>
-          </a>
+          </RouterLink>
 
           <!-- The chat menu -->
           <a href="#" class="text-black">
@@ -91,15 +91,23 @@ if (token) {
         <!-- https://i.pravatar.cc/40?img=70 is blocked! -->
         <div class="menu-right">
           <template v-if="userStore.user.isAuthenticated">
-            <RouterLink
-              :to="{'name': 'profile', params: { id: userStore.user.id }}"
-              class="flex items-center space-x-2">
-              <img
-                :src="avatarDataUri"
-                alt="avatar"
-                class="rounded-full"
-              />
-            </RouterLink>
+            <div>
+              <RouterLink
+                :to="{'name': 'profile', params: { id: userStore.user.id }}"
+                class="flex items-center space-x-2">
+                <img
+                  :src="avatarDataUri"
+                  alt="avatar"
+                  class="rounded-full"
+                />
+                <span class="text-sm">{{ userStore.user.name }}</span>
+              </RouterLink>
+            </div>
+            <div>
+              <span class="text-xs text-gray-500">
+                {{ userStore.user.email }}
+              </span>
+            </div>
           </template>
           <template v-else>
             <RouterLink

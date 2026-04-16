@@ -1,6 +1,7 @@
 Friendships - Build a Full-Stack Social Network with Django and Vue 3 | Part 5/16
 ============================================================================================
 https://www.youtube.com/watch?v=V4SDOq5WvS4&list=PLpyspNLjzwBlobEvnZzyWP8I-ORQcq4IO&index=5
+
 00:00 Overview
 00:10 Set up friendships (model changes)
 00:29 Make it possible to send friend requests
@@ -13,5 +14,8 @@ https://www.youtube.com/watch?v=V4SDOq5WvS4&list=PLpyspNLjzwBlobEvnZzyWP8I-ORQcq
  - 21:00 Retrieve the friend list in account/api.py
  - 25:30 Modify account/urls.py to add the friends URL
  - 26:35 List the friends in FriendsView.vue
+ - 30:00 Prevent sending multiple friendship requests
+ - 57:56 Change the Home button to a RouterLink to "/feed"
+ 58:30 Update feed to include your friend's posts
  
- .sync-conflict-
+

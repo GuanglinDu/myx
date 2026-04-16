@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
 import { onMounted } from 'vue';
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios from 'axios';
 import { createAvatar } from '@dicebear/core';
 import { adventurer } from '@dicebear/collection';
 import PeopleYouMayKnow from '@/components/PeopleYouMayKnow.vue';
@@ -26,7 +26,7 @@ const isSendingRequest = ref<boolean>(false);
 const isProcessingRequest = ref<boolean>(false);
 
 const isOwnProfile = computed(() => {
-  return userStore.user.id === user.value.id;
+  return userStore.user.id === props.id;
 });
 
 // Generate the avatar as a Data URI
@@ -38,19 +38,16 @@ const avatarDataUri = computed(() =>
 );
 
 async function getFeed(): Promise<void> {
-  await axios
-    .get(`/api/posts/profile/${props.id}/`)
-    .then((response: AxiosResponse) => {
-      console.log('data', response.data);
-
-      posts.value = response.data.posts;
-      user.value = response.data.user;
-      friendshipStatus.value = response.data.friendship_status || 'none';
-      requestId.value = response.data.request_id || '';
-    })
-    .catch((error: any) => {
-      console.error('Error fetching feed:', error);
-    });
+  try {
+    const response = await axios.get(`/api/posts/profile/${props.id}/`);
+    console.log('data', response.data);
+    posts.value = response.data.posts;
+    user.value = response.data.user;
+    friendshipStatus.value = response.data.friendship_status || 'none';
+    requestId.value = response.data.request_id || '';
+  } catch (error) {
+    console.error('Error fetching feed:', error);
+  }
 }
 
 // We expect to receive an 'id' prop of type string, which represents the
@@ -60,74 +57,55 @@ async function sendFriendshipRequest(): Promise<void> {
   if (isSendingRequest.value || friendshipStatus.value !== 'none') return;
 
   isSendingRequest.value = true;
-  await axios
-    .post(`/api/friends/send/${props.id}/`)
-    .then((response: AxiosResponse) => {
-      console.log('Friendship request sent:', response.data);
-      
-      friendshipStatus.value = 'request_sent';
-       // Update user data to reflect new friendship status
-      // user.value = response.data.user;
-    })
-    .catch((error: any) => {
-      console.error('Error sending friendship request:', error);
-    })
-    .finally(() => {
-      isSendingRequest.value = false;
-    });
+  try {
+    await axios.post(`/api/friends/send/${props.id}/`);
+    friendshipStatus.value = 'request_sent';
+  } catch (error) {
+    console.error('Error sending friendship request:', error);
+  } finally {
+    isSendingRequest.value = false;
+  }
 }
 
 async function acceptFriendshipRequest(): Promise<void> {
   if (!requestId.value || isProcessingRequest.value) return;
 
   isProcessingRequest.value = true;
-  await axios
-    .post(`/api/friends/accept/${requestId.value}/`)
-    .then((response: AxiosResponse) => {
-      console.log('Friendship request accepted:', response.data);
-      friendshipStatus.value = 'friends';
-    })
-    .catch((error: any) => {
-      console.error('Error accepting friendship request:', error);
-    })
-    .finally(() => {
-      isProcessingRequest.value = false;
-    });
+  try {
+    await axios.post(`/api/friends/accept/${requestId.value}/`);
+    friendshipStatus.value = 'friends';
+  } catch (error) {
+    console.error('Error accepting friendship request:', error);
+  } finally {
+    isProcessingRequest.value = false;
+  }
 }
 
 async function rejectFriendshipRequest(): Promise<void> {
   if (!requestId.value || isProcessingRequest.value) return;
 
   isProcessingRequest.value = true;
-  await axios
-    .post(`/api/friends/reject/${requestId.value}/`)
-    .then((response: AxiosResponse) => {
-      console.log('Friendship request rejected:', response.data);
-      friendshipStatus.value = 'none';
-      requestId.value = '';
-    })
-    .catch((error: any) => {
-      console.error('Error rejecting friendship request:', error);
-    })
-    .finally(() => {
-      isProcessingRequest.value = false;
-    });
+  try {
+    await axios.post(`/api/friends/reject/${requestId.value}/`);
+    friendshipStatus.value = 'none';
+    requestId.value = '';
+  } catch (error) {
+    console.error('Error rejecting friendship request:', error);
+  } finally {
+    isProcessingRequest.value = false;
+  }
 }
 
 async function submitForm(): Promise<void> {
   console.log('submitForm:', body.value);
-  await axios
-    .post('/api/posts/create/', { body: body.value })
-    .then((response: AxiosResponse) => {
-      console.log('Post created:', response.data);
-
-      // posts.value.push(response.data);    // appended to the end
-      posts.value.unshift(response.data); // appended to the start
-      body.value = '';
-    })
-    .catch((error: any) => {
-      console.error('Error creating post:', error);
-    });
+  try {
+    const response = await axios.post('/api/posts/create/', { body: body.value });
+    console.log('Post created:', response.data);
+    posts.value.unshift(response.data);
+    body.value = '';
+  } catch (error) {
+    console.error('Error creating post:', error);
+  }
 }
 
 onMounted(() => {
@@ -145,11 +123,6 @@ watch(() => props.id, () => {
     <div class="main-left col-span-1">
       <div class="p-4 bg-white border border-gray-200
                   text-center rounded-lg">
-        <!-- <img
-          src="@/assets/Brian-200x200px.png"
-          alt="avatar"
-          class="rounded-full"
-        /> -->
         <img :src="avatarDataUri" alt="User Avatar" />
         
         <!-- the logged-in user's name vs any user's name

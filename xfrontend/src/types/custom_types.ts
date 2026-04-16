@@ -17,3 +17,9 @@ export interface Post {
   created_at: string;
   created_by: string;
 };
+
+export interface FriendshipRequest {
+  id: string;
+  status: 'sent' | 'accepted' | 'rejected';
+  created_by: User;
+};

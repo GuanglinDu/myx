@@ -1,61 +1,53 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
+import { createAvatar } from '@dicebear/core';
+import { adventurer } from '@dicebear/collection';
+import type { FriendshipRequest } from '@/types/custom_types';
+import { useUserStore } from '@/stores/user';
 
-interface FriendshipRequest {
-  id: string;
-  created_by: string;
-  created_by_user: {
-    id: string;
-    name: string;
-    email: string;
-  };
-  created_at: string;
-}
-
+const userStore = useUserStore();
 const requests = ref<FriendshipRequest[]>([]);
 const isLoading = ref<boolean>(false);
 const showDropdown = ref<boolean>(false);
 
+function getAvatarUri(userId: string): string {
+  return createAvatar(adventurer, {
+    seed: userId,
+    size: 40,
+  }).toDataUri();
+}
+
 async function fetchRequests(): Promise<void> {
   isLoading.value = true;
-  await axios
-    .get('/api/friends/requests/')
-    .then((response: AxiosResponse) => {
-      requests.value = response.data;
-    })
-    .catch((error: any) => {
-      console.error('Error fetching requests:', error);
-    })
-    .finally(() => {
-      isLoading.value = false;
-    });
+  try {
+    const response = await axios.get(
+      `/api/friends/${userStore.user.id}/requests/`
+    );
+    requests.value = response.data;
+  } catch (error) {
+    console.error('Error fetching requests:', error);
+  } finally {
+    isLoading.value = false;
+  }
 }
 
 async function acceptRequest(requestId: string): Promise<void> {
-  await axios
-    .post(`/api/friends/accept/${requestId}/`)
-    .then((response: AxiosResponse) => {
-      console.log('Request accepted:', response.data);
-      // Remove from list
-      requests.value = requests.value.filter(r => r.id !== requestId);
-    })
-    .catch((error: any) => {
-      console.error('Error accepting request:', error);
-    });
+  try {
+    await axios.post(`/api/friends/accept/${requestId}/`);
+    requests.value = requests.value.filter(r => r.id !== requestId);
+  } catch (error) {
+    console.error('Error accepting request:', error);
+  }
 }
 
 async function rejectRequest(requestId: string): Promise<void> {
-  await axios
-    .post(`/api/friends/reject/${requestId}/`)
-    .then((response: AxiosResponse) => {
-      console.log('Request rejected:', response.data);
-      // Remove from list
-      requests.value = requests.value.filter(r => r.id !== requestId);
-    })
-    .catch((error: any) => {
-      console.error('Error rejecting request:', error);
-    });
+  try {
+    await axios.post(`/api/friends/reject/${requestId}/`);
+    requests.value = requests.value.filter(r => r.id !== requestId);
+  } catch (error) {
+    console.error('Error rejecting request:', error);
+  }
 }
 
 function toggleDropdown(): void {
@@ -125,13 +117,13 @@ onMounted(() => {
         >
           <div class="flex items-center space-x-3">
             <img
-              src="@/assets/Brian-40x40px.png"
+              :src="getAvatarUri(request.created_by.id)"
               alt="avatar"
               class="w-10 h-10 rounded-full"
             />
             <div>
               <p class="text-sm font-medium">
-                {{ request.created_by_user.name }}
+                {{ request.created_by.name }}
               </p>
               <p class="text-xs text-gray-500">
                 wants to be your friend

@@ -1,5 +1,5 @@
 import uuid
-from django.db.models.query import QuerySet
+from django.db.models import Q, QuerySet
 from django.http import JsonResponse
 from rest_framework.request import Request
 from rest_framework.decorators import (api_view, authentication_classes,
@@ -13,7 +13,9 @@ from .forms import PostForm
 
 @api_view(['GET'])
 def post_list(request: Request) -> JsonResponse:
-    posts: QuerySet[Post] = Post.objects.all()  # change later to feed
+    posts: QuerySet[Post] = Post.objects.filter(
+        Q(created_by=request.user) | Q(created_by__in=request.user.friends.all())
+    ).order_by('-created_at')
     serializer: PostSerializer = PostSerializer(posts, many=True)
     return JsonResponse(serializer.data, safe=False)
 

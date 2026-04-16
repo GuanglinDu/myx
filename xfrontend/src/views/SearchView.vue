@@ -67,7 +67,7 @@ async function submitForm(): Promise<void> {
         </form>
       </div>
 
-      <!-- Ignores empty users array -->
+      <!-- Users found -->
       <div
         v-if="users.length"
         class="p-4 bg-white border border-gray-200 rounded-lg
@@ -99,7 +99,7 @@ async function submitForm(): Promise<void> {
         </div>
       </div>
 
-      <!-- 1/2 Start of posts -->
+      <!-- Posts found -->
       <div
         class="p-4 bg-white border border-gray-200 rounded-lg"
         v-for="post in posts"
@@ -107,7 +107,6 @@ async function submitForm(): Promise<void> {
       >
         <FeedItem :post="post" />
       </div>
-      <!-- 2/2 End of the posts --> 
     </div>
 
     <!-- (3/3) The main-right column: PeopleYouMayKnow & Trends --> 
