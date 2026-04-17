@@ -35,6 +35,7 @@
  */
 import { reactive } from 'vue';
 import { defineStore } from "pinia";
+import router from '@/router';
 // Warning: module axios can only be default imported using
 // the allowSyntheticDefaultImports flag
 import axios from 'axios';
@@ -120,6 +121,11 @@ const useUserStore = defineStore('user', () => {
     localStorage.setItem("user.avatar", "");
   }
 
+  function logout(): void {
+    removeToken();
+    router.push('/login');
+  }
+
   function setUserInfo(usr: User): void {
     console.log("setUserInfo", user);
 
@@ -157,7 +163,7 @@ const useUserStore = defineStore('user', () => {
       });
   }
 
-  return { user, initStore, setToken, removeToken, setUserInfo, refreshToken };
+  return { user, initStore, setToken, removeToken, logout, setUserInfo, refreshToken };
 });
 
 export { useUserStore };

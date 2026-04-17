@@ -8,7 +8,6 @@ https://www.youtube.com/watch?v=qM8WhgvbZDI&list=PLpyspNLjzwBlobEvnZzyWP8I-ORQcq
  - 9:50 View and URLs
  - 14:32 Get a test feed and show in the frontend (Your own posts; Create a superuser)
 30:30 Make it possible to add text posts
-
 33:37 Make it possible to view a profile
 33:37 Set up friendships (model changes)
 

@@ -14,7 +14,8 @@ from .forms import PostForm
 @api_view(['GET'])
 def post_list(request: Request) -> JsonResponse:
     posts: QuerySet[Post] = Post.objects.filter(
-        Q(created_by=request.user) | Q(created_by__in=request.user.friends.all())
+        Q(created_by=request.user) |
+        Q(created_by__in=request.user.friends.all())
     ).order_by('-created_at')
     serializer: PostSerializer = PostSerializer(posts, many=True)
     return JsonResponse(serializer.data, safe=False)
@@ -37,7 +38,8 @@ def post_list_profile(request: Request, id: uuid.UUID) -> JsonResponse:
             friendship_status = 'friends'
         else:
             # Check if they sent us a request
-            pending_request: FriendshipRequest | None = FriendshipRequest.objects.filter(
+            pending_request: FriendshipRequest | None = \
+              FriendshipRequest.objects.filter(
                 created_for=request.user,
                 created_by=user,
                 status=FriendshipRequest.SENT
@@ -47,7 +49,8 @@ def post_list_profile(request: Request, id: uuid.UUID) -> JsonResponse:
                 request_id = str(pending_request.id)
             else:
                 # Check if we sent them a request
-                sent_request: FriendshipRequest | None = FriendshipRequest.objects.filter(
+                sent_request: FriendshipRequest | None = \
+                  FriendshipRequest.objects.filter(
                     created_for=user,
                     created_by=request.user,
                     status=FriendshipRequest.SENT

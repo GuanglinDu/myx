@@ -12,6 +12,9 @@ import type { Post, User } from '@/types/custom_types';
 
 const userStore = useUserStore();
 
+// router/index.ts defines the route for this view as '/profile/:id', where
+// ':id' is a dynamic segment representing the user UUID of the profile being
+// viewed. We will access this UUID via props.
 const props = defineProps({
   id: { type: String, required: true }
 });
@@ -51,7 +54,7 @@ async function getFeed(): Promise<void> {
 }
 
 // We expect to receive an 'id' prop of type string, which represents the
-// ID of the user whose profile we want to display. This id is passed via
+// UUID of the user whose profile we want to display. This id is passed via
 // the route parameters. See src/router/index.ts for the route definition.
 async function sendFriendshipRequest(): Promise<void> {
   if (isSendingRequest.value || friendshipStatus.value !== 'none') return;
@@ -193,6 +196,17 @@ watch(() => props.id, () => {
                    rounded-lg cursor-not-allowed"
           >
             Friends
+          </button>
+        </div>
+
+        <!-- Log out (only on own profile) -->
+        <div class="mt-6" v-if="isOwnProfile">
+          <button
+            @click="userStore.logout()"
+            class="w-full p-3 bg-red-500 text-white text-sm
+                   rounded-lg hover:bg-red-600"
+          >
+            Log out
           </button>
         </div>
       </div>
