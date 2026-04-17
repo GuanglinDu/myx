@@ -93,7 +93,7 @@ if (token) {
           <template v-if="userStore.user.isAuthenticated">
             <div>
               <RouterLink
-                :to="{'name': 'profile', params: { id: userStore.user.id }}"
+                :to="{ name: 'profile', params: { id: userStore.user.id } }"
                 class="flex items-center space-x-2">
                 <img
                   :src="avatarDataUri"

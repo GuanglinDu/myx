@@ -14,7 +14,8 @@ const userStore = useUserStore();
 
 // router/index.ts defines the route for this view as '/profile/:id', where
 // ':id' is a dynamic segment representing the user UUID of the profile being
-// viewed. We will access this UUID via props.
+// viewed. We will access this UUID via props. So props.id gives you the UUID
+// of the user whose profile is being viewed.
 const props = defineProps({
   id: { type: String, required: true }
 });
@@ -102,7 +103,8 @@ async function rejectFriendshipRequest(): Promise<void> {
 async function submitForm(): Promise<void> {
   console.log('submitForm:', body.value);
   try {
-    const response = await axios.post('/api/posts/create/', { body: body.value });
+    const response = await axios.post('/api/posts/create/',
+                                      { body: body.value });
     console.log('Post created:', response.data);
     posts.value.unshift(response.data);
     body.value = '';
@@ -128,8 +130,8 @@ watch(() => props.id, () => {
                   text-center rounded-lg">
         <img :src="avatarDataUri" alt="User Avatar" />
         
-        <!-- the logged-in user's name vs any user's name
-          <p><strong>{{ userStore.user.name }}</strong></p>
+        <!-- The logged-in user's name: {{ userStore.user.name }}
+          Any user's name on his profile page:
         -->
         <p><strong>{{ user.name }}</strong></p>
 

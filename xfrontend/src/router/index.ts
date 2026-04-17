@@ -96,7 +96,7 @@ const routes: Array<RouteRecordRaw> = [
     path: "/profile/:id",
     name: "profile",
     component: () => import("@/views/ProfileView.vue"),
-    props: true, // Pass route params as props to the component
+    props: true, // route :id param is passed as the `id` prop
   },
   {
     path: "/profile/:id/friends",

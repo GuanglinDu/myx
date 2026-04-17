@@ -74,7 +74,10 @@ def signup(request: Request) -> JsonResponse:
 @api_view(['POST'])
 def send_friendship_request(request: Request,
                             user_id: uuid.UUID) -> JsonResponse:
-    """Send a friendship request to another user."""
+    """Send a friendship request to another user.
+    
+    user_id: the target user's UUID
+    """
     user: User = request.user  # the logged-in user sending the request
 
     # target_user: user whose profile we are visiting
@@ -90,8 +93,8 @@ def send_friendship_request(request: Request,
     # Check if a request already exists
     existing_request: FriendshipRequest | None = \
       FriendshipRequest.objects.filter(
-        created_for=user,
-        created_by=target_user,
+        created_for=user,        # created_for = you, the logged-in user
+        created_by=target_user,  # created_by = them
         status=FriendshipRequest.SENT
     ).first()
 
@@ -102,8 +105,8 @@ def send_friendship_request(request: Request,
     # Check if we already sent a request
     existing_request_sent: FriendshipRequest | None = \
       FriendshipRequest.objects.filter(
-        created_for=target_user,
-        created_by=user,
+        created_for=target_user,   # created_for = them
+        created_by=user,           # created_by = you, the logged-in user
         status=FriendshipRequest.SENT
     ).first()
 
@@ -157,12 +160,14 @@ def accept_friendship_request(request: Request,
 
 
 @api_view(['POST'])
-def reject_friendship_request(request: Request, request_id: uuid.UUID) -> JsonResponse:
+def reject_friendship_request(request: Request,
+                              request_id: uuid.UUID) -> JsonResponse:
     """Reject a friendship request."""
     user: User = request.user
 
     try:
-        friendship_request: FriendshipRequest = FriendshipRequest.objects.get(
+        friendship_request: FriendshipRequest = \
+          FriendshipRequest.objects.get(
             pk=request_id,
             created_for=user,
             status=FriendshipRequest.SENT
@@ -179,7 +184,8 @@ def reject_friendship_request(request: Request, request_id: uuid.UUID) -> JsonRe
 
 
 @api_view(['GET'])
-def get_friendship_status(request: Request, user_id: uuid.UUID) -> JsonResponse:
+def get_friendship_status(request: Request,
+                          user_id: uuid.UUID) -> JsonResponse:
     """Get friendship status with another user."""
     current_user: User = request.user
 
@@ -197,7 +203,8 @@ def get_friendship_status(request: Request, user_id: uuid.UUID) -> JsonResponse:
         return JsonResponse({'status': 'friends'})
 
     # Check if they sent us a request (we need to accept/reject)
-    pending_request: FriendshipRequest | None = FriendshipRequest.objects.filter(
+    pending_request: FriendshipRequest | None = \
+      FriendshipRequest.objects.filter(
         created_for=current_user,
         created_by=target_user,
         status=FriendshipRequest.SENT
@@ -210,7 +217,8 @@ def get_friendship_status(request: Request, user_id: uuid.UUID) -> JsonResponse:
         })
 
     # Check if we sent them a request
-    sent_request: FriendshipRequest | None = FriendshipRequest.objects.filter(
+    sent_request: FriendshipRequest | None = \
+      FriendshipRequest.objects.filter(
         created_for=target_user,
         created_by=current_user,
         status=FriendshipRequest.SENT
@@ -223,12 +231,14 @@ def get_friendship_status(request: Request, user_id: uuid.UUID) -> JsonResponse:
 
 
 @api_view(['GET'])
-def get_friendship_requests(request: Request) -> JsonResponse:
+def get_friendship_requests(request: Request,
+                            user_id: uuid.UUID) -> JsonResponse:
     """Get all pending friendship requests sent to the current user."""
     user: User = request.user
 
     # Get all pending requests sent to the current user
-    pending_requests: list[FriendshipRequest] = FriendshipRequest.objects.filter(
+    pending_requests: list[FriendshipRequest] = \
+      FriendshipRequest.objects.filter(
         created_for=user,
         status=FriendshipRequest.SENT
     ).select_related('created_by')
