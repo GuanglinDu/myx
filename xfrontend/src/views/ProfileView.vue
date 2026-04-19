@@ -131,8 +131,7 @@ watch(() => props.id, () => {
         <img :src="avatarDataUri" alt="User Avatar" />
         
         <!-- The logged-in user's name: {{ userStore.user.name }}
-          Any user's name on his profile page:
-        -->
+          Any user's name on his profile page: -->
         <p><strong>{{ user.name }}</strong></p>
 
         <div class="mt-6 flex space-x-8 justify-around">
@@ -227,7 +226,7 @@ watch(() => props.id, () => {
             <textarea
               v-model="body"
               class="p-4 w-full bg-gray-100 rounded-lg"
-              placeholder="What are you curious about?"
+              placeholder="What are you curious about? - ProfileView.vue"
             />
           </div>
 

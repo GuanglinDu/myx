@@ -5,6 +5,14 @@ from django.db import models
 from account.models import User
 
 
+class Like(models.Model):
+    id: uuid.UUID = models.UUIDField(primary_key=True, default=uuid.uuid4,
+                                     editable=False)
+    created_by: User = models.ForeignKey(User, related_name='likes',
+                                         on_delete=models.CASCADE)
+    created_at: datetime = models.DateTimeField(auto_now_add=True)
+
+
 class PostAttachment(models.Model):
     id: uuid.UUID = models.UUIDField(
         primary_key=True, default=uuid.uuid4, editable=False)
@@ -27,8 +35,9 @@ class Post(models.Model):
     attachments: 'ManyRelatedManager' = models.ManyToManyField(
         'PostAttachment', blank=True)
 
-    # likes
-    # likes_count: int = models.IntegerField(default=0)
+    likes: "ManyRelatedManager" = models.ManyToManyField(Like, blank=True)
+    likes_count: int = models.IntegerField(default=0)
+    liked: bool = models.BooleanField(default=False)
 
     created_at: datetime = models.DateTimeField(auto_now_add=True)
     created_by: User = models.ForeignKey(

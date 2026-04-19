@@ -14,8 +14,10 @@ export interface Post {
   id: string;
   body: string;
   attachments: string[];
+  likes_count: number;
+  liked: boolean;
   created_at: string;
-  created_by: string;
+  created_by: User;
 };
 
 export interface FriendshipRequest {

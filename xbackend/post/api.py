@@ -6,7 +6,7 @@ from rest_framework.decorators import (api_view, authentication_classes,
                                        permission_classes)
 from account.models import User, FriendshipRequest
 from account.serializers import UserSerializer
-from .models import Post
+from .models import Post, Like
 from .serializers import PostSerializer
 from .forms import PostForm
 
@@ -17,7 +17,8 @@ def post_list(request: Request) -> JsonResponse:
         Q(created_by=request.user) |
         Q(created_by__in=request.user.friends.all())
     ).order_by('-created_at')
-    serializer: PostSerializer = PostSerializer(posts, many=True)
+    serializer: PostSerializer = PostSerializer(
+        posts, many=True, context={'request': request})
     return JsonResponse(serializer.data, safe=False)
 
 
@@ -93,3 +94,20 @@ def post_create(request: Request) -> JsonResponse:
 
     # return JsonResponse({'message': message})
     # return JsonResponse({'hello': 'hepp'})
+
+
+@api_view(['POST'])
+def post_like(request: Request, id: uuid.UUID) -> JsonResponse:
+    post: Post = Post.objects.get(pk=id)
+    like: Like
+    created: User
+    like, created = Like.objects.get_or_create(post=post, created_by=request.user)
+    if created:
+        post.likes_count += 1
+        liked: bool = True
+    else:
+        like.delete()
+        post.likes_count = max(0, post.likes_count - 1)
+        liked: bool = False
+    post.save()
+    return JsonResponse({'liked': liked, 'likes_count': post.likes_count}, safe=False)
