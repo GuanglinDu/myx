@@ -4,6 +4,7 @@ django-extensions==4.1
 django-cors-headers==3.14.0
 djangorestframework==3.14.0
 djangorestframework-simplejwt==5.5.1
+django-stubs==6.0.3
 django-silk==5.5.0
 Pillow==9.5.0
 PyJWT==2.6.0

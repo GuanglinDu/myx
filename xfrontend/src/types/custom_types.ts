@@ -1,5 +1,5 @@
 export interface User {
-  id: string;
+  id: string; // Python uuid.UUID as string
   name: string;
   email: string;
   avatar: string;

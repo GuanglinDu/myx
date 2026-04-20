@@ -113,6 +113,13 @@ async function submitForm(): Promise<void> {
   }
 }
 
+function handlePostUpdated(updatedPost: Post): void {
+  const index = posts.value.findIndex((p) => p.id === updatedPost.id);
+  if (index !== -1) {
+    posts.value[index] = updatedPost;
+  }
+}
+
 onMounted(() => {
   getFeed();
 });
@@ -253,7 +260,7 @@ watch(() => props.id, () => {
         v-for="post in posts"
         :key="post.id"      
       >
-        <FeedItem :post="post" />
+        <FeedItem :post="post" @post-updated="handlePostUpdated" />
       </div>
       <!-- 2/2 End of post --> 
     </div>

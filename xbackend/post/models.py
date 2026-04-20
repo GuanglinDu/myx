@@ -1,5 +1,6 @@
 import uuid
 from datetime import datetime
+# from django.db.models.manager import ManyRelatedManager
 from django.utils.timesince import timesince
 from django.db import models
 from account.models import User
@@ -22,20 +23,31 @@ class PostAttachment(models.Model):
          on_delete=models.CASCADE)
 
 
-# django.db.models.fields.related_descriptors
-#     .create_forward_many_to_many_manager.<locals>.ManyRelatedManager
+# django.db.models.fields.related_descriptors.
+#   create_forward_many_to_many_manager.<locals>.ManyRelatedManager
+# 
+# How to type-annotate the ManyToManyField in Django? - Google AI Overview
+# To type-annotate a ManyToManyField in Django correctly, especially when
+# using tools like django-stubs, you must account for the fact that accessing
+# the field on a model instance returns a manager (specifically a
+# ManyRelatedManager), not a list or single object.
 class Post(models.Model):
     id: uuid.UUID = models.UUIDField(primary_key=True, default=uuid.uuid4,
                                      editable=False)
     body: str = models.TextField(blank=True, null=True)
-    # WARNINGS: post.Post.attachments: (fields.W340) null has no effect on
+    # 1. WARNINGS: post.Post.attachments: (fields.W340) null has no effect on
     # ManyToManyField.
     # attachments = models.ManyToManyField('PostAttachment', blank=True,
     #                                      null=True)
-    attachments: 'ManyRelatedManager' = models.ManyToManyField(
+    # 2. How to type-annotate the ManyToManyField in Django?
+    # *Type comments* instead of direct type annotations are used here because
+    # Django's ORM does not support direct type annotations for
+    # ManyToManyField. The actual field is defined without type annotations,
+    # and the type is provided as a comment for static type checkers.
+    attachments: "ManyRelatedManager[PostAttachment]" = models.ManyToManyField(
         'PostAttachment', blank=True)
 
-    likes: "ManyRelatedManager" = models.ManyToManyField(Like, blank=True)
+    likes: "ManyRelatedManager[Like]" = models.ManyToManyField(Like, blank=True)
     likes_count: int = models.IntegerField(default=0)
     liked: bool = models.BooleanField(default=False)
 

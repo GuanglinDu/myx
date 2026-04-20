@@ -31,6 +31,13 @@ async function submitForm(): Promise<void> {
     console.error('Error:', error);
   }
 }
+
+function handlePostUpdated(updatedPost: Post): void {
+  const index = posts.value.findIndex((p) => p.id === updatedPost.id);
+  if (index !== -1) {
+    posts.value[index] = updatedPost;
+  }
+}
 </script>
 
 <template>
@@ -105,7 +112,7 @@ async function submitForm(): Promise<void> {
         v-for="post in posts"
         :key="post.id"      
       >
-        <FeedItem :post="post" />
+        <FeedItem :post="post" @post-updated="handlePostUpdated" />
       </div>
     </div>
 

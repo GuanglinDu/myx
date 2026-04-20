@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { createAvatar } from '@dicebear/core';
 import { adventurer } from '@dicebear/collection';
 import axios from 'axios';
 import type { Post } from '@/types/custom_types';
+
+const isLiking = ref<boolean>(false);
 
 const $props = defineProps<{
   post: Post;
@@ -23,7 +25,10 @@ const avatarDataUri = computed(() =>
 );
 
 // Handle like button click
-async function toggleLike() {
+async function toggleLike(): Promise<void> {
+  if (isLiking.value) return;  // Prevent multiple clicks
+
+  isLiking.value = true;
   try {
     const response = await axios.post(
       `/api/posts/like/${$props.post.id}/`
@@ -36,6 +41,8 @@ async function toggleLike() {
     });
   } catch (error) {
     console.error('Failed to toggle like:', error);
+  // } finally { // wrong. Will increate the like count continuously
+  //   isLiking.value = false;
   }
 }
 </script>
