@@ -24,7 +24,8 @@ as props to the component.
     props: true,
   }
 
-The :id param is passed as a prop named id to ProfileView.vue. This lets you use:
+The :id param is passed as a prop named id to ProfileView.vue. This lets you
+use:
   const props = defineProps<{ id: string }>();
   // Access via props.id instead of useRoute().params.id
 
@@ -91,6 +92,11 @@ const routes: Array<RouteRecordRaw> = [
     path: "/search",
     name: "search",
     component: () => import("@/views/SearchView.vue"),
+  },
+  {
+    path: "/:id",
+    name: "postview",
+    component: () => import("@/views/PostView.vue"),
   },
   {
     path: "/profile/:id",

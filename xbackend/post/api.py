@@ -7,7 +7,7 @@ from rest_framework.decorators import (api_view, authentication_classes,
 from account.models import User, FriendshipRequest
 from account.serializers import UserSerializer
 from .models import Post, Like
-from .serializers import PostSerializer
+from .serializers import PostSerializer, PostDetailSerializer
 from .forms import PostForm
 
 
@@ -19,6 +19,13 @@ def post_list(request: Request) -> JsonResponse:
     ).order_by('-created_at')
     serializer: PostSerializer = PostSerializer(
         posts, many=True, context={'request': request})
+    return JsonResponse(serializer.data, safe=False)
+
+
+@api_view(['GET'])
+def post_detail(request: Request, id: uuid.UUID) -> JsonResponse:
+    post: Post = Post.objects.get(pk=id)
+    serializer: PostSerializer = PostSerializer(post, context={'request': request})
     return JsonResponse(serializer.data, safe=False)
 
 
@@ -98,16 +105,29 @@ def post_create(request: Request) -> JsonResponse:
 
 @api_view(['POST'])
 def post_like(request: Request, id: uuid.UUID) -> JsonResponse:
-    post: Post = Post.objects.get(pk=id)
-    like: Like
-    created: User
-    like, created = Like.objects.get_or_create(post=post, created_by=request.user)
-    if created:
-        post.likes_count += 1
-        liked: bool = True
-    else:
-        like.delete()
+    """id is the post's UUID passed from the URL path variable, while
+    we get the user from the request.
+    """
+    post: Post = Post.objects.get(pk=id)        
+    # Checks if the user has already liked the post.
+    existing_like: Like = post.likes.filter(created_by=request.user).first()
+
+    # Toggles the like status: if the user has already liked the post, it
+    # removes the like; otherwise, it creates a new like. It also updates
+    # the likes_count accordingly and returns the new like status and
+    # count in the response.
+    if existing_like:
+        existing_like.delete()
         post.likes_count = max(0, post.likes_count - 1)
         liked: bool = False
+    else:
+        like: Like = Like(created_by=request.user)
+        like.save()
+        post.likes.add(like)
+        post.likes_count += 1
+        liked: bool = True
+
     post.save()
-    return JsonResponse({'liked': liked, 'likes_count': post.likes_count}, safe=False)
+    return JsonResponse({'liked': liked, 'likes_count': post.likes_count},
+                        safe=False)
+    

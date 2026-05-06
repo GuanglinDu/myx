@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import PeopleYouMayKnow from '@/components/PeopleYouMayKnow.vue';
 import TrendsComponent from '@/components/TrendsComponent.vue';
@@ -64,7 +63,7 @@ onMounted(() => {
             <textarea
               v-model="body"
               class="p-4 w-full bg-gray-100 rounded-lg"
-              placeholder="What are you curious about?"
+              placeholder="What are you curious about? - FeedView.vue"
             />
           </div>
 
@@ -85,6 +84,7 @@ onMounted(() => {
         </form>
       </div>
 
+      <!-- @post-updated <=> @postUpdated in template -->
       <div
         class="p-4 bg-white border border-gray-200 rounded-lg"
         v-for="post in posts"

@@ -143,7 +143,7 @@ watch(() => props.id, () => {
 
         <div class="mt-6 flex space-x-8 justify-around">
           <RouterLink
-            :to="{name: 'friends', params: {user_id: user.id}}"
+            :to="{name: 'friends', params: {id: user.id}}"
             class="text-xs text-gray-500"
           >
             {{ user.friends_count || 0 }} friends

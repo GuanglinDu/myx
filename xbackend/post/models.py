@@ -1,9 +1,19 @@
 import uuid
 from datetime import datetime
+# Cannot import
 # from django.db.models.manager import ManyRelatedManager
 from django.utils.timesince import timesince
 from django.db import models
 from account.models import User
+
+
+class Comment(models.Model):
+    id: uuid.UUID = models.UUIDField(primary_key=True, default=uuid.uuid4,
+                                     editable=False)
+    body: str = models.TextField(blank=True, null=True)
+    created_by: User = models.ForeignKey(User, related_name='comments',
+                                         on_delete=models.CASCADE)
+    created_at: datetime = models.DateTimeField(auto_now_add=True)
 
 
 class Like(models.Model):
@@ -50,6 +60,10 @@ class Post(models.Model):
     likes: "ManyRelatedManager[Like]" = models.ManyToManyField(Like, blank=True)
     likes_count: int = models.IntegerField(default=0)
     liked: bool = models.BooleanField(default=False)
+
+    comments: "ManyRelatedManager[Comment]" = models.ManyToManyField(
+        Comment, blank=True)
+    comments_count: int = models.IntegerField(default=0)
 
     created_at: datetime = models.DateTimeField(auto_now_add=True)
     created_by: User = models.ForeignKey(

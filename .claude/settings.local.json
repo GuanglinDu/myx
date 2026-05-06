@@ -12,7 +12,8 @@
       "Bash(python:*)",
       "Bash(claude --version)",
       "Bash(claude code:*)",
-      "Bash(gh release:*)"
+      "Bash(gh release:*)",
+      "Bash(dir D:\\\\repo-tauri\\\\myx\\\\*.md)"
     ]
   }
 }
