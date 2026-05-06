@@ -98,11 +98,13 @@ pytest --cov
 
 ```shell
 npm install -D vitest @vue/test-utils happy-dom @testing-library/vue @pinia/testing
+
+Or, npm install --registry=https://registry.npmmirror.com
 ```
 
 Note:
 
-- vitest is for unit-testing plain JS/TS;
-- @vue/test-utils is for unit-testing the components;
-- @testing-library/vue is for unit-testing composables;
-- Happy DOM is designed to work seamlessly with testing frameworks. It allows developers to simulate a DOM environment for running unit tests for front-end projects without relying on a browser.
+* vitest is for unit-testing plain JS/TS;
+* @vue/test-utils is for unit-testing the components;
+* @testing-library/vue is for unit-testing composables;
+* Happy DOM is designed to work seamlessly with testing frameworks. It allows developers to simulate a DOM environment for running unit tests for front-end projects without relying on a browser.

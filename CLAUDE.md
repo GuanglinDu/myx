@@ -103,11 +103,55 @@ Frontend uses hash mode routing (`#/`) to avoid server configuration. Routes def
 
 ## Important Notes
 
-- Frontend runs on port 5174 by default (configurable via `VITE_PORT`)
-- Backend runs on port 8001
-- User avatars use DiceBear generation in frontend, stored as ImageField in backend with picsum.photos fallback
-- Custom user model uses email as USERNAME_FIELD
-- JWT access tokens expire after 30 days
+- The frontend uses hash mode routing (`#/`) to avoid server configuration requirements
+- Authentication tokens are stored in localStorage with auto-refresh on page load
+- User avatars use `ImageField` with fallback to `https://picsum.photos/200/200`
+- Backend includes `django-extensions` for additional development utilities
+- Chinese PyPI mirror configured in README for faster package installation in China
+
+## Code Style
+
+### Backend (Python)
+- 4 spaces for indentation
+- 79 character line limit
+- `snake_case` for functions/variables
+- Blank lines: 2 between top-level functions/classes
+
+### Frontend (TypeScript/Vue)
+- 2 spaces for indentation
+- `camelCase` for functions/variables
+- Use `async/await` instead of `.then()/.catch()` chains
+
+## Authentication Flow
+
+The user store (`xfrontend/src/stores/user.ts`) manages JWT auth:
+
+1. `initStore()` on app load checks localStorage for stored tokens
+2. If `user.access` exists, calls `/api/refresh/` to refresh the token
+3. `setToken(data)` stores access/refresh tokens in localStorage
+4. `logout()` clears tokens and redirects to `/login`
+5. Axios `Authorization: Bearer <token>` header is set on each refresh
+
+## API Patterns
+
+### Backend APIs (`xbackend/*/api.py`)
+- Function-based views with `@api_view` decorator
+- `request.user` for authenticated user
+- `request.data` for JSON body, `request.query_params` for query strings
+- Return `JsonResponse` with serialized data
+
+### Frontend API calls (`xfrontend/src/stores/user.ts`)
+- Axios configured with `VITE_API_URL` base URL in `main.ts`
+- JWT token attached via `axios.defaults.headers.common["Authorization"]`
+- User state managed via Pinia `useUserStore`
+
+## Frontend Architecture
+
+- **Routing**: Vue Router with hash mode (`createWebHashHistory`) in `src/router/index.ts`
+- **State**: Pinia stores (`src/stores/user.ts`, `src/stores/toast.ts`)
+- **Views**: `src/views/` (HomeView, FeedView, ProfileView, etc.)
+- **Components**: `src/components/` (ToastComponent, TrendsComponent, etc.)
+- **Types**: `src/types/custom_types.ts` (User, Post, FriendshipRequest interfaces)
 
 ## graphify
 
