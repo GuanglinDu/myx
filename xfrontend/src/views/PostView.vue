@@ -68,14 +68,12 @@ onMounted(() => {
 
 <template>
   <div class="max-w-7xl mx-auto grid grid-cols-4 gap-4">
-    <!-- The main left columns -->
     <div class="main-left col-span-3 space-y-4">
       <h1 class="text-2xl font-bold mb-4">Post Detail View</h1>
       <p>This is the Post View. It will show the details of a single post.</p>
 
-      <div
-        class="p-4 bg-white border border-gray-200 rounded-lg"
-      >
+      <!-- The post details -->
+      <div class="p-4 bg-white border border-gray-200 rounded-lg">
         <FeedItem v-if="post" :post="post" />
       </div>
 
@@ -91,13 +89,14 @@ onMounted(() => {
         </div>
       </div>
 
+      <!-- The comment form -->
       <div class="bg-white border border-gray-200 rounded-lg p-4">
         <h2 class="text-xl font-semibold mb-2">Add a Comment</h2>
         <textarea
           v-model="body"
           class="w-full p-2 border border-gray-300 rounded mb-2"
           placeholder="Write your comment here..."
-        ></textarea>
+        />
         <button
           @click="submitCommentForm"
           class="px-4 py-2 bg-blue-500 text-white rounded

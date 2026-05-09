@@ -74,8 +74,10 @@ JWT-based using `djangorestframework-simplejwt`. Tokens stored in localStorage w
 
 Frontend uses hash mode routing (`#/`) to avoid server configuration. Routes defined in `src/router/index.ts`:
 - `#/` - Home
-- `#/feed` - Feed
+- `#/feed` - Feed (friends' posts)
+- `#/:id` - Post detail (comments, like)
 - `#/profile/:id` - User profile
+- `#/profile/:id/friends` - User's friends
 - `#/search` - Search
 - `#/messages` - Messages
 - `#/login` / `#/signup` - Auth pages
@@ -85,20 +87,23 @@ Frontend uses hash mode routing (`#/`) to avoid server configuration. Routes def
 - `/api/login/` - JWT login/refresh
 - `/api/signup/` - User registration
 - `/api/me/` - Current user profile
-- `/api/posts/` - Posts CRUD
-- `/api/posts/like/:id/` - Like/unlike post
+- `/api/posts/` - Posts list (friends' posts)
+- `/api/posts/create/` - Create post
+- `/api/posts/:id/` - Get post detail
+- `/api/posts/:id/like/` - Like/unlike post
+- `/api/posts/:id/comment/` - Create comment
 - `/api/search/` - Search users
-- `/api/friendship/request/` - Send friendship request
-- `/api/friendship/accept/:id/` - Accept request
-- `/api/friendship/reject/:id/` - Reject request
-- `/api/friendship/remove/:id/` - Remove friend
+- `/api/friends/send/:id/` - Send friendship request
+- `/api/friends/accept/:id/` - Accept request
+- `/api/friends/reject/:id/` - Reject request
+- `/api/friends/remove/:id/` - Remove friend
 
 ### Key Models
 
 - **User** (account/) - Custom user with UUID pk, email as username, friends M2M
-- **Post** (post/) - Social posts with author, content, attachments
-- **Like** (post/) - Post likes (note: missing post ForeignKey - bug)
-- **Comment** (post/) - Post comments
+- **Post** (post/) - Social posts with author, content, attachments, likes, comments
+- **Like** (post/) - Post likes via M2M on Post model
+- **Comment** (post/) - Post comments via M2M on Post model
 - **FriendshipRequest** (account/) - Friend request model
 
 ## Important Notes
