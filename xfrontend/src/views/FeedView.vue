@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import type { Post } from '@/types/custom_types';
 import PeopleYouMayKnow from '@/components/PeopleYouMayKnow.vue';
 import TrendsComponent from '@/components/TrendsComponent.vue';
 import FeedItem from './FeedItem.vue';
-import type { Post } from '@/types/custom_types';
 
 const posts = ref<Post[]>([]);
 const body = ref<string>('');
@@ -29,10 +29,9 @@ async function submitForm(): Promise<void> {
     .then((response: AxiosResponse) => {
       console.log('Post created:', response.data);
 
-      // posts.value.push(response.data);    // appended to the end
+      // posts.value.push(response.data); // appended to the end
       posts.value.unshift(response.data); // appended to the start
       body.value = '';
-      // getFeed();
     })
     .catch((error: any) => {
       console.error('Error creating post:', error);
@@ -71,13 +70,13 @@ onMounted(() => {
           <div class="p-4 border-t border-gray-100 flex justify-between">
             <a href="#"
               class="inline-block py-4 px-6 bg-gray-600 text-white
-                      rounded-lg">
+                     rounded-lg">
               Attach image
             </a>
 
             <button
               class="inline-block py-4 px-6 bg-purple-600 text-white
-                      rounded-lg">
+                     rounded-lg">
               Post
             </button>
           </div>

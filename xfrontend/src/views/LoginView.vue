@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
+import { useRouter } from 'vue-router'; // vs userRoute
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { useUserStore } from '@/stores/user';
 
 const userStore = useUserStore();
-const $router = useRouter();
+const $router = useRouter(); // vs $route = useRoute()
 
 interface LoginCredentials {
   email: string;

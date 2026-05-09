@@ -1,7 +1,8 @@
 import uuid
 from datetime import datetime
-# Cannot import
+# This module is nonexistent as is dynamically generated!
 # from django.db.models.manager import ManyRelatedManager
+from django_stubs_ext.db.models.manager import ManyRelatedManager
 from django.utils.timesince import timesince
 from django.db import models
 from account.models import User
@@ -14,6 +15,12 @@ class Comment(models.Model):
     created_by: User = models.ForeignKey(User, related_name='comments',
                                          on_delete=models.CASCADE)
     created_at: datetime = models.DateTimeField(auto_now_add=True)
+
+    def created_at_formatted(self) -> str:
+        return timesince(self.created_at)
+    
+    class Meta:
+        ordering: list[str] = ['created_at']
 
 
 class Like(models.Model):
@@ -69,9 +76,8 @@ class Post(models.Model):
     created_by: User = models.ForeignKey(
         'account.User', related_name='posts', on_delete=models.CASCADE)
 
+    def created_at_formatted(self) -> str:
+        return timesince(self.created_at)
     class Meta:
         ordering: list[str] = ['-created_at']
 
-
-    def created_at_formatted(self) -> str:
-        return timesince(self.created_at)

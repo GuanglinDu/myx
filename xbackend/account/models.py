@@ -33,6 +33,9 @@ from django.contrib.auth.models import (AbstractBaseUser, PermissionsMixin,
                                         UserManager)
 from django.db import models
 from django.db.models.fields.files import ImageFieldFile
+# This module is nonexistent as is dynamically generated!
+# from django.db.models.manager import ManyRelatedManager
+from django_stubs_ext.db.models.manager import ManyRelatedManager
 
 
 class CustomUserManager(UserManager):
@@ -69,10 +72,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     name: str = models.CharField(max_length=255, blank=True, default='')
     avatar: ImageFieldFile = models.ImageField(upload_to='avatars', blank=True,
                                                null=True)
-    friends: "ManyRelatedManager" = models.ManyToManyField('self')
+    friends: "ManyRelatedManager[User]" = models.ManyToManyField('self')
     friends_count: int = models.IntegerField(default=0)
 
-    people_you_may_know: "ManyRelatedManager" = models.ManyToManyField('self')
+    people_you_may_know: "ManyRelatedManager[User]" = \
+        models.ManyToManyField('self')
 
     posts_count: int = models.IntegerField(default=0)
 

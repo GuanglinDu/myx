@@ -36,8 +36,8 @@ Why it's useful:
    contexts
  
 2. Can I use the $route.params.id at the same time, where
-const $route  = useRouter() and import { useRouter }  from 'vue-router' in
-ProfileView.vue?
+const $route  = useRoute() and import { useRoute }  from 'vue-router' in
+ProfileView.vue? (Keep an eye on userRoute vs userRouter)
 
 ● Yes, but it's unnecessary and redundant.
 
@@ -145,7 +145,7 @@ const router = createRouter({
   history: createWebHashHistory(),
   routes, // property sharthand
   scrollBehavior(to, from, savedPosition) {
-    // Always scroll to top
+    // Always scroll to the top
     return { top: 0 };
   },
 });

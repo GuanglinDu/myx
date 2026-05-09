@@ -1,4 +1,3 @@
-#
 from typing import TypeAlias
 from rest_framework import serializers
 from account.serializers import UserSerializer
@@ -13,12 +12,6 @@ class PostAttachmentSerializer(serializers.ModelSerializer):
 
 class PostSerializer(serializers.ModelSerializer):
     created_by: UserSerializer = UserSerializer(read_only=True)
-
-    class Meta:
-        model: TypeAlias = Post
-        fields: list[str] = ['id', 'body', 'attachments', 'created_by',
-                             'created_at_formatted', 'likes_count', 'liked']
-
     liked: serializers.SerializerMethodField
 
     def get_liked(self, obj: Post) -> bool:
@@ -27,13 +20,22 @@ class PostSerializer(serializers.ModelSerializer):
             return obj.likes.filter(pk=request.user.pk).exists()
         return False
 
+    class Meta:
+        model: TypeAlias = Post
+        fields: list[str] = [
+            'id', 'body', 'attachments', 'created_by', 'created_at_formatted',
+            'likes_count', 'liked', 'comments_count'
+        ]
+
 
 class CommentSerializer(serializers.ModelSerializer):
     created_by: UserSerializer = UserSerializer(read_only=True)
     
     class Meta:
         model: TypeAlias = Comment
-        fields: list[str] = ['id', 'body', 'created_by', 'created_at']
+        fields: list[str] = [
+            'id', 'body', 'created_by', 'created_at', 'created_at_formatted'
+        ]
 
 
 class PostDetailSerializer(serializers.ModelSerializer):
@@ -42,11 +44,6 @@ class PostDetailSerializer(serializers.ModelSerializer):
         many=True, read_only=True)
     comments: CommentSerializer = CommentSerializer(many=True, read_only=True)
 
-    class Meta:
-        model: TypeAlias = Post
-        fields: list[str] = ['id', 'body', 'attachments', 'created_by',
-           'created_at_formatted', 'likes_count', 'liked', 'comments']
-
     liked: serializers.SerializerMethodField
 
     def get_liked(self, obj: Post) -> bool:
@@ -54,3 +51,11 @@ class PostDetailSerializer(serializers.ModelSerializer):
         if request and request.user.is_authenticated:
             return obj.likes.filter(pk=request.user.pk).exists()
         return False
+
+    class Meta:
+        model: TypeAlias = Post
+        fields: list[str] = [
+           'id', 'body', 'attachments', 'created_by', 'created_at_formatted',
+           'likes_count', 'liked', 'comments', 'comments_count'
+        ]
+

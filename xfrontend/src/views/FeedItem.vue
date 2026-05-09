@@ -2,11 +2,10 @@
 import { computed, ref } from 'vue';
 import { createAvatar } from '@dicebear/core';
 import { adventurer } from '@dicebear/collection';
-import axios from 'axios';
 import type { Post } from '@/types/custom_types';
+import axios from 'axios';
 
 const isLiking = ref<boolean>(false);
-
 const $props = defineProps<{
   post: Post;
 }>();
@@ -48,20 +47,21 @@ async function toggleLike(): Promise<void> {
 </script>
 
 <template>
-  <!-- The avatar, name, & how long has the post been published? -->
+  <!-- The avatar, name, & the time elapsed since the post was published. -->
   <div class="mb-6 flex justify-between">
     <div class="flex space-x-1 justify-between">
       <img
         :src="avatarDataUri"
         alt="User Avatar"
-        class="w-[40px] rounded-full" />
+        class="w-[40px] rounded-full"
+      />
       <p>
         <strong>
-        <RouterLink
-          :to="{ name: 'profile', params: { id: post.created_by.id } }"
-        >
+          <RouterLink
+            :to="{ name: 'profile', params: { id: post.created_by.id } }"
+          >
             {{ post.created_by.name }}
-        </RouterLink>
+          </RouterLink>
         </strong>
       </p>
     </div>
@@ -87,7 +87,7 @@ async function toggleLike(): Promise<void> {
             :stroke="post.liked ? 'none' : 'currentColor'"
             class="size-6"
             :class="post.liked ? 'text-red-500' : 'text-gray-500'"
-            >
+          >
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
@@ -101,44 +101,44 @@ async function toggleLike(): Promise<void> {
       <!-- Count of comments -->
       <div class="flex items-center space-x-2">
         <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="1.5"
-        stroke="currentColor"
-        class="size-6"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="size-6"
         >
-        <path
+          <path
             stroke-linecap="round"
             stroke-linejoin="round"
             d="M8.625 9.75a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 0 1 .778-.332 48.294 48.294 0 0 0 5.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z"
-        />
+          />
         </svg>
         <RouterLink
-          :to="{ name: 'postview', params: { id: post.id } }"
+          :to="{ name: 'postview', params: {id: post.id} }"
           class="text-gray-500 text-xs"
         >
-          0 comments
+          {{ post.comments_count }} comments
         </RouterLink>
-    </div>
+      </div>
     </div>
 
     <!-- The ellipsis symbol -->
     <div>
-    <svg
+      <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
         stroke-width="1.5"
         stroke="currentColor"
         class="size-6"
-    >
+      >
         <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
         />
-    </svg>
+      </svg>
     </div>
   </div>
 </template>

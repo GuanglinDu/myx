@@ -12,4 +12,5 @@ urlpatterns: list[ URLPattern | URLResolver] = [
     # The post's UUID
     path('<uuid:id>/', api.post_detail, name='post_detail'),
     path('<uuid:id>/like/', api.post_like, name='post_like'),
+    path('<uuid:id>/comment/', api.create_comment, name='create_comment'),
 ]

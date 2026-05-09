@@ -6,8 +6,8 @@ from rest_framework.decorators import (api_view, authentication_classes,
                                        permission_classes)
 from account.models import User, FriendshipRequest
 from account.serializers import UserSerializer
-from .models import Post, Like
-from .serializers import PostSerializer, PostDetailSerializer
+from .models import Post, Like, Comment
+from .serializers import PostSerializer, PostDetailSerializer, CommentSerializer
 from .forms import PostForm
 
 
@@ -25,8 +25,9 @@ def post_list(request: Request) -> JsonResponse:
 @api_view(['GET'])
 def post_detail(request: Request, id: uuid.UUID) -> JsonResponse:
     post: Post = Post.objects.get(pk=id)
-    serializer: PostSerializer = PostSerializer(post, context={'request': request})
-    return JsonResponse(serializer.data, safe=False)
+    serializer: PostDetailSerializer = PostDetailSerializer(
+        post, context={'request': request})
+    return JsonResponse({ 'post': serializer.data }, safe=False)
 
 
 @api_view(['GET'])
@@ -131,3 +132,26 @@ def post_like(request: Request, id: uuid.UUID) -> JsonResponse:
     return JsonResponse({'liked': liked, 'likes_count': post.likes_count},
                         safe=False)
     
+@api_view(['POST'])
+def create_comment(request: Request, id: uuid.UUID) -> JsonResponse:
+    post: Post = Post.objects.get(pk=id)
+    # Similar logic to post_like, but for comments. You would create a new
+    # Comment object, associate it with the post, and return the updated list
+    # of comments or the new comment in the response.
+    # print(request.data)
+    comment: Comment = Comment(
+        body=request.data.get('body', ''),
+        created_by=request.user
+    )
+    comment.save()
+    # Another way to create the comment and associate it with the post:
+    # comment = Comment.objects.create(
+    #     body=request.data.get('body', ''),
+    #     created_by=request.user
+    # )
+    post.comments.add(comment)
+    post.comments_count += 1
+    post.save()
+
+    serializer: CommentSerializer = CommentSerializer(comment)
+    return JsonResponse(serializer.data, safe=False)
