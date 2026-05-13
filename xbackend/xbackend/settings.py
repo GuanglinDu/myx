@@ -98,6 +98,7 @@ INSTALLED_APPS: list[str] = [
     'account',
     'post',
     'search',
+    'chat',
 ]
 
 MIDDLEWARE: list[str] = [

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { type AxiosResponse } from 'axios';
 import type { Post } from '@/types/custom_types';
 import PeopleYouMayKnow from '@/components/PeopleYouMayKnow.vue';
 import TrendsComponent from '@/components/TrendsComponent.vue';

@@ -15,7 +15,7 @@ const emit = defineEmits<{
   (e: 'postUpdated', post: Post): void;
 }>();
 
-// Generate the avatar as a Data URI
+// Generates the avatar as a Data URI
 const avatarDataUri = computed(() =>
   createAvatar(adventurer, {
     seed: $props.post.created_by.id,

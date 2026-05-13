@@ -7,6 +7,7 @@
 *.code-workspace
 *.theia-workspace
 README.local.md
+CLAUDE.local.md
 
 # Test coverage reports at any directory level
 **/coverage

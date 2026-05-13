@@ -15,148 +15,131 @@ X-like social network application built with Django REST Framework (backend) and
 
 ```bash
 cd xbackend
-pip install -r requirements.txt             # Install dependencies
-python manage.py migrate                    # Run migrations
-python manage.py runserver 0.0.0.0:8001     # Start server
-pytest                                      # Run all tests
-pytest -v                                   # Verbose output
-pytest tests/apps/                          # Test specific folder
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver 0.0.0.0:8001
+pytest                           # Run all tests
+pytest -v                        # Verbose output
+pytest tests/apps/               # Test specific folder
 pytest tests/apps/model_test.py::test_name  # Run specific test
-pytest --cov                                # With coverage report
+pytest --cov                    # With coverage report
 ```
 
 ### Frontend
 
 ```bash
 cd xfrontend
-npm install                         # Install dependencies
-npm run dev                         # Start dev server (port 5174)
-npm run build                       # Build for production
+npm install
+npm run dev         # Start dev server (port 5174)
+npm run build       # Build for production
 ```
 
 ### Database
 
 ```bash
-# Populate with fake data (10 users, 20 comments, 20 likes)
-python manage.py seed_db
+python manage.py seed_db           # Populate with fake data
 python manage.py seed_db --clear  # Clear seeded data
-python del_migrations.py          # Remove all migrations (development only)
+python del_migrations.py      # Remove all migrations (dev only)
 ```
 
 ## Architecture
 
-### Backend Structure (xbackend/)
+### Backend Apps (xbackend/)
 
-- **xbackend/** - Django project settings
-- **account/**  - User model, friends, friendship requests
-- **post/**     - Posts, attachments, comments, likes
-- **search/**   - Search functionality
+| App | Purpose |
+|-----|---------|
+| **account/** | User model, friends, friendship requests |
+| **post/** | Posts, attachments, comments, likes |
+| **search/** | User search functionality |
+| **chat/** | Direct messaging between users |
 
-Key files in each app:
-- `models.py`      - Database models
-- `serializers.py` - DRF serializers
-- `api.py`         - API views/viewsets
-- `urls.py`        - URL routing
+Each app contains: `models.py`, `serializers.py`, `api.py`, `urls.py`
 
 ### Frontend Structure (xfrontend/src/)
 
-- **views/** - Page components (HomeView, FeedView, ProfileView, etc.)
+- **views/** - Page components (HomeView, FeedView, ProfileView, ChatView, etc.)
 - **components/** - Reusable components
-- **stores/** - Pinia state management (user.ts, toast.ts)
+- **stores/** - Pinia state management (`user.ts`, `toast.ts`)
 - **router/** - Vue Router configuration
 - **types/** - TypeScript type definitions
 
-### Authentication
-
-JWT-based using `djangorestframework-simplejwt`. Tokens stored in localStorage with auto-refresh on page load. All API endpoints (except signup) require authentication via `IsAuthenticated` permission.
-
 ### URL Patterns
 
-Frontend uses hash mode routing (`#/`) to avoid server configuration. Routes defined in `src/router/index.ts`:
+Frontend uses hash mode routing (`#/`) by default. Routes in `src/router/index.ts`:
 - `#/` - Home
-- `#/feed` - Feed (friends' posts)
-- `#/:id` - Post detail (comments, like)
+- `#/feed` - Friends' posts
+- `#/chat` - Direct messages
+- `#/search` - Search users
 - `#/profile/:id` - User profile
 - `#/profile/:id/friends` - User's friends
-- `#/search` - Search
-- `#/messages` - Messages
-- `#/login` / `#/signup` - Auth pages
+- `#/login` / `#/signup` - Authentication
 
 ### API Endpoints
 
-- `/api/login/` - JWT login/refresh
-- `/api/signup/` - User registration
-- `/api/me/` - Current user profile
-- `/api/posts/` - Posts list (friends' posts)
-- `/api/posts/create/` - Create post
-- `/api/posts/:id/` - Get post detail
-- `/api/posts/:id/like/` - Like/unlike post
-- `/api/posts/:id/comment/` - Create comment
-- `/api/search/` - Search users
-- `/api/friends/send/:id/` - Send friendship request
-- `/api/friends/accept/:id/` - Accept request
-- `/api/friends/reject/:id/` - Reject request
-- `/api/friends/remove/:id/` - Remove friend
+Authentication:
+- `POST /api/login/` - JWT login
+- `POST /api/refresh/` - Refresh token
+- `POST /api/signup/` - User registration
+- `GET /api/me/` - Current user profile
+
+Posts:
+- `GET /api/posts/` - Feed (friends' posts)
+- `POST /api/posts/create/` - Create post
+- `GET /api/posts/:id/` - Post detail
+- `POST /api/posts/:id/like/` - Like/unlike
+- `POST /api/posts/:id/comment/` - Add comment
+
+Friends:
+- `POST /api/friends/send/:id/` - Send request
+- `POST /api/friends/accept/:id/` - Accept request
+- `POST /api/friends/reject/:id/` - Reject request
+- `POST /api/friends/remove/:id/` - Remove friend
+
+Chat:
+- `GET /api/chat/` - List conversations
+- `GET /api/chat/:id/` - Get conversation with messages
+- `POST /api/chat/:id/send/` - Send message
+- `GET /api/chat/:user_id/get-or-create/` - Start new conversation
+
+Search: `GET /api/search/`
 
 ### Key Models
 
-- **User** (account/) - Custom user with UUID pk, email as username, friends M2M
-- **Post** (post/) - Social posts with author, content, attachments, likes, comments
-- **Like** (post/) - Post likes via M2M on Post model
-- **Comment** (post/) - Post comments via M2M on Post model
-- **FriendshipRequest** (account/) - Friend request model
+- **User** (`account/`) - Custom user with UUID pk, email as username, friends M2M
+- **Post** (`post/`) - Social posts with author, content, attachments
+- **Like** (`post/`) - Post likes via M2M
+- **Comment** (`post/`) - Post comments via M2M
+- **FriendshipRequest** (`account/`) - Friend request model
+- **Conversation** (`chat/`) - DM conversations with participants M2M
+- **ConversationMessage** (`chat/`) - Direct messages
 
-## Important Notes
+## Authentication Flow
 
-- The frontend uses hash mode routing (`#/`) to avoid server configuration requirements
-- Authentication tokens are stored in localStorage with auto-refresh on page load
-- User avatars use `ImageField` with fallback to `https://picsum.photos/200/200`
-- Backend includes `django-extensions` for additional development utilities
-- Chinese PyPI mirror configured in README for faster package installation in China
+JWT-based using `djangorestframework-simplejwt`. User store (`xfrontend/src/stores/user.ts`):
+
+1. `initStore()` checks localStorage for tokens on app load
+2. If `user.access` exists, calls `/api/refresh/` to refresh
+3. `setToken(data)` stores tokens in localStorage
+4. `logout()` clears tokens and redirects to `/login`
 
 ## Code Style
 
 ### Backend (Python)
-- 4 spaces for indentation
+- 4 spaces indentation
 - 79 character line limit
 - `snake_case` for functions/variables
-- Blank lines: 2 between top-level functions/classes
+- 2 blank lines between top-level definitions
 
 ### Frontend (TypeScript/Vue)
-- 2 spaces for indentation
-- `camelCase` for functions/variables
+- 2 spaces indentation
 - Use `async/await` instead of `.then()/.catch()` chains
 
-## Authentication Flow
+## Important Notes
 
-The user store (`xfrontend/src/stores/user.ts`) manages JWT auth:
-
-1. `initStore()` on app load checks localStorage for stored tokens
-2. If `user.access` exists, calls `/api/refresh/` to refresh the token
-3. `setToken(data)` stores access/refresh tokens in localStorage
-4. `logout()` clears tokens and redirects to `/login`
-5. Axios `Authorization: Bearer <token>` header is set on each refresh
-
-## API Patterns
-
-### Backend APIs (`xbackend/*/api.py`)
-- Function-based views with `@api_view` decorator
-- `request.user` for authenticated user
-- `request.data` for JSON body, `request.query_params` for query strings
-- Return `JsonResponse` with serialized data
-
-### Frontend API calls (`xfrontend/src/stores/user.ts`)
-- Axios configured with `VITE_API_URL` base URL in `main.ts`
-- JWT token attached via `axios.defaults.headers.common["Authorization"]`
-- User state managed via Pinia `useUserStore`
-
-## Frontend Architecture
-
-- **Routing**: Vue Router with hash mode (`createWebHashHistory`) in `src/router/index.ts`
-- **State**: Pinia stores (`src/stores/user.ts`, `src/stores/toast.ts`)
-- **Views**: `src/views/` (HomeView, FeedView, ProfileView, etc.)
-- **Components**: `src/components/` (ToastComponent, TrendsComponent, etc.)
-- **Types**: `src/types/custom_types.ts` (User, Post, FriendshipRequest interfaces)
+- Frontend runs on port 5174 (configurable via `VITE_PORT`)
+- Backend runs on port 8001
+- User avatars use `ImageField` with fallback to DiceBear generation
+- Chinese PyPI mirror configured for faster installs in China
 
 ## graphify
 

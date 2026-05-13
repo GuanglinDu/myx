@@ -48,7 +48,7 @@ def post_list_profile(request: Request, id: uuid.UUID) -> JsonResponse:
         else:
             # Check if they sent us a request
             pending_request: FriendshipRequest | None = \
-              FriendshipRequest.objects.filter(
+                    FriendshipRequest.objects.filter(
                 created_for=request.user,
                 created_by=user,
                 status=FriendshipRequest.SENT
@@ -59,7 +59,7 @@ def post_list_profile(request: Request, id: uuid.UUID) -> JsonResponse:
             else:
                 # Check if we sent them a request
                 sent_request: FriendshipRequest | None = \
-                  FriendshipRequest.objects.filter(
+                        FriendshipRequest.objects.filter(
                     created_for=user,
                     created_by=request.user,
                     status=FriendshipRequest.SENT

@@ -36,3 +36,17 @@ export interface FriendshipRequest {
   status: 'sent' | 'accepted' | 'rejected';
   created_by: User;
 };
+
+export interface Conversation {
+  id: string;
+  participants: User[];
+  last_message: string;
+  last_message_time: string;
+  modified_at_formatted: string;
+  messages: {
+    id: string;
+    body: string;
+    sent_to: User;
+    created_at_formatted: string;
+    created_by: User }[];
+};

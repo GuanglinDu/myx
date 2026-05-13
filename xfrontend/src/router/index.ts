@@ -2,7 +2,10 @@
  * Created at 17:37:07 on 20260204 Wed by Guanglin Du.
  * https://router.vuejs.org/guide/
  */
-import { createWebHashHistory, createRouter } from "vue-router";
+import { createWebHistory,
+         createWebHashHistory,
+         createRouter
+       } from "vue-router";
 import type { RouteRecordRaw } from "vue-router";
 import HomeView from "@/views/HomeView.vue";
 import NotFoundView from "@/views/NotFoundView.vue";
@@ -74,6 +77,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import("@/views/AboutView.vue"),
   },
   {
+    path: "/chat",
+    name: "chat",
+    component: () => import("@/views/ChatView.vue"),
+  },
+  {
     path: "/feed",
     name: "feed",
     component: () => import("@/views/FeedView.vue"),
@@ -82,11 +90,6 @@ const routes: Array<RouteRecordRaw> = [
     path: "/login",
     name: "login",
     component: () => import("@/views/LoginView.vue"),
-  },
-  {
-    path: "/messages",
-    name: "messages",
-    component: () => import("@/views/MessagesView.vue"),
   },
   {
     path: "/search",
@@ -142,7 +145,8 @@ const routes: Array<RouteRecordRaw> = [
 // http://localhost:5174/#/signup/
 // http://localhost:5174/#/UserDetails/
 const router = createRouter({
-  history: createWebHashHistory(),
+  // history: createWebHashHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes, // property sharthand
   scrollBehavior(to, from, savedPosition) {
     // Always scroll to the top
@@ -151,3 +155,9 @@ const router = createRouter({
 });
 
 export default router;
+
+// (3/3) Accesses the route and router instance in the Vue component:
+// import { userRoute, useRouter } from 'vue-router';
+// const $route = useRoute();
+// const $router = useRouter();
+

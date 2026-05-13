@@ -71,7 +71,7 @@ const useUserStore = defineStore('user', () => {
 
     // If the token exists, the user is believed to have been logged in.
     if (localStorage.getItem("user.access")) {
-      console.log("User has access!");
+      console.log("userStore: User has access!");
 
       user.access = localStorage.getItem("user.access") ?? '';
       user.refresh = localStorage.getItem("user.refresh") ?? '';

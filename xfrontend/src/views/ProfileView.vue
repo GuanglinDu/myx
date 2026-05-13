@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
 import { onMounted } from 'vue';
-import axios from 'axios';
+import { useRouter } from 'vue-router';
+import axios, { type AxiosResponse } from 'axios';
 import { createAvatar } from '@dicebear/core';
 import { adventurer } from '@dicebear/collection';
 import PeopleYouMayKnow from '@/components/PeopleYouMayKnow.vue';
@@ -11,6 +12,7 @@ import { useUserStore } from '@/stores/user';
 import type { Post, User } from '@/types/custom_types';
 
 const userStore = useUserStore();
+const $router = useRouter();
 
 // router/index.ts defines the route for this view as '/profile/:id', where
 // ':id' is a dynamic segment representing the user UUID of the profile being
@@ -120,6 +122,29 @@ function handlePostUpdated(updatedPost: Post): void {
   }
 }
 
+function sendDirectMessage(): void {
+  // For simplicity, we'll just navigate to the chat page with this user.
+  // In a real app, you might want to create a conversation first if it doesn't
+  // exist.
+  console.log('Send direct message to user ID:', props.id);
+
+  axios
+    .get(`/api/chat/${props.id}/get-or-create/`) // user id of the recipient
+    .then((response: AxiosResponse) => {
+      console.log('Conversation created or retrieved:', response.data);
+
+      const conversationId = response.data.id;
+      // Navigate to the chat page for this conversation
+      // window.location.href = `/chat/${conversationId}`; // error-prone
+
+      $router.push({ name: 'chat', params: { id: conversationId } });
+      // $router.push('/chat/');
+    }).
+    catch (error => {
+      console.error('Error creating or retrieving conversation:', error);
+    })
+}
+
 onMounted(() => {
   getFeed();
 });
@@ -217,6 +242,15 @@ watch(() => props.id, () => {
             Log out
           </button>
         </div>
+
+        <!-- Direct Messages (DM) -->
+        <button
+          @click="sendDirectMessage"
+          class="inline-block mt-2 p-3 bg-purple-600 text-white text-sm
+                 rounded-lg hover:bg-purple-700 disabled:opacity-50"
+        >
+          Messages
+        </button>
       </div>
     </div>
 

@@ -44,7 +44,7 @@ async function getPost(): Promise<void> {
 // count).
 getPost();
 
-async function submitCommentForm(): Promise<void> {
+async function submitForm(): Promise<void> {
   console.log('submitCommentForm:', body.value);
   await axios
     .post(`/api/posts/${$route.params.id}/comment/`, { body: body.value })
@@ -98,7 +98,7 @@ onMounted(() => {
           placeholder="Write your comment here..."
         />
         <button
-          @click="submitCommentForm"
+          @click="submitForm"
           class="px-4 py-2 bg-blue-500 text-white rounded
                hover:bg-blue-600"
         >

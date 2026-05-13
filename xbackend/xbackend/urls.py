@@ -30,6 +30,7 @@ urlpatterns: list[ URLPattern | URLResolver] = [
     path('api/', include('account.urls')),
     path('api/posts/', include('post.urls')),
     path('api/search/', include('search.urls')),
+    path('api/chat/', include('chat.urls')),
 ]
 
 urlpatterns += [path('silk/', include('silk.urls', namespace='silk'))]
