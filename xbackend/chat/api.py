@@ -21,6 +21,10 @@ def conversation_list(request: Request) -> JsonResponse:
 
 @api_view(['GET'])
 def conversation_detail(request: Request, id: uuid.UUID) -> JsonResponse:
+    """The id is the conversation ID, not the user ID. This is because
+    we want to be able to fetch conversation details for conversations
+    we haven't had with a specific user yet.
+    """
     conversation: Conversation = Conversation.objects.filter(
         participants__in=list([request.user])).get(pk=id)
     serializer: ConversationDetailSerializer = ConversationDetailSerializer(
@@ -44,27 +48,12 @@ def get_or_create_conversation(request: Request,
     if conversations.exists():
         print('Conversation already exists, using existing one.')
         conversation = conversations.first()
-        # for participant in conversations.participants.all():
-        #     if participant != request.user:
-        #         sent_to_id = participant.id
-        #         break
     else:
         print('No existing conversation, creating new one.')
         conversation = Conversation.objects.create()
         conversation.participants.add(request.user, recipient)
         conversation.save()
 
-    body: str = request.data.get('body', '')
-     # Use provided sent_to, or fall back to auto-determined
-    # sent_to_id: uuid.UUID = request.data.get('sent_to') or sent_to_id
-    # message: ConversationMessage = ConversationMessage.objects.create(
-    #     conversation=conversations,
-    #     body=body,
-    #     sent_to=User.objects.get(pk=sent_to_id),
-    #     created_by=request.user
-    # )
-    # serializer: ConversationMessageSerializer = ConversationMessageSerializer(
-    #     message, context={'request': request})
     serializer: ConversationSerializer = ConversationSerializer(
         conversation, context={'request': request})
     return JsonResponse(serializer.data, safe=False)
@@ -72,8 +61,14 @@ def get_or_create_conversation(request: Request,
 
 @api_view(['POST'])
 def send_message(request: Request, id: uuid.UUID) -> JsonResponse:
+    """The id is the conversation ID, not the user ID. This is because
+    we want to be able to send messages in conversations with a specific
+    user.
+    """
     conversation: Conversation = Conversation.objects.filter(
         participants__in=list([request.user])).get(pk=id)
+    
+    # TODO: What to do if no conversation found?
 
     for participant in conversation.participants.all():
         if participant != request.user:

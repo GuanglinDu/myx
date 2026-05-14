@@ -3,8 +3,8 @@ export interface User {
   name: string;
   email: string;
   avatar: string;
-  friends_count: number;
-  posts_count: number;
+  friend_count: number;
+  post_count: number;
   is_active: boolean;
   is_superuser: boolean;
   is_staff: boolean;

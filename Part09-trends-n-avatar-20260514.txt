@@ -1,0 +1,4 @@
+Trends/Avatar - Build a Full-Stack Social Network with Django and Vue 3 | Part 9/16
+https://www.youtube.com/watch?v=Kg_dS_AxelM&list=PLpyspNLjzwBlobEvnZzyWP8I-ORQcq4IO&index=9
+
+00:00 

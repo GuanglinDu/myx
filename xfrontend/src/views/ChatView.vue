@@ -9,6 +9,7 @@ import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
 const conversations = ref<Conversation[]>([]);
 const activeConversation = ref<Conversation | null>(null);
+// The other participant in the conversation
 const participant = ref<User | null>(null);
 const body = ref<string>('');
 
@@ -43,11 +44,12 @@ function getConversations(): void {
 
       getMessages();
     })
-    .catch((error) => {
+    .catch(error => {
       console.error('Error fetching conversations:', error);
     });
 }
 
+// Fetches messages for the active conversation
 function getMessages(): void {
   if (!activeConversation.value) return;
 
@@ -61,11 +63,12 @@ function getMessages(): void {
 
       activeConversation.value = response.data;
     })
-    .catch((error) => {
+    .catch(error => {
       console.error('Error fetching messages:', error);
     });
 }
 
+// Submits a new message to the active conversation
 function submitForm(): void {
   if (!activeConversation.value) return;
 
@@ -78,11 +81,12 @@ function submitForm(): void {
     })
     .then((response: AxiosResponse) => {
       console.log('Message sent:', response.data);
-
-      body.value = '';
+      // Appends the new message to the active conversation's message array
+      // instead of refetching all messages from the DB for better performance.
       activeConversation.value.messages.push(response.data);
+      body.value = '';      
     })
-    .catch((error) => {
+    .catch(error => {
       console.error('Error sending message:', error);
     });
 }
@@ -104,7 +108,7 @@ onMounted(() => {
 
 <template>
   <div class="max-w-7xl mx-auto grid grid-cols-4 gap-4">
-    <!-- People list who sent you messages -->
+    <!-- Conversation list on the left 1 column -->
     <div class="main-left col-span-1">
       <div class="space-y-4">
         <div
@@ -128,6 +132,7 @@ onMounted(() => {
               v-for="participant in conversation.participants"
               :key="participant.id"
             >
+              <!-- Only shows the other participant's name -->
               <p
                 class="text-xs font-bold"
                 v-if="participant.id !== userStore.user.id"
@@ -143,7 +148,7 @@ onMounted(() => {
       </div>
     </div>
 
-    <!-- Messages  -->
+    <!-- Messages on the right 3 columns -->
     <div class="main-center col-span-3 space-y-2">
       <div class="bg-white border border-gray-200 rounded-lg">
         <div class="flex flex-col flex-grow p-4">
@@ -200,22 +205,22 @@ onMounted(() => {
       <!-- Creates and sends messages -->
       <div class="bg-white border border-gray-200 rounded-lg">
         <form @submit.prevent="submitForm" method="POST">
-            <div class="p-4">
+          <div class="p-4">
             <textarea
-                v-model="body"
-                class="p-4 w-full bg-gray-100 rounded-lg"
-                placeholder="What do you want to say?"
+              v-model="body"
+              class="p-4 w-full bg-gray-100 rounded-lg"
+              placeholder="What do you want to say?"
             />
-            </div>
+          </div>
 
-            <!-- The Send button -->
-            <div class="p-4 border-t border-gray-100 flex justify-between">
+          <!-- The Send button -->
+          <div class="p-4 border-t border-gray-100 flex justify-between">
             <button type="submit"
-                class="inline-block py-4 px-6 bg-purple-600 text-white
-                        rounded-lg">
-                Send
+              class="inline-block py-4 px-6 bg-purple-600 text-white
+                     rounded-lg">
+              Send
             </button>
-            </div>
+          </div>
         </form>
       </div>
     </div>

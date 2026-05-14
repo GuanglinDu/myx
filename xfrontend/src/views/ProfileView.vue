@@ -35,7 +35,7 @@ const isOwnProfile = computed(() => {
   return userStore.user.id === props.id;
 });
 
-// Generate the avatar as a Data URI
+// Generates the avatar as a Data URI
 const avatarDataUri = computed(() => 
   createAvatar(adventurer, {
     seed: props.id,
@@ -138,7 +138,6 @@ function sendDirectMessage(): void {
       // window.location.href = `/chat/${conversationId}`; // error-prone
 
       $router.push({ name: 'chat', params: { id: conversationId } });
-      // $router.push('/chat/');
     }).
     catch (error => {
       console.error('Error creating or retrieving conversation:', error);
@@ -162,8 +161,8 @@ watch(() => props.id, () => {
                   text-center rounded-lg">
         <img :src="avatarDataUri" alt="User Avatar" />
         
-        <!-- The logged-in user's name: {{ userStore.user.name }}
-          Any user's name on his profile page: -->
+        <!-- The logged-in user's name is {{ userStore.user.name }}, while
+             any user's name on his profile page is {{ user.name }}. -->
         <p><strong>{{ user.name }}</strong></p>
 
         <div class="mt-6 flex space-x-8 justify-around">
@@ -171,10 +170,10 @@ watch(() => props.id, () => {
             :to="{name: 'friends', params: {id: user.id}}"
             class="text-xs text-gray-500"
           >
-            {{ user.friends_count || 0 }} friends
+            {{ user.friend_count || 0 }} friends
           </RouterLink>
           <p class="text-xs text-gray-500">
-            {{ user.posts_count || 0 }} posts
+            {{ user.post_count || 0 }} posts
           </p>
         </div>
 
@@ -243,13 +242,13 @@ watch(() => props.id, () => {
           </button>
         </div>
 
-        <!-- Direct Messages (DM) -->
+        <!-- Creates a conversation to send direct messages (DM) -->
         <button
           @click="sendDirectMessage"
           class="inline-block mt-2 p-3 bg-purple-600 text-white text-sm
                  rounded-lg hover:bg-purple-700 disabled:opacity-50"
         >
-          Messages
+          Send direct messages
         </button>
       </div>
     </div>

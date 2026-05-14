@@ -148,9 +148,9 @@ def accept_friendship_request(request: Request,
     friendship_request.created_by.friends.add(user)
 
     # Increment friends_count for both users
-    user.friends_count += 1
+    user.friend_count += 1
     user.save()
-    friendship_request.created_by.friends_count += 1
+    friendship_request.created_by.friend_count += 1
     friendship_request.created_by.save()
 
     # Delete the friendship request

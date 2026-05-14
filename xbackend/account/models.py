@@ -73,7 +73,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     avatar: ImageFieldFile = models.ImageField(upload_to='avatars', blank=True,
                                                null=True)
     friends: "ManyRelatedManager[User]" = models.ManyToManyField('self')
-    friends_count: int = models.IntegerField(default=0)
+    friend_count: int = models.IntegerField(default=0)
 
     people_you_may_know: "ManyRelatedManager[User]" = \
         models.ManyToManyField('self')
