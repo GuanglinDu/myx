@@ -9,6 +9,14 @@ cd xfrontend
 npm install --registry=https://registry.npmmirror.com
 ```
 
+## Tests
+
+```shell
+cd xfrontend
+npm run test （or, npx vitest）
+```
+
+
 ## xbackend - Django + DRF + JWT
 
 ```shell
@@ -84,6 +92,13 @@ pytest -x     (stop at the fist failure)
 pytest tests  (against a folder/package)
 pytest tests/apps/basic_data/model_test.py  (against a module)
 pytest tests/apps/basic_data/model_test.py::test_model_update  (against a specific test)
+```
+
+### Enable the pytest watching mode
+
+```shell
+pip install pytest-watcher
+ptw . (or, ptw /home/repos/project)
 ```
 
 ### Show the test coverage

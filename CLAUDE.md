@@ -18,11 +18,13 @@ cd xbackend
 pip install -r requirements.txt
 python manage.py migrate
 python manage.py runserver 0.0.0.0:8001
+
+# Tests (32 passing, 93% coverage)
 pytest                           # Run all tests
 pytest -v                        # Verbose output
-pytest tests/apps/               # Test specific folder
-pytest tests/apps/model_test.py::test_name  # Run specific test
-pytest --cov                    # With coverage report
+pytest tests/test_account.py      # Test specific file
+pytest tests/test_account.py::TestAccountAPI::test_me_returns_user_info  # Run specific test
+pytest --cov                     # With coverage report
 ```
 
 ### Frontend
@@ -31,7 +33,8 @@ pytest --cov                    # With coverage report
 cd xfrontend
 npm install
 npm run dev         # Start dev server (port 5174)
-npm run build       # Build for production
+npm run build       # Build for production (type-check + bundle)
+npm run test        # Run all vitest tests (50 passing)
 ```
 
 ### Database
@@ -55,13 +58,24 @@ python del_migrations.py      # Remove all migrations (dev only)
 
 Each app contains: `models.py`, `serializers.py`, `api.py`, `urls.py`
 
+**Backend Tests** (`xbackend/tests/`):
+- `test_account.py` - User auth, signup, friendship requests (15 tests)
+- `test_post.py` - Post CRUD, likes, comments (10 tests)
+- `test_chat.py` - Conversations, messages (8 tests)
+
 ### Frontend Structure (xfrontend/src/)
 
 - **views/** - Page components (HomeView, FeedView, ProfileView, ChatView, etc.)
-- **components/** - Reusable components
+- **components/** - Reusable components (ToastComponent, TrendsComponent, PeopleYouMayKnow, NotificationsComponent)
 - **stores/** - Pinia state management (`user.ts`, `toast.ts`)
 - **router/** - Vue Router configuration
 - **types/** - TypeScript type definitions
+
+### Frontend Tests (xfrontend/tests/)
+
+- **tests/stores/** - Pinia store unit tests
+- **tests/views/** - View component tests
+- **tests/components/** - Reusable component tests
 
 ### URL Patterns
 

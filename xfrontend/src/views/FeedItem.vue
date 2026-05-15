@@ -36,7 +36,7 @@ async function toggleLike(): Promise<void> {
     emit('postUpdated', {
       ...$props.post,
       liked,
-      likes_count,
+      like_count: likes_count,
     });
   } catch (error) {
     console.error('Failed to toggle like:', error);
@@ -95,7 +95,7 @@ async function toggleLike(): Promise<void> {
             />
           </svg>
         </button>
-        <span class="text-gray-500 text-xs">{{ post.likes_count }}</span>
+        <span class="text-gray-500 text-xs">{{ post.like_count }}</span>
       </div>
 
       <!-- Count of comments -->

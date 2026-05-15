@@ -115,21 +115,21 @@ def post_like(request: Request, id: uuid.UUID) -> JsonResponse:
 
     # Toggles the like status: if the user has already liked the post, it
     # removes the like; otherwise, it creates a new like. It also updates
-    # the likes_count accordingly and returns the new like status and
+    # the like_count accordingly and returns the new like status and
     # count in the response.
     if existing_like:
         existing_like.delete()
-        post.likes_count = max(0, post.likes_count - 1)
+        post.like_count = max(0, post.like_count - 1)
         liked: bool = False
     else:
         like: Like = Like(created_by=request.user)
         like.save()
         post.likes.add(like)
-        post.likes_count += 1
+        post.like_count += 1
         liked: bool = True
 
     post.save()
-    return JsonResponse({'liked': liked, 'likes_count': post.likes_count},
+    return JsonResponse({'liked': liked, 'like_count': post.like_count},
                         safe=False)
     
 @api_view(['POST'])

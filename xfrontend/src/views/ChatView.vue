@@ -33,10 +33,10 @@ function getConversations(): void {
       conversations.value = response.data;
 
       if (conversations.value.length > 0) {
-        activeConversation.value = conversations.value[0];
-        participant.value = activeConversation.value.participants.find(
+        activeConversation.value = conversations.value[0] ?? null;
+        participant.value = activeConversation.value?.participants.find(
           (p) => p.id !== userStore.user.id
-        ) || null;
+        ) ?? null;
       }
 
       console.log('Active Conversation:', activeConversation.value);
@@ -83,7 +83,7 @@ function submitForm(): void {
       console.log('Message sent:', response.data);
       // Appends the new message to the active conversation's message array
       // instead of refetching all messages from the DB for better performance.
-      activeConversation.value.messages.push(response.data);
+      activeConversation.value!.messages.push(response.data);
       body.value = '';      
     })
     .catch(error => {
@@ -94,11 +94,13 @@ function submitForm(): void {
 function setActiveConversation(conversationId: string): void {
   console.log('Setting active conversation to ID:', conversationId);
 
-//   activeConversation.value = conversations.value.find(    
-//     (c) => c.id === conversationId
-//   ) || null;
-  activeConversation.value.id = conversationId;
-  getMessages();
+  const conversation = conversations.value.find(
+    (c) => c.id === conversationId
+  );
+  if (conversation) {
+    activeConversation.value = conversation;
+    getMessages();
+  }
 }
 
 onMounted(() => {

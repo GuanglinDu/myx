@@ -14,19 +14,19 @@ export interface Post {
   id: string;
   body: string;
   attachments: string[];
-  likes_count: number;
+  like_count: number;
   liked: boolean;
-  comments: string[];
+  comments: Comment[];
   comments_count: number;
   created_at: string;
+  created_at_formatted: string;
   created_by: User;
 };
 
 export interface Comment {
   id: string;
   body: string;
-  comments: string[];
-  comments_count: number;
+  created_at: string;
   created_at_formatted: string;
   created_by: User;
 };

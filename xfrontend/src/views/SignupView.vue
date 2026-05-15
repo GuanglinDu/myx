@@ -1,12 +1,18 @@
 <script setup lang="ts">
 import axios from 'axios';
 import { useToastStore } from '@/stores/toast';
-import type { User } from '@/types/custom_types';
 
 const toastStore = useToastStore();
 
+interface SignupForm {
+  name: string;
+  email: string;
+  password1: string;
+  password2: string;
+}
+
 // The JSON object sent by AXIOS to the signup API of the backend
-let form: User = {
+let form: SignupForm = {
   name: "",
   email: "",
   password1: "",

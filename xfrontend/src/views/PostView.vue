@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { useRoute }  from 'vue-router';
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-import type { Post } from '@/types/custom_types';
+import axios from 'axios';
+import type { Post, Comment } from '@/types/custom_types';
 import FeedItem from './FeedItem.vue';
 import CommentItem from './CommentItem.vue';
 
@@ -15,11 +15,20 @@ const post = ref<Post>({
   created_by: {
     id: '',
     name: '',
+    email: '',
+    avatar: '',
+    friend_count: 0,
+    post_count: 0,
+    is_active: true,
+    is_superuser: false,
+    is_staff: false,
   },
+  attachments: [],
   created_at: '',
-  likes_count: 0,
+  created_at_formatted: '',
+  like_count: 0,
   liked: false,
-  comments: [],
+  comments: [] as Comment[],
   comments_count: 0,
 });
 
@@ -28,7 +37,7 @@ const body = ref<string>(''); // the comment body
 async function getPost(): Promise<void> {
   await axios
     .get(`/api/posts/${$route.params.id}/`)
-    .then((response: AxiosResponse) => {
+    .then((response) => {
       console.log('data', response.data);
 
       post.value = response.data.post;
@@ -48,7 +57,7 @@ async function submitForm(): Promise<void> {
   console.log('submitCommentForm:', body.value);
   await axios
     .post(`/api/posts/${$route.params.id}/comment/`, { body: body.value })
-    .then((response: AxiosResponse) => {
+    .then((response) => {
       console.log('Comment created:', response.data);
 
       // post.value.comments.unshift(response.data);

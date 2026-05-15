@@ -65,7 +65,7 @@ class Post(models.Model):
         'PostAttachment', blank=True)
 
     likes: "ManyRelatedManager[Like]" = models.ManyToManyField(Like, blank=True)
-    likes_count: int = models.IntegerField(default=0)
+    like_count: int = models.IntegerField(default=0)
     liked: bool = models.BooleanField(default=False)
 
     comments: "ManyRelatedManager[Comment]" = models.ManyToManyField(

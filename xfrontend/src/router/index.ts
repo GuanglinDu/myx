@@ -2,10 +2,7 @@
  * Created at 17:37:07 on 20260204 Wed by Guanglin Du.
  * https://router.vuejs.org/guide/
  */
-import { createWebHistory,
-         createWebHashHistory,
-         createRouter
-       } from "vue-router";
+import { createWebHistory, createRouter } from "vue-router";
 import type { RouteRecordRaw } from "vue-router";
 import HomeView from "@/views/HomeView.vue";
 import NotFoundView from "@/views/NotFoundView.vue";
@@ -148,7 +145,7 @@ const router = createRouter({
   // history: createWebHashHistory(),
   history: createWebHistory(import.meta.env.BASE_URL),
   routes, // property sharthand
-  scrollBehavior(to, from, savedPosition) {
+  scrollBehavior(_to, _from, _savedPosition) {
     // Always scroll to the top
     return { top: 0 };
   },

@@ -13,7 +13,10 @@
       "Bash(claude --version)",
       "Bash(claude code:*)",
       "Bash(gh release:*)",
-      "Bash(dir D:\\\\repo-tauri\\\\myx\\\\*.md)"
+      "Bash(dir D:\\\\repo-tauri\\\\myx\\\\*.md)",
+      "Bash(pip list *)",
+      "Bash(npm install *)",
+      "Bash(npm run *)"
     ]
   }
 }

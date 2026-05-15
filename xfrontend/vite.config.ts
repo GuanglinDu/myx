@@ -20,5 +20,9 @@ export default defineConfig(({ mode }) => {
       // host: 'localhost', // optional
       // open: true         // optional: auto-opens the brwoser
     },
+    test: {
+      globals: true,
+      environment: 'happy-dom',
+    },
   };
 });

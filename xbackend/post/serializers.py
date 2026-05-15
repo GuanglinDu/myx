@@ -24,7 +24,7 @@ class PostSerializer(serializers.ModelSerializer):
         model: TypeAlias = Post
         fields: list[str] = [
             'id', 'body', 'attachments', 'created_by', 'created_at_formatted',
-            'likes_count', 'liked', 'comments_count'
+            'like_count', 'liked', 'comments_count'
         ]
 
 
@@ -56,6 +56,6 @@ class PostDetailSerializer(serializers.ModelSerializer):
         model: TypeAlias = Post
         fields: list[str] = [
            'id', 'body', 'attachments', 'created_by', 'created_at_formatted',
-           'likes_count', 'liked', 'comments', 'comments_count'
+           'like_count', 'liked', 'comments', 'comments_count'
         ]
 
