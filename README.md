@@ -9,13 +9,33 @@ cd xfrontend
 npm install --registry=https://registry.npmmirror.com
 ```
 
-## Tests
+## Frontend Tests
+
+### Install the dependencies
+
+```shell
+npm install -D vitest @vue/test-utils happy-dom @testing-library/vue @pinia/testing
+
+Or, npm install --registry=https://registry.npmmirror.com
+```
+
+### Run the Tests
 
 ```shell
 cd xfrontend
-npm run test （or, npx vitest）
+npm run test (or, npx vitest)
+...
+npx playwright test
+npx playwright test e2e/auth.spec.ts
 ```
 
+Note:
+
+* Both commands `npm run test` and `npx vitest` run into the watch mode by default.
+* vitest is for unit-testing plain JS/TS;
+* @vue/test-utils is for unit-testing the components;
+* @testing-library/vue is for unit-testing composables;
+* Happy DOM is designed to work seamlessly with testing frameworks. It allows developers to simulate a DOM environment for running unit tests for front-end projects without relying on a browser.
 
 ## xbackend - Django + DRF + JWT
 
@@ -79,8 +99,6 @@ python manage.py seed_db  --formations=500 --workspaces=10 --projects=50
 python manage.py seed_db --clear
 ```
 
-## Backend Tests
-
 ### Run the tests
 
 ```shell
@@ -90,8 +108,8 @@ pytest -vv    (very verbose)
 pytest -rP    (report the print output)
 pytest -x     (stop at the fist failure)
 pytest tests  (against a folder/package)
-pytest tests/apps/basic_data/model_test.py  (against a module)
-pytest tests/apps/basic_data/model_test.py::test_model_update  (against a specific test)
+pytest tests/test_account.py  (against a module)
+pytest tests/test_account.py::test_model_update  (against a specific test)
 ```
 
 ### Enable the pytest watching mode
@@ -106,20 +124,3 @@ ptw . (or, ptw /home/repos/project)
 ```shell
 pytest --cov
 ```
-
-## Frontend Tests
-
-### Install the dependencies
-
-```shell
-npm install -D vitest @vue/test-utils happy-dom @testing-library/vue @pinia/testing
-
-Or, npm install --registry=https://registry.npmmirror.com
-```
-
-Note:
-
-* vitest is for unit-testing plain JS/TS;
-* @vue/test-utils is for unit-testing the components;
-* @testing-library/vue is for unit-testing composables;
-* Happy DOM is designed to work seamlessly with testing frameworks. It allows developers to simulate a DOM environment for running unit tests for front-end projects without relying on a browser.

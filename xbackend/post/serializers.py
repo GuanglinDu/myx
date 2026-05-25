@@ -1,7 +1,7 @@
 from typing import TypeAlias
 from rest_framework import serializers
 from account.serializers import UserSerializer
-from .models import Post, PostAttachment, Comment, Like
+from .models import Post, PostAttachment, Comment
 
 
 class PostAttachmentSerializer(serializers.ModelSerializer):

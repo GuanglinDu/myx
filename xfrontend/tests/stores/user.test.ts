@@ -1,3 +1,52 @@
+/**
+ * Updated at 18:14:51 on 20260520 Wednesday by Guanglin Du
+ * 
+ * (1/2) What are the unit tests, integration tests, and end-to-end tests in
+ * Vue.js 3, respectively? - Google AI Overview
+ * 
+ * In Vue.js 3, testing is typically categorized by the scope of the code being
+ * examined, often following a "testing pyramid" strategy that balances speed
+ * and reliability.
+ * 
+ * (1.1/2) Unit Testing
+ * Unit tests verify the smallest, isolated parts of your application in
+ * complete isolation. In a Vue context, this usually means testing pure logic
+ * rather than the UI. 
+ * - Targets: Individual functions, classes, composables, or utility modules.
+ * - Focus: Ensuring specific inputs produce the correct outputs or side effects
+ * (e.g., a math helper or a data formatter).
+ * - Tools: Vitest (native to Vite and highly recommended for Vue 3) or Jest.
+ * 
+ * (1.2/2) Integration (Component) Testing
+ * In Vue development, "Integration Testing" is often synonymous with Component
+ * Testing. These tests check how multiple units or components work together as
+ * a small system.
+ * - Target: Vue components and their interactions with children or shared state.
+ * - Focus: Verifying that a component mounts correctly, renders the right UI,
+ * handles user events (like clicks), and communicates properly with other
+ * modules.
+ * - Tools: Vue Test Utils paired with Vitest, or Cypress Component Testing.
+ * 
+ * (1.3/2) End-to-End (E2E) Testing
+ * E2E tests validate the entire application flow from a real user's
+ * perspective. They run against a production-like build of your app and often
+ * involve a real browser.
+ * - Target: Complete user journeys spanning multiple pages and real network
+ * requests.
+ * - Focus: Checking features like "user login," "shopping cart checkout," or
+ * "onboarding flows" to ensure the frontend and backend work together
+ * seamlessly.
+ * - Tools: Playwright or Cypress.
+ * 
+ * (2/2) Dependencies
+ * npm install -D vitest               (test runners & unit tests)
+ * npm install -D @vue/test-utiles     (component tests)
+ * npm install -D @testing-library/vue (testing Vue components with a focus on
+ * user-centric testing practices, making it easier to test how users interact
+ * with your Vue applications)
+ * npm install -D @playwright/test     (end-to-end tests), or
+ * npm install -D cypress              (end-to-end tests)
+ */
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { setActivePinia, createPinia } from 'pinia';
 import { useUserStore } from '@/stores/user';

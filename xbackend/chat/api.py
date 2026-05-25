@@ -1,9 +1,8 @@
 import uuid
-from django.db.models import Q, QuerySet
+from django.db.models import QuerySet
 from django.http import JsonResponse
 from rest_framework.request import Request
-from rest_framework.decorators import (api_view, authentication_classes,
-                                       permission_classes)
+from rest_framework.decorators import (api_view)
 from account.models import User                                       
 from .models import Conversation, ConversationMessage
 from .serializers import (ConversationSerializer, ConversationDetailSerializer,
@@ -69,7 +68,7 @@ def send_message(request: Request, id: uuid.UUID) -> JsonResponse:
         participants__in=list([request.user])).get(pk=id)
     
     # TODO: What to do if no conversation found?
-
+    sent_to_id: uuid.UUID = None
     for participant in conversation.participants.all():
         if participant != request.user:
             sent_to_id = participant.id

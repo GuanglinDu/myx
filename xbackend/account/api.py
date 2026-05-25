@@ -2,12 +2,10 @@ import uuid
 from django.http import JsonResponse
 from django.db.models import QuerySet
 from rest_framework.request import Request
-from rest_framework.response import Response
 from rest_framework.decorators import (api_view, authentication_classes,
                                        permission_classes)
-from rest_framework.permissions import IsAuthenticated
 # from notification.utils import create_notification
-from .forms import SignupForm, ProfileForm
+from .forms import SignupForm
 from .models import User, FriendshipRequest
 from .serializers import UserSerializer, FriendshipRequestSerializer
 
@@ -62,11 +60,11 @@ def signup(request: Request) -> JsonResponse:
     # form.save() creates and returns a User object with a securely
     # hashed password.
     if form.is_valid():
-        user: User = form.save()
+        form.save()
 
         # Sends verification email later!
     else:
-      message: str = 'error'
+        message: str = 'error'
 
     return JsonResponse({'message': message})
 
@@ -147,11 +145,11 @@ def accept_friendship_request(request: Request,
     user.friends.add(friendship_request.created_by)
     friendship_request.created_by.friends.add(user)
 
-    # Increment friends_count for both users
+    # Increment friend_count for both users
     user.friend_count += 1
-    user.save()
+    user.save(update_fields=['friend_count'])
     friendship_request.created_by.friend_count += 1
-    friendship_request.created_by.save()
+    friendship_request.created_by.save(update_fields=['friend_count'])
 
     # Delete the friendship request
     friendship_request.delete()

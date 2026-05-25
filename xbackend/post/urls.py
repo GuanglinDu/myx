@@ -1,4 +1,4 @@
-from django.urls import path, include, URLPattern, URLResolver
+from django.urls import path, URLPattern, URLResolver
 from . import api
 
 # The URL path variable will pass the user's or post's UUID to the view
@@ -11,6 +11,7 @@ urlpatterns: list[ URLPattern | URLResolver] = [
     path('profile/<uuid:id>/', api.post_list_profile, name='post_list_profile'),
     # The post's UUID
     path('<uuid:id>/', api.post_detail, name='post_detail'),
+    path('<uuid:id>/delete/', api.post_delete, name='post_delete'),
     path('<uuid:id>/like/', api.post_like, name='post_like'),
     path('<uuid:id>/comment/', api.create_comment, name='create_comment'),
 ]

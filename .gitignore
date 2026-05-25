@@ -8,8 +8,10 @@
 *.theia-workspace
 README.local.md
 CLAUDE.local.md
+.claude/settings.local.json
 
 # Test coverage reports at any directory level
+dist/
 **/coverage
 **/.coverage
 
@@ -53,3 +55,9 @@ xbackend/start_conda.ps1
 # Graphify output
 graphify-out/
 
+# Test results and reports
+test-results/
+playwright-report/
+
+# Claude worktrees
+.claude/worktrees/

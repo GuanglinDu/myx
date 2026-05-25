@@ -5,7 +5,7 @@ from chat.models import Conversation, ConversationMessage
 
 
 @pytest.fixture
-def user(db):
+def user(db) -> User:
     """Create a test user."""
     return User.objects.create_user(
         name='Test User',
@@ -15,7 +15,7 @@ def user(db):
 
 
 @pytest.fixture
-def user2(db):
+def user2(db) -> User:
     """Create a second test user."""
     return User.objects.create_user(
         name='Test User 2',
@@ -25,7 +25,7 @@ def user2(db):
 
 
 @pytest.fixture
-def client():
+def client() -> APIClient:
     """Return a REST framework API client."""
     return APIClient()
 
@@ -34,7 +34,7 @@ def client():
 class TestChatAPI:
     """Tests for chat/api.py endpoints."""
 
-    def test_conversation_list_empty(self, user, client):
+    def test_conversation_list_empty(self, user: User, client: APIClient) -> None:
         """Test conversation list when no conversations exist."""
         client.force_authenticate(user=user)
         response = client.get('/api/chat/')
@@ -43,7 +43,9 @@ class TestChatAPI:
         assert isinstance(data, list)
         assert len(data) == 0
 
-    def test_conversation_list(self, user, user2, client):
+    def test_conversation_list(
+            self, user: User, user2: User, client: APIClient
+    ) -> None:
         """Test getting conversation list."""
         # Create a conversation between users
         conv = Conversation.objects.create()
@@ -55,7 +57,9 @@ class TestChatAPI:
         data = response.json()
         assert len(data) == 1
 
-    def test_get_or_create_conversation_new(self, user, user2, client):
+    def test_get_or_create_conversation_new(
+            self, user: User, user2: User, client: APIClient
+    ) -> None:
         """Test creating a new conversation."""
         client.force_authenticate(user=user)
         response = client.get(f'/api/chat/{user2.id}/get-or-create/')
@@ -67,7 +71,9 @@ class TestChatAPI:
         assert Conversation.objects.filter(participants=user).filter(
             participants=user2).exists()
 
-    def test_get_or_create_conversation_existing(self, user, user2, client):
+    def test_get_or_create_conversation_existing(
+            self, user: User, user2: User, client: APIClient
+    ) -> None:
         """Test getting existing conversation."""
         # Create existing conversation
         conv = Conversation.objects.create()
@@ -77,12 +83,14 @@ class TestChatAPI:
         response = client.get(f'/api/chat/{user2.id}/get-or-create/')
         assert response.status_code == 200
 
-    def test_conversation_detail(self, user, user2, client):
+    def test_conversation_detail(
+            self, user: User, user2: User, client: APIClient
+    ) -> None:
         """Test getting conversation details."""
         # Create conversation with a message
         conv = Conversation.objects.create()
         conv.participants.add(user, user2)
-        msg = ConversationMessage.objects.create(
+        ConversationMessage.objects.create(
             conversation=conv,
             body='Hello',
             sent_to=user2,
@@ -96,7 +104,9 @@ class TestChatAPI:
         assert len(data['messages']) == 1
         assert data['messages'][0]['body'] == 'Hello'
 
-    def test_send_message(self, user, user2, client):
+    def test_send_message(
+            self, user: User, user2: User, client: APIClient
+    ) -> None:
         """Test sending a message."""
         # Create conversation
         conv = Conversation.objects.create()
@@ -116,7 +126,9 @@ class TestChatAPI:
         assert ConversationMessage.objects.filter(body='Test message').exists()
 
     @pytest.mark.skip(reason="Backend raises DoesNotExist exception instead of 404")
-    def test_cannot_see_other_conversations(self, user, user2, client):
+    def test_cannot_see_other_conversations(
+            self, user: User, user2: User, client: APIClient
+    ) -> None:
         """Test that users cannot see other users' conversations."""
         # Create conversation between user2 and another user
         other_user = User.objects.create_user(

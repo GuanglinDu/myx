@@ -74,7 +74,7 @@ class Post(models.Model):
 
     created_at: datetime = models.DateTimeField(auto_now_add=True)
     created_by: User = models.ForeignKey(
-        'account.User', related_name='posts', on_delete=models.CASCADE)
+        User, related_name='posts', on_delete=models.CASCADE)
 
     def created_at_formatted(self) -> str:
         return timesince(self.created_at)

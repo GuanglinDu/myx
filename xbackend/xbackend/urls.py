@@ -22,7 +22,6 @@ Before using:
 """
 from django.contrib import admin
 from django.urls import include, path, URLPattern, URLResolver
-from . import settings
 
 # URL concatenation
 urlpatterns: list[ URLPattern | URLResolver] = [

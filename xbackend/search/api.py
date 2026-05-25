@@ -1,9 +1,7 @@
-from django.template.defaultfilters import safe
 from django.db.models.query import QuerySet
 from django.http import JsonResponse
 from rest_framework.request import Request
-from rest_framework.decorators import (api_view, authentication_classes,
-                                       permission_classes)
+from rest_framework.decorators import (api_view)
 from account.models import User
 from account.serializers import UserSerializer
 from post.models import Post
@@ -49,7 +47,8 @@ from post.serializers import PostSerializer
 @api_view(['POST'])
 def search(request: Request) -> JsonResponse:
     data: dict | list = request.data
-    query = data['query']
+    # query = data['query'] # No validation before accessing data['query']
+    query = data.get('query', '')
 
     # The double underscore (dunder) is used to separate the field name
     # from the lookup type. In this case, `name__icontains` means that we

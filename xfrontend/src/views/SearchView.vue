@@ -100,8 +100,12 @@ function handlePostUpdated(updatedPost: Post): void {
           </p>
 
           <div class="mt-6 flex space-x-8 justify-around">
-            <p class="text-xs text-gray-500">182 friends</p>
-            <p class="text-xs text-gray-500">120 posts</p>
+            <p class="text-xs text-gray-500">
+              {{ user.friend_count  || 0 }} friends
+            </p>
+            <p class="text-xs text-gray-500">
+              {{ user.post_count || 0 }} posts
+            </p>
           </div>
         </div>
       </div>

@@ -32,11 +32,11 @@ async function toggleLike(): Promise<void> {
     const response = await axios.post(
       `/api/posts/${$props.post.id}/like/`
     );
-    const { liked, likes_count } = response.data;
+    const { liked, like_count } = response.data;
     emit('postUpdated', {
       ...$props.post,
       liked,
-      like_count: likes_count,
+      like_count: like_count,
     });
   } catch (error) {
     console.error('Failed to toggle like:', error);

@@ -78,7 +78,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     people_you_may_know: "ManyRelatedManager[User]" = \
         models.ManyToManyField('self')
 
-    posts_count: int = models.IntegerField(default=0)
+    post_count: int = models.IntegerField(default=0)
 
     is_active: bool = models.BooleanField(default=True)
     is_superuser: bool = models.BooleanField(default=False)

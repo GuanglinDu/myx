@@ -7,7 +7,9 @@ class UserSerializer(serializers.ModelSerializer):
     
     class Meta:
         model: TypeAlias = User
-        fields: list[str] = ['id', 'name', 'email']
+        fields: list[str] = [
+            'id', 'name', 'email', 'friend_count', 'post_count'
+        ]
 
 
 class FriendshipRequestSerializer(serializers.ModelSerializer):

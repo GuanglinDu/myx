@@ -2,8 +2,7 @@ import uuid
 from django.db.models import Q, QuerySet
 from django.http import JsonResponse
 from rest_framework.request import Request
-from rest_framework.decorators import (api_view, authentication_classes,
-                                       permission_classes)
+from rest_framework.decorators import (api_view)
 from account.models import User, FriendshipRequest
 from account.serializers import UserSerializer
 from .models import Post, Like, Comment
@@ -75,6 +74,8 @@ def post_list_profile(request: Request, id: uuid.UUID) -> JsonResponse:
     }, safe=False)
 
 
+# Instead of storing post_count, compute it on-the-fly
+# user.post_count = user.posts.count()  # Accesses the reverse FK relation
 @api_view(['POST'])
 def post_create(request: Request) -> JsonResponse:
     data: dict | list = request.data
@@ -86,11 +87,18 @@ def post_create(request: Request) -> JsonResponse:
         post.created_by = request.user
         post.save()
 
+        # Update the author's post_count
+        user: User = request.user
+        user.post_count += 1
+        # This bypasses change detection — it updates exactly what you list,
+        # regardless of whether Django thinks it changed.
+        user.save(update_fields=['post_count'])
+
         serializer: PostSerializer = PostSerializer(post)
         return JsonResponse(serializer.data, safe=False)
     else:
-        # return JsonResponse(form.errors, status=400)
-        return JsonResponse('error', 'Add something here later')
+        return JsonResponse({'error': 'Invalid data', 'details': form.errors},
+                            status=400, safe=False)
 
     # These lines were created by Copilot and they work!
     # message: str = 'success'
@@ -131,7 +139,25 @@ def post_like(request: Request, id: uuid.UUID) -> JsonResponse:
     post.save()
     return JsonResponse({'liked': liked, 'like_count': post.like_count},
                         safe=False)
-    
+
+
+@api_view(['DELETE'])
+def post_delete(request: Request, id: uuid.UUID) -> JsonResponse:
+    """Delete a post. Only the author can delete their own post."""
+    post: Post = Post.objects.get(pk=id)
+
+    if post.created_by != request.user:
+        return JsonResponse({'error': 'Not authorized'}, status=403)
+
+    author: User = post.created_by
+    post.delete()
+
+    author.post_count = max(0, author.post_count - 1)
+    author.save(update_fields=['post_count'])
+
+    return JsonResponse({'message': 'Post deleted'}, safe=False)
+
+
 @api_view(['POST'])
 def create_comment(request: Request, id: uuid.UUID) -> JsonResponse:
     post: Post = Post.objects.get(pk=id)
