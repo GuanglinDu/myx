@@ -1,5 +1,6 @@
 import pytest
 from rest_framework.test import APIClient
+from rest_framework.response import Response
 from account.models import User
 from chat.models import Conversation, ConversationMessage
 
@@ -30,41 +31,52 @@ def client() -> APIClient:
     return APIClient()
 
 
+# DRF's test response object: 
+# response is of type rest_framework.response.Response
+# Key properties available:
+# ┌──────────────────────┬─────────────┬───────────────────┐
+# │       Property       │    Type     │      Example      │
+# ├──────────────────────┼─────────────┼───────────────────┤
+# │ response.status_code │ int         │ 200               │
+# ├──────────────────────┼─────────────┼───────────────────┤
+# │ response.json()      │ dict | list │ {'key': 'value'}  │
+# ├──────────────────────┼─────────────┼───────────────────┤
+# │ response.content     │ bytes       │ raw response body │
+# └──────────────────────┴─────────────┴───────────────────┘
 @pytest.mark.django_db
 class TestChatAPI:
     """Tests for chat/api.py endpoints."""
 
-    def test_conversation_list_empty(self, user: User, client: APIClient) -> None:
+    def test_conversation_list_empty(self, user: User,
+                                     client: APIClient) -> None:
         """Test conversation list when no conversations exist."""
         client.force_authenticate(user=user)
-        response = client.get('/api/chat/')
+        response: Response = client.get('/api/chat/')
         assert response.status_code == 200
-        data = response.json()
+        data: dict | list = response.json()
         assert isinstance(data, list)
         assert len(data) == 0
 
     def test_conversation_list(
-            self, user: User, user2: User, client: APIClient
-    ) -> None:
+            self, user: User, user2: User, client: APIClient) -> None:
         """Test getting conversation list."""
         # Create a conversation between users
-        conv = Conversation.objects.create()
+        conv: Conversation = Conversation.objects.create()
         conv.participants.add(user, user2)
 
         client.force_authenticate(user=user)
-        response = client.get('/api/chat/')
+        response: Response = client.get('/api/chat/')
         assert response.status_code == 200
-        data = response.json()
+        data: dict | list = response.json()
         assert len(data) == 1
 
     def test_get_or_create_conversation_new(
-            self, user: User, user2: User, client: APIClient
-    ) -> None:
+            self, user: User, user2: User, client: APIClient) -> None:
         """Test creating a new conversation."""
         client.force_authenticate(user=user)
-        response = client.get(f'/api/chat/{user2.id}/get-or-create/')
+        response: Response = client.get(f'/api/chat/{user2.id}/get-or-create/')
         assert response.status_code == 200
-        data = response.json()
+        data: dict = response.json()
         assert len(data['participants']) == 2
 
         # Verify conversation was created
@@ -72,23 +84,20 @@ class TestChatAPI:
             participants=user2).exists()
 
     def test_get_or_create_conversation_existing(
-            self, user: User, user2: User, client: APIClient
-    ) -> None:
+            self, user: User, user2: User, client: APIClient) -> None:
         """Test getting existing conversation."""
         # Create existing conversation
-        conv = Conversation.objects.create()
+        conv: Conversation = Conversation.objects.create()
         conv.participants.add(user, user2)
-
         client.force_authenticate(user=user)
-        response = client.get(f'/api/chat/{user2.id}/get-or-create/')
+        response: Response = client.get(f'/api/chat/{user2.id}/get-or-create/')
         assert response.status_code == 200
 
     def test_conversation_detail(
-            self, user: User, user2: User, client: APIClient
-    ) -> None:
+            self, user: User, user2: User, client: APIClient) -> None:
         """Test getting conversation details."""
         # Create conversation with a message
-        conv = Conversation.objects.create()
+        conv: Conversation = Conversation.objects.create()
         conv.participants.add(user, user2)
         ConversationMessage.objects.create(
             conversation=conv,
@@ -98,28 +107,27 @@ class TestChatAPI:
         )
 
         client.force_authenticate(user=user)
-        response = client.get(f'/api/chat/{conv.id}/')
+        response: Response = client.get(f'/api/chat/{conv.id}/')
         assert response.status_code == 200
-        data = response.json()
+        data: dict = response.json()
         assert len(data['messages']) == 1
         assert data['messages'][0]['body'] == 'Hello'
 
     def test_send_message(
-            self, user: User, user2: User, client: APIClient
-    ) -> None:
+            self, user: User, user2: User, client: APIClient) -> None:
         """Test sending a message."""
         # Create conversation
         conv = Conversation.objects.create()
         conv.participants.add(user, user2)
 
         client.force_authenticate(user=user)
-        response = client.post(
+        response: Response = client.post(
             f'/api/chat/{conv.id}/send/',
             {'body': 'Test message', 'sent_to': str(user2.id)},
             format='json'
         )
         assert response.status_code == 200
-        data = response.json()
+        data: dict = response.json()
         assert data['body'] == 'Test message'
 
         # Verify message was created
@@ -127,8 +135,7 @@ class TestChatAPI:
 
     @pytest.mark.skip(reason="Backend raises DoesNotExist exception instead of 404")
     def test_cannot_see_other_conversations(
-            self, user: User, user2: User, client: APIClient
-    ) -> None:
+            self, user: User, user2: User, client: APIClient) -> None:
         """Test that users cannot see other users' conversations."""
         # Create conversation between user2 and another user
         other_user = User.objects.create_user(

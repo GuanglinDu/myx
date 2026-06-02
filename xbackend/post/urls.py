@@ -7,6 +7,7 @@ from . import api
 urlpatterns: list[ URLPattern | URLResolver] = [
     path('', api.post_list, name='post_list'),
     path('create/', api.post_create, name='post_create'),
+    path('trends/', api.trends_list, name='trends_list'),
     # The user's UUID
     path('profile/<uuid:id>/', api.post_list_profile, name='post_list_profile'),
     # The post's UUID

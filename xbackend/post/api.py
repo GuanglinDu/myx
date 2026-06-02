@@ -5,8 +5,10 @@ from rest_framework.request import Request
 from rest_framework.decorators import (api_view)
 from account.models import User, FriendshipRequest
 from account.serializers import UserSerializer
-from .models import Post, Like, Comment
-from .serializers import PostSerializer, PostDetailSerializer, CommentSerializer
+from .models import Post, Like, Comment, Trend
+from .serializers import (
+    PostSerializer, PostDetailSerializer, CommentSerializer, TrendSerializer
+)
 from .forms import PostForm
 
 
@@ -180,4 +182,43 @@ def create_comment(request: Request, id: uuid.UUID) -> JsonResponse:
     post.save()
 
     serializer: CommentSerializer = CommentSerializer(comment)
+    return JsonResponse(serializer.data, safe=False)
+
+
+# Updated at 08:12:40 on 20260602 Tue by Guanglin Du.
+# *Dunder in Django - Google AI Overview*
+# In Django, the term "dunder" (short for "double underscore") refers
+# to two entirely different concepts depending on whether you are
+# querying data via the ORM or writing standard Python code within your
+# models.
+# 
+# (1/2) Django ORM Query Lookup (Field Lookups)
+# In the Django Object-Relational Mapper (ORM), a double underscore __
+# is used as a syntax separator to perform field lookups, handle joins
+# across database relationships, and apply filters.
+# (1.1/2) Relationship Joins: Follow foreign keys or many-to-many
+# fields to query data from related tables. 
+#   #Finds books where the related author's name is 'Tolstoy':
+#   Book.objects.filter(author__name='Tolstoy')
+# (1.2/2) Field Lookups: Apply specific SQL modifications (like LIKE,
+# IN, >, or <).
+#   # Translates to an SQL 'LIKE %django%' query (case-insensitive)
+#   Post.objects.filter(title__icontains='django')
+#   # Translates to a greater-than (>) SQL query
+#   Product.objects.filter(price__gt=50)
+# 
+# (2/2) Python Dunder Methods in Django Models
+# To define built-in methods and variables, e.g.,
+# __init__(self), __str__(self), __eq__(self), __repr__(self), etc.
+@api_view(['GET'])
+def trends_list(request: Request) -> JsonResponse:
+    """Return top 10 trending hashtags with at least 10 occurrences."""
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'Unauthorized'}, status=401)
+
+    trends: QuerySet[Trend] = Trend.objects.filter(
+        occurences__gte=1
+    ).order_by('-occurences')[:10]
+    # trends: QuerySet[Trend] = Trend.objects.all().order_by('-occurences')[:10]
+    serializer: TrendSerializer = TrendSerializer(trends, many=True)
     return JsonResponse(serializer.data, safe=False)

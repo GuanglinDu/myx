@@ -19,7 +19,10 @@ pip install -r requirements.txt
 python manage.py migrate
 python manage.py runserver 0.0.0.0:8001
 
-# Tests (32 passing, 93% coverage)
+# Linting
+flake8 .
+
+# Tests (93% coverage)
 pytest                           # Run all tests
 pytest -v                        # Verbose output
 pytest tests/test_account.py      # Test specific file
@@ -34,7 +37,9 @@ cd xfrontend
 npm install
 npm run dev         # Start dev server (port 5174)
 npm run build       # Build for production (type-check + bundle)
-npm run test        # Run all vitest tests (50 passing)
+npm run test        # Run vitest unit tests
+npm run e2e         # Run Playwright e2e tests
+npm run lint        # ESLint
 ```
 
 ### Database
@@ -77,16 +82,18 @@ Each app contains: `models.py`, `serializers.py`, `api.py`, `urls.py`
 - **tests/views/** - View component tests
 - **tests/components/** - Reusable component tests
 
+E2E tests in `e2e/` directory with Playwright. Config in `playwright.config.ts`.
+
 ### URL Patterns
 
-Frontend uses hash mode routing (`#/`) by default. Routes in `src/router/index.ts`:
-- `#/` - Home
-- `#/feed` - Friends' posts
-- `#/chat` - Direct messages
-- `#/search` - Search users
-- `#/profile/:id` - User profile
-- `#/profile/:id/friends` - User's friends
-- `#/login` / `#/signup` - Authentication
+Frontend uses HTML5 history mode routing (no `#` prefix). Routes in `src/router/index.ts`:
+- `/` - Home
+- `/feed` - Friends' posts
+- `/chat` - Direct messages
+- `/search` - Search users
+- `/profile/:id` - User profile
+- `/profile/:id/friends` - User's friends
+- `/login` / `/signup` - Authentication
 
 ### API Endpoints
 
@@ -138,15 +145,9 @@ JWT-based using `djangorestframework-simplejwt`. User store (`xfrontend/src/stor
 
 ## Code Style
 
-### Backend (Python)
-- 4 spaces indentation
-- 79 character line limit
-- `snake_case` for functions/variables
-- 2 blank lines between top-level definitions
-
-### Frontend (TypeScript/Vue)
-- 2 spaces indentation
-- Use `async/await` instead of `.then()/.catch()` chains
+Per-project coding standards (authoritative):
+- **xbackend/CLAUDE.md** - PEP 8, 4 spaces, 79 char line limit, `snake_case`
+- **xfrontend/CLAUDE.md** - Vue 3 Compositional API, 2 spaces, 79 char line limit, `async/await`
 
 ## Important Notes
 

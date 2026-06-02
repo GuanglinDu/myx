@@ -1,0 +1,14 @@
+# .claudeignore
+node_modules/
+.next/
+.git/
+*.log
+dist/
+coverage/
+public/images/
+db.sqlite3
+graphify-out/
+.pytest_cache/
+logs/
+tmp/
+temp/

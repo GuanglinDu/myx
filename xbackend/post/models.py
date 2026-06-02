@@ -81,3 +81,10 @@ class Post(models.Model):
     class Meta:
         ordering: list[str] = ['-created_at']
 
+
+class Trend(models.Model):
+    id: uuid.UUID = models.UUIDField(primary_key=True, default=uuid.uuid4,
+                                     editable=False)
+    hashtag: str = models.CharField(max_length=255, unique=True)
+    occurences: int = models.IntegerField(default=0)
+    created_at: datetime = models.DateTimeField(auto_now_add=True)

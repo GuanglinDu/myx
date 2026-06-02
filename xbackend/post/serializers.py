@@ -1,7 +1,7 @@
 from typing import TypeAlias
 from rest_framework import serializers
 from account.serializers import UserSerializer
-from .models import Post, PostAttachment, Comment
+from .models import Post, PostAttachment, Comment, Trend
 
 
 class PostAttachmentSerializer(serializers.ModelSerializer):
@@ -58,4 +58,10 @@ class PostDetailSerializer(serializers.ModelSerializer):
            'id', 'body', 'attachments', 'created_by', 'created_at_formatted',
            'like_count', 'liked', 'comments', 'comments_count'
         ]
+
+
+class TrendSerializer(serializers.ModelSerializer):
+    class Meta:
+        model: TypeAlias = Trend
+        fields: list[str] = ['id', 'hashtag', 'occurences']
 
