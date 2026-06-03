@@ -1,0 +1,121 @@
+<script setup lang="ts">
+import { ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
+import axios from 'axios';
+import { useUserStore } from '@/stores/user';
+import { useToastStore } from '@/stores/toast';
+
+const userStore = useUserStore();
+const toastStore = useToastStore();
+const $router = useRouter();
+
+// Lightweight client-side check. The backend enforces the same shape.
+const EMAIL_RE: RegExp = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+
+// Form fields are kept in sync with the user store. The store is the
+// single source of truth, so typing in the form updates the store and
+// vice versa.
+const name = ref<string>(userStore.user.name);
+const email = ref<string>(userStore.user.email);
+
+watch(name, (value: string) => {
+  userStore.user.name = value;
+});
+watch(email, (value: string) => {
+  userStore.user.email = value;
+});
+
+// If the active user changes (e.g. after a re-login), pull the latest
+// values back into the form.
+watch(() => userStore.user.id, () => {
+  name.value = userStore.user.name;
+  email.value = userStore.user.email;
+});
+
+async function submitForm(): Promise<void> {
+  if (!name.value.trim()) {
+    toastStore.showToast(5000, 'Your name is missing', 'bg-red-300');
+    return;
+  }
+
+  if (!EMAIL_RE.test(email.value.trim())) {
+    toastStore.showToast(
+      5000, 'Enter a valid e-mail address', 'bg-red-300');
+    return;
+  }
+
+  try {
+    const response = await axios.post('/api/editme/', {
+      name: name.value.trim(),
+      email: email.value.trim(),
+    });
+
+    userStore.setUserInfo({
+      ...userStore.user,
+      name: response.data.name,
+      email: response.data.email,
+    });
+
+    toastStore.showToast(
+      5000, 'Profile updated', 'bg-emerald-500');
+
+    $router.push({ name: 'profile', params: { id: userStore.user.id } });
+  } catch (error: unknown) {
+    // Avoid relying on axios.isAxiosError so this also works under mocks
+    // and in any caller that throws a plain object.
+    const responseError: string | undefined =
+      (error as { response?: { data?: { error?: string } } })
+        ?.response?.data?.error;
+    const message: string = responseError
+      ?? 'Could not update profile. Please try again.';
+    toastStore.showToast(5000, message, 'bg-red-300');
+  }
+}
+</script>
+
+<template>
+  <div class="max-w-7xl mx-auto grid grid-cols-2 gap-4">
+    <div class="main-left">
+      <div class="p-12 bg-white border border-gray-200 rounded-lg">
+        <h1 class="mb-6 text-2xl">Edit profile</h1>
+        <p class="mb-6 text-gray-500">
+          Update your name and e-mail address. Changes are saved immediately.
+        </p>
+      </div>
+    </div>
+
+    <div class="main-right">
+      <div class="p-12 bg-white border border-gray-200 rounded-lg">
+        <form class="space-y-6" @submit.prevent="submitForm">
+          <div>
+            <label>Name</label><br />
+            <input
+              type="text"
+              name="name"
+              v-model="name"
+              placeholder="Enter your full name"
+              class="w-full mt-2 py-4 px-6 border-gray-200 rounded-lg"
+            />
+          </div>
+
+          <div>
+            <label>E-mail</label><br />
+            <input
+              type="email"
+              name="email"
+              v-model="email"
+              placeholder="Enter your e-mail address"
+              class="w-full mt-2 py-4 px-6 border-gray-200 rounded-lg"
+            />
+          </div>
+
+          <div>
+            <button class="py-4 px-6 bg-purple-600 text-white rounded-lg">
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</template>

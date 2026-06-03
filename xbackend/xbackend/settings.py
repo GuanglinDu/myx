@@ -14,7 +14,7 @@ from datetime import timedelta
 from pathlib import Path, PosixPath, WindowsPath
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR: PosixPath | WindowsPath  = Path(__file__).resolve().parent.parent
+BASE_DIR: PosixPath | WindowsPath = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -171,8 +171,10 @@ USE_TZ: bool = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 STATIC_URL: str = 'static/'
-
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+MEDIA_URL: str = 'media/'
+MEDIA_ROOT: PosixPath | WindowsPath = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

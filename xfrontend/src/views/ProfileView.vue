@@ -231,6 +231,17 @@ watch(() => props.id, () => {
           </button>
         </div>
 
+        <!-- Edits the profile) -->
+        <div class="mt-6" v-if="isOwnProfile">
+          <RouterLink to="/profile/edit"
+            class="w-full p-3 bg-blue-600 text-white text-sm
+                   rounded-lg hover:bg-blue-700 text-center"
+            v-if="userStore.user.id === user.id"
+          >
+            Edit profile
+          </RouterLink>
+        </div>
+
         <!-- Log out (only on own profile) -->
         <div class="mt-6" v-if="isOwnProfile">
           <button

@@ -83,20 +83,23 @@ onMounted(() => {
         </form>
       </div>
 
-      <!-- @post-updated <=> @postUpdated in template -->
+      <!-- @post-updated vs @postUpdated
+      The camelCase and kebab-case event names in Vue.js 3 emits - Google AI Overview
+      In Vue 3, event names undergo an automatic case transformation, allowing you to emit an event using camelCase in your JavaScript code and listen to it using kebab-case in your HTML templates.
+      -->
       <div
         class="p-4 bg-white border border-gray-200 rounded-lg"
         v-for="post in posts"
-        :key="post.id"      
+        :key="post.id"
       >
         <FeedItem :post="post" @post-updated="handlePostUpdated" />
       </div>
+    </div>
 
-      <!-- (3/3) The main-right column: PeopleYouMayKnow & Trends --> 
-      <div class="main-right col-span-1 space-y-4">
-        <PeopleYouMayKnow />
-        <TrendsComponent />
-      </div>
+    <!-- (3/3) The main-right column: PeopleYouMayKnow & Trends (sibling of main-center) -->
+    <div class="main-right col-span-1 space-y-4">
+      <PeopleYouMayKnow />
+      <TrendsComponent />
     </div>
   </div>
 </template>

@@ -10,7 +10,7 @@ const $props = defineProps<{
   post: Post;
 }>();
 
-// Emit event to parent to refresh posts
+// Emits event to parent to refresh posts
 const emit = defineEmits<{
   (e: 'postUpdated', post: Post): void;
 }>();
@@ -23,7 +23,7 @@ const avatarDataUri = computed(() =>
   }).toDataUri()
 );
 
-// Handle the like-button click
+// Handles the like-button click
 async function toggleLike(): Promise<void> {
   // if (isLiking.value) return;  // Prevent multiple clicks
 

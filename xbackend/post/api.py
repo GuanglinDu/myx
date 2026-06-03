@@ -18,6 +18,12 @@ def post_list(request: Request) -> JsonResponse:
         Q(created_by=request.user) |
         Q(created_by__in=request.user.friends.all())
     ).order_by('-created_at')
+
+    # trend: str = request.GET.get('trend', '')         # Django way    
+    trend: str = request.query_params.get('trend', '')  # DRF way
+    if trend:
+        posts = posts.filter(body__icontains=f'#{trend}')
+    
     serializer: PostSerializer = PostSerializer(
         posts, many=True, context={'request': request})
     return JsonResponse(serializer.data, safe=False)
@@ -198,7 +204,7 @@ def create_comment(request: Request, id: uuid.UUID) -> JsonResponse:
 # across database relationships, and apply filters.
 # (1.1/2) Relationship Joins: Follow foreign keys or many-to-many
 # fields to query data from related tables. 
-#   #Finds books where the related author's name is 'Tolstoy':
+#   # Finds books where the related author's name is 'Tolstoy':
 #   Book.objects.filter(author__name='Tolstoy')
 # (1.2/2) Field Lookups: Apply specific SQL modifications (like LIKE,
 # IN, >, or <).

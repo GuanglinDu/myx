@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue';
 import axios from 'axios';
 
 interface Trend {
+  id: string;
   hashtag: string;
   occurences: number;
 }
@@ -30,18 +31,18 @@ onMounted(() => {
 
   <!-- The trend list -->
   <div class="space-y-4">
-    <div v-for="trend in trends" :key="trend.hashtag"
+    <div v-for="trend in trends" :key="trend.id"
          class="flex items-center justify-between">
       <p class="text-xs">
         <strong>#{{ trend.hashtag }}</strong>
         <span class="text-gray-500">{{ trend.occurences }} posts</span>
       </p>
 
-      <a href="#"
+      <RouterLink :to="{ name: 'trendview', params: { id: trend.hashtag } }"
         class="py-2 px-3 bg-purple-600 text-white text-xs rounded-lg"
       >
         Explore
-      </a>
+      </RouterLink>
     </div>
   </div>
 </div>

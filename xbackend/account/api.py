@@ -1,3 +1,4 @@
+import re
 import uuid
 from django.http import JsonResponse
 from django.db.models import QuerySet
@@ -8,6 +9,10 @@ from rest_framework.decorators import (api_view, authentication_classes,
 from .forms import SignupForm
 from .models import User, FriendshipRequest
 from .serializers import UserSerializer, FriendshipRequestSerializer
+
+
+# Simple RFC-5322-ish check good enough for client-side hints.
+EMAIL_RE: str = r'^[^@\s]+@[^@\s]+\.[^@\s]+$'
 
 
 # Appended at 10:40:46 on 20260416 Thu by Guanglin Du.
@@ -40,6 +45,46 @@ def me(request: Request):
         'id': request.user.id,
         'name': request.user.name,
         'email': request.user.email,
+    })
+
+
+@api_view(['POST'])
+def editme(request: Request) -> JsonResponse:
+    """Update the logged-in user's name and/or email.
+
+    Only fields present in the payload are updated; omitted fields are
+    preserved. Returns the updated user fields.
+    """
+    user: User = request.user
+    data: dict = request.data
+
+    new_name: str | None = data.get('name', None)
+    new_email: str | None = data.get('email', None)
+
+    if new_name is not None:
+        if not new_name.strip():
+            return JsonResponse(
+                {'error': 'Name must not be blank'}, status=400)
+        user.name = new_name.strip()
+
+    if new_email is not None:
+        new_email = new_email.strip()
+        if not re.match(EMAIL_RE, new_email):
+            return JsonResponse(
+                {'error': 'Enter a valid e-mail address'}, status=400)
+        # Block taking another user's email.
+        if (new_email != user.email
+                and User.objects.filter(email=new_email).exists()):
+            return JsonResponse(
+                {'error': 'This e-mail is already in use'}, status=400)
+        user.email = new_email
+
+    user.save()
+
+    return JsonResponse({
+        'id': str(user.id),
+        'name': user.name,
+        'email': user.email,
     })
 
 

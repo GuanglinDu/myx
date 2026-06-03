@@ -1,63 +1,126 @@
+# Already tracked files:
+# .gitignore only applies to untracked files. If a file was committed to the
+# repository before it was added to .gitignore, it will continue to be tracked.
+# To untrack it while keeping it on your local disk, run:
+#   git rm --cached <file-name>, or
+#   git rm -r --cached <directory-name>
+# 
+# See https://git-scm.com/docs/gitignore for more details.
+# (0) Ignore a specific file anywhere in the repository with its filename
+# (a global match), e.g., secret.json ignore secret.json, src/secret.json,
+# config/dev/secret.json, etc., equivalent to **/secret.json.
+# (1) * matches anything except a slash /.
+# (2) ? matches any one character except "/".
+# (3) **/foo matches file or directory "foo" anywhere, the same as pattern
+#  "foo".
+# (4) **/*.log is functionally identical to writing *.log. Both rules tell Git
+# to ignore all files ending in .log throughout the entire repository.
+# (5) **/foo/bar" matches file or directory "bar" anywhere that is directly
+# under directory "foo".
+# (6) config/** ensures every file and subfolder inside the root config folder
+# is ignored.
+# (7) A trailing "/**" matches everything inside. For example, "abc/**" matches
+# all files inside directory "abc", relative to the location of the .gitignore
+# file, with infinite depth.
+# (8) A slash followed by two consecutive asterisks then a slash matches zero or
+# more directories. For example, "a/**/b" matches "a/b", "a/x/b", "a/x/y/b" and
+# so on, e.g., src/**/test/ matches src/test/, src/components/test/, or
+# src/utils/handlers/test/.
+
 # Files in any directory level
+# ====================
+# OS & Editor Files
+# ====================
 .DS_Store
-.stignore
-*.pyc
-*.sw?
-# The IDE workspace files
+Thumbs.db
+
+# IDE workspace files
 *.code-workspace
 *.theia-workspace
-README.local.md
-CLAUDE.local.md
-.claude/settings.local.json
 
-# Test coverage reports at any directory level
+# ====================
+# Language-Specific
+# ====================
+# Python
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.sw?
+*.so
+*.egg
+*.egg-info/
 dist/
-**/coverage
-**/.coverage
-
-# Possible IDE settings at any directory level
-# The trailing / ensures that only directories are ignored.
-.idea/
-.vscode/
-.theia/
+build/
 .mypy_cache/
 .pytest_cache/
-.stfolder/
-
-# Ignores any directory at any level. The trailing / matters!
 __pycache__/
+db.sqlite3
+coverage/
+.coverage
+
+# Node dependencies anywhere in the repository
 node_modules/
 
-# Frequently changing files
-**/db.sqlite3
-**/media/
+# ====================
+# IDE Settings
+# ====================
+# Ignore personal VS Code workspace configurations
+.vscode/*
+
+# But do track shared team configurations
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+.idea/
+.theia/
+# Config for syncthing (if used for syncing)
+.stfolder/
+.stignore
+
+# ====================
+# Project-Specific
+# ====================
+# Django/DRF silk
+media/
+static/
+
+# Migrations (keep __init__.py)
 **/migrations/*.py
 !**/migrations/__init__.py
 
-# Temporary folders & files
+# Tauri
+**/src-tauri/target/
+
+# ====================
+# Temporary
+# ====================
 tmp/
 temp/
-
-# Ignores Tauri build output which can be large!
-**/src-tauri/target/
-**/tests/report.html
-
-# Created by Claude Code
 logs/
 
-# Python silk
-xbackend/static/
+# ====================
+# Local Config
+# ====================
+README.local.md
+CLAUDE.local.md
 
-# Conda environment activation scripts
-xbackend/start_conda.bat
-xbackend/start_conda.ps1
-
-# Graphify output
-graphify-out/
-
-# Test results and reports
+# ====================
+# Test & Reports
+# ====================
+**/tests/report.html
 test-results/
 playwright-report/
 
-# Claude worktrees
-.claude/worktrees/
+# ====================
+# Scripts
+# ====================
+start_conda.bat
+start_conda.ps1
+
+# ====================
+# Special Tools (AI)
+# ====================
+graphify-out/

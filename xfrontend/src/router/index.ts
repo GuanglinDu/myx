@@ -105,6 +105,11 @@ const routes: Array<RouteRecordRaw> = [
     props: true, // route :id param is passed as the `id` prop
   },
   {
+    path: "/profile/edit",
+    name: "editprofile",
+    component: () => import("@/views/EditProfileView.vue")
+  },
+  {
     path: "/profile/:id/friends",
     name: "friends",
     component: () => import("@/views/FriendsView.vue"),
@@ -113,6 +118,11 @@ const routes: Array<RouteRecordRaw> = [
     path: "/signup",
     name: "signup",
     component: () => import("@/views/SignupView.vue"),
+  },
+  {
+    path: "/trends/:id",
+    name: "trendview",
+    component: () => import("@/views/TrendView.vue"),
   },
   { path: "/:pathMatch(.*)*",
     name: "NotFound",

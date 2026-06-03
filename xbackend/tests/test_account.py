@@ -228,3 +228,70 @@ class TestAccountAPI:
         data: dict = response.json()
         assert len(data['friends']) == 1
         assert str(data['friends'][0]['id']) == str(user2.id)
+
+    def test_editme_success(self, user: User, client: APIClient) -> None:
+        """Test the /api/editme/ endpoint updates name and email."""
+        client.force_authenticate(user=user)
+        response: Response = client.post('/api/editme/', {
+            'name': 'Updated Name',
+            'email': 'updated@example.com',
+        }, format='json')
+        assert response.status_code == 200
+        data: dict = response.json()
+        assert data['name'] == 'Updated Name'
+        assert data['email'] == 'updated@example.com'
+        assert str(data['id']) == str(user.id)
+
+        user.refresh_from_db()
+        assert user.name == 'Updated Name'
+        assert user.email == 'updated@example.com'
+
+    def test_editme_preserves_unchanged_fields(
+            self, user: User, client: APIClient) -> None:
+        """Test that omitting a field does not blank it out."""
+        client.force_authenticate(user=user)
+        response: Response = client.post('/api/editme/', {
+            'name': 'Only Name Changed',
+        }, format='json')
+        assert response.status_code == 200
+        data: dict = response.json()
+        assert data['name'] == 'Only Name Changed'
+        assert data['email'] == user.email
+
+    def test_editme_rejects_invalid_email(
+            self, user: User, client: APIClient) -> None:
+        """Test that an invalid email is rejected with 400."""
+        client.force_authenticate(user=user)
+        response: Response = client.post('/api/editme/', {
+            'name': 'Test User',
+            'email': 'not-an-email',
+        }, format='json')
+        assert response.status_code == 400
+
+    def test_editme_rejects_blank_name(
+            self, user: User, client: APIClient) -> None:
+        """Test that a blank name is rejected with 400."""
+        client.force_authenticate(user=user)
+        response: Response = client.post('/api/editme/', {
+            'name': '   ',
+            'email': 'test@example.com',
+        }, format='json')
+        assert response.status_code == 400
+
+    def test_editme_rejects_duplicate_email(
+            self, user: User, user2: User, client: APIClient) -> None:
+        """Test that taking another user's email is rejected with 400."""
+        client.force_authenticate(user=user)
+        response: Response = client.post('/api/editme/', {
+            'name': 'Test User',
+            'email': user2.email,
+        }, format='json')
+        assert response.status_code == 400
+
+    def test_editme_unauthenticated(self, client: APIClient) -> None:
+        """Test /api/editme/ returns 401 for unauthenticated users."""
+        response: Response = client.post('/api/editme/', {
+            'name': 'Test User',
+            'email': 'test@example.com',
+        }, format='json')
+        assert response.status_code == 401
