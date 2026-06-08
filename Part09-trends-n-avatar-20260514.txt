@@ -1,5 +1,10 @@
-Trends/Avatar - Build a Full-Stack Social Network with Django and Vue 3 | Part 9/16
+Trends/Avatar - Build a Full-Stack Social Network with Django and Vue 3 | Part 9/15
 https://www.youtube.com/watch?v=Kg_dS_AxelM&list=PLpyspNLjzwBlobEvnZzyWP8I-ORQcq4IO&index=9
 
-00:00 Implement the Trends functionality
-39:50 Make it possible to add avatar
+00:00:00 ToDos
+00:00:30 Fix error on profile page
+00:02:50 Change the hard-coded post count on the profile page to be automatic
+00:06:45 Implement the Trends functionality
+00:39:50 Make it possible to edit the profile (name & email address)
+00:54:15 Make it possible to add an avatar
+01:11:30 Set avatar in store when adding/changing avatar

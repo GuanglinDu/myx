@@ -10,6 +10,9 @@ const toastStore = useToastStore();
 const $router = useRouter();
 
 // Lightweight client-side check. The backend enforces the same shape.
+// This regular expression supports an unlimited number of dots (.). While it
+// explicitly requires at least one literal dot after the @ symbol, it does
+// not cap the maximum number of dots allowed anywhere in the string.
 const EMAIL_RE: RegExp = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
 // Form fields are kept in sync with the user store. The store is the
@@ -21,6 +24,7 @@ const email = ref<string>(userStore.user.email);
 watch(name, (value: string) => {
   userStore.user.name = value;
 });
+
 watch(email, (value: string) => {
   userStore.user.email = value;
 });
@@ -45,7 +49,7 @@ async function submitForm(): Promise<void> {
   }
 
   try {
-    const response = await axios.post('/api/editme/', {
+    const response = await axios.post('/api/editprofile/', {
       name: name.value.trim(),
       email: email.value.trim(),
     });
@@ -58,7 +62,8 @@ async function submitForm(): Promise<void> {
 
     toastStore.showToast(
       5000, 'Profile updated', 'bg-emerald-500');
-
+    // Navigate to the profile page to show the updated info. This also serves
+    // as a confirmation that the update was successful.
     $router.push({ name: 'profile', params: { id: userStore.user.id } });
   } catch (error: unknown) {
     // Avoid relying on axios.isAxiosError so this also works under mocks

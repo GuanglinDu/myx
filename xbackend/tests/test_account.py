@@ -70,9 +70,10 @@ class TestAccountAPI:
             'password1': 'newpass123',
             'password2': 'differentpass'
         }, format='json')
-        assert response.status_code == 200
+        assert response.status_code == 400
         data: dict = response.json()
-        assert data['message'] == 'error'
+        assert 'errors' in data
+        assert 'password2' in data['errors']
 
     def test_send_friendship_request(
             self, user: User, user2: User, client: APIClient) -> None:
@@ -229,10 +230,10 @@ class TestAccountAPI:
         assert len(data['friends']) == 1
         assert str(data['friends'][0]['id']) == str(user2.id)
 
-    def test_editme_success(self, user: User, client: APIClient) -> None:
-        """Test the /api/editme/ endpoint updates name and email."""
+    def test_editprofile_success(self, user: User, client: APIClient) -> None:
+        """Test the /api/editprofile/ endpoint updates name and email."""
         client.force_authenticate(user=user)
-        response: Response = client.post('/api/editme/', {
+        response: Response = client.post('/api/editprofile/', {
             'name': 'Updated Name',
             'email': 'updated@example.com',
         }, format='json')
@@ -246,11 +247,11 @@ class TestAccountAPI:
         assert user.name == 'Updated Name'
         assert user.email == 'updated@example.com'
 
-    def test_editme_preserves_unchanged_fields(
+    def test_editprofile_preserves_unchanged_fields(
             self, user: User, client: APIClient) -> None:
         """Test that omitting a field does not blank it out."""
         client.force_authenticate(user=user)
-        response: Response = client.post('/api/editme/', {
+        response: Response = client.post('/api/editprofile/', {
             'name': 'Only Name Changed',
         }, format='json')
         assert response.status_code == 200
@@ -258,39 +259,39 @@ class TestAccountAPI:
         assert data['name'] == 'Only Name Changed'
         assert data['email'] == user.email
 
-    def test_editme_rejects_invalid_email(
+    def test_editprofile_rejects_invalid_email(
             self, user: User, client: APIClient) -> None:
         """Test that an invalid email is rejected with 400."""
         client.force_authenticate(user=user)
-        response: Response = client.post('/api/editme/', {
+        response: Response = client.post('/api/editprofile/', {
             'name': 'Test User',
             'email': 'not-an-email',
         }, format='json')
         assert response.status_code == 400
 
-    def test_editme_rejects_blank_name(
+    def test_editprofile_rejects_blank_name(
             self, user: User, client: APIClient) -> None:
         """Test that a blank name is rejected with 400."""
         client.force_authenticate(user=user)
-        response: Response = client.post('/api/editme/', {
+        response: Response = client.post('/api/editprofile/', {
             'name': '   ',
             'email': 'test@example.com',
         }, format='json')
         assert response.status_code == 400
 
-    def test_editme_rejects_duplicate_email(
+    def test_editprofile_rejects_duplicate_email(
             self, user: User, user2: User, client: APIClient) -> None:
         """Test that taking another user's email is rejected with 400."""
         client.force_authenticate(user=user)
-        response: Response = client.post('/api/editme/', {
+        response: Response = client.post('/api/editprofile/', {
             'name': 'Test User',
             'email': user2.email,
         }, format='json')
         assert response.status_code == 400
 
-    def test_editme_unauthenticated(self, client: APIClient) -> None:
-        """Test /api/editme/ returns 401 for unauthenticated users."""
-        response: Response = client.post('/api/editme/', {
+    def test_editprofile_unauthenticated(self, client: APIClient) -> None:
+        """Test /api/editprofile/ returns 401 for unauthenticated users."""
+        response: Response = client.post('/api/editprofile/', {
             'name': 'Test User',
             'email': 'test@example.com',
         }, format='json')

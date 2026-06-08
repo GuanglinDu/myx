@@ -1,13 +1,28 @@
 # Created at 11:57:51 on 20260601 Mon by Guanglin Du.
 # (env312) PS D:\repo-tauri\myx\xbackend> python .\scripts\generate_trends.py
+# 
+# Common Pitfalls to Avoid - How to use django.setup? - Google AI Overview
+# (1) Wrong Import Order: Never import a Django model or utility before
+# executing django.setup(). Doing so throws an AppRegistryNotReady
+# exception.
+# (2) Missing Python Path: If your script resides outside your
+# project's root folder, Python will fail to find your settings module.
+# You must add the root path to your script manually.
+# (3) Logging Conflicts: Avoid putting logging statements directly
+# inside your settings.py file, as django.setup() initializes the
+# logging framework dynamically during boot.
 import os
 import sys
 import django
 
+# Django configuration for standalone script
+# 1. Point to your Django settings module (.. = os.pardir)
+# 2. Initialize Django
 sys.path.append(os.path.join(os.path.abspath(os.path.dirname(__file__)), '..'))
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'xbackend.settings')
 django.setup()
 
+# 3. Import and use your models safely AFTER django.setup()
 from collections import Counter
 from django.db.models import QuerySet
 from post.models import Post, Trend
@@ -38,7 +53,8 @@ def extract_hashtags(content: str) -> list[str]:
 posts: QuerySet[Post] = Post.objects.all()
 trends: list[str] = []
 
-# To meet the qniqueness restrictions
+# Ensures uniqueness constraints are met
+trend: Trend
 for trend in Trend.objects.all():
     trend.delete()
 

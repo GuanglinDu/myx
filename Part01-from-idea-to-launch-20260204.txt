@@ -7,9 +7,9 @@ The folder structure:
 	       --xbackend
 
 
-(1/4) Create a new Vue.js 3 project named xfrontend from scratch
+(1/5) Create a new Vue.js 3 project named xfrontend from scratch
 =================================================================
-(env314) PS D:\repo-tauri\twitter> npm init vite@latest
+(env315) PS D:\repo-tauri\twitter> npm init vite@latest
 Need to install the following packages:
 create-vite@8.2.0
 Ok to proceed? (y) y
@@ -58,13 +58,13 @@ Port 5173 is in use, trying another one...
   ➜  press h + enter to show help
 
 
-(2/4) npm install (Seems unnecessary)
+(2/5) npm install (Seems unnecessary)
 =====================================
 Terminate batch job (Y/N)? Y
-(env314) PS D:\repo-tauri\twitter> codium .
-(env314) PS D:\repo-tauri\twitter> cd .\xfrontend\
-(env314) PS D:\repo-tauri\twitter\xfrontend> codium .
-(env314) PS D:\repo-tauri\twitter\xfrontend> npm install
+(env315) PS D:\repo-tauri\twitter> codium .
+(env315) PS D:\repo-tauri\twitter> cd .\xfrontend\
+(env315) PS D:\repo-tauri\twitter\xfrontend> codium .
+(env315) PS D:\repo-tauri\twitter\xfrontend> npm install
 
 up to date, audited 49 packages in 1s
 
@@ -72,12 +72,12 @@ up to date, audited 49 packages in 1s
   run `npm fund` for details
 
 found 0 vulnerabilities
-(env314) PS D:\repo-tauri\twitter\xfrontend>
+(env315) PS D:\repo-tauri\twitter\xfrontend>
 
 
-(3/4) Install vue-router, pinia, and axios
+(3/5) Install vue-router, pinia, and axios
 =========================================
-(env314) PS D:\repo-tauri\twitter\xfrontend> npm install axios
+(env315) PS D:\repo-tauri\twitter\xfrontend> npm install axios
 
 added 23 packages, and audited 72 packages in 11s
 
@@ -87,7 +87,7 @@ added 23 packages, and audited 72 packages in 11s
 found 0 vulnerabilities
 
 
-(3.1/4) Install vue-router & pinia
+(3.1/5) Install vue-router & pinia
 -----------------------------------
 npm install vue-router pinia
 
@@ -101,7 +101,7 @@ added 47 packages, and audited 119 packages in 11s
 found 0 vulnerabilities
 
 
-(4/4) Install tailwindcss
+(4/5) Install tailwindcss
 ===========================
 Install Tailwind CSS with Vue 3 and Vite
 https://v2.tailwindcss.com/docs/guides/vue-3-vite
@@ -119,21 +119,21 @@ found 0 vulnerabilities
 (env312) PS D:\repo-tauri\twitter\xfrontend>
 
 
-(4.1/4) Create your configuration files
+(4.1/5) Create your configuration files
 -------------------------------------------
 Next, generate your tailwind.config.js and postcss.config.js files:
 
 npx tailwindcss init -p
 
 
-(4.2/4) Problems caused by the latest version
+(4.2/5) Problems caused by the latest version
 ----------------------------------------------
 (env312) PS D:\repo-tauri\twitter\xfrontend> npx tailwindcss init -p
 npm error could not determine executable to run
 npm error A complete log of this run can be found in: C:\Users\Guanglin\AppData\Local\npm-cache\_logs\2026-02-04T12_34_27_872Z-debug-0.log
 
 
-(4.2/4) Fix: Use a lower version
+(4.2/5) Fix: Use a lower version
 ---------------------------------------------
 npm uninstall tailwindcss postcss autoprefixer
 
@@ -152,3 +152,30 @@ npm install, and then,
 Created Tailwind CSS config file: tailwind.config.js
 Created PostCSS config file: postcss.config.js
 (env312) PS D:\repo-tauri\twitter\xfrontend>
+
+
+(5/5) Time lines
+=================================
+0:00 Overview
+1:50 Create a new Vue 3 project
+ - 5:30 Install Axios
+ - 6:45 Install Tailwind CSS
+ - 10:20 Make sure everything is running
+10:38 Set up the app.vue file (Menu, etc)
+ - 11:25 Set the indentation to 2 spaces
+ - 12:30 Create the menu
+ - 16:20 Create the main tag
+17:02 Create static sign up page
+25:35 Create static log in page
+28:55 Create static feed page
+ - 30:25 Create the post layout and the profile (the left column)
+ - 32:34 Create the text area for images & posts (the central 2 columns)
+ - 34:58 Create the Attach image and Post buttons
+ - 36:57 Create a post with an image
+ - 40:00 Create a pure textual post
+ - 40:39 Create the PeopleYouMayKnow and Trends elements (the right column)
+44:54 Create the static messages page
+53:46 Create the static search page
+1:00:53 Make PeopleYouMayKnow a component
+1:04:38 Make Trends a component
+1:05:48 Create the toast component

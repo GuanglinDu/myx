@@ -162,7 +162,7 @@ describe('EditProfileView', () => {
     expect(axiosPost).not.toHaveBeenCalled();
   });
 
-  it('posts to the editme API and updates the store on success',
+  it('posts to the editprofile API and updates the store on success',
      async () => {
        const userStore = useUserStore();
        userStore.setUserInfo({
@@ -192,7 +192,7 @@ describe('EditProfileView', () => {
        await wrapper.find('form').trigger('submit.prevent');
        await flushPromises();
 
-       expect(axiosPost).toHaveBeenCalledWith('/api/editme/', {
+       expect(axiosPost).toHaveBeenCalledWith('/api/editprofile/', {
          name: 'New Name',
          email: 'new@example.com',
        });

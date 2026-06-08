@@ -44,32 +44,31 @@ function submitForm(): void {
     axios
       .post("/api/signup/", form)
       .then((response) => {
-        if (response.data.message === "success") {
-          toastStore.showToast(
-            5000,
-            "The user is registered. Please log in.",
-            "bg-emerald-500"
-          );
+        toastStore.showToast(
+          5000,
+          "The user is registered. Please log in.",
+          "bg-emerald-500"
+        );
 
-          form.email = "";
-          form.name = "";
-          form.password1 = "";
-          form.password2 = "";
-        } else {
-          // const data = JSON.parse(response.data);
-          // let key: keyof data;
-          // for (const key in data) {
-          //   errors.push(data[key][0].message);
-          // }
-          toastStore.showToast(
-            5000,
-            "Something went wrong. Please try again.",
-            "bg-red-300"
-          );
-        }
+        form.email = "";
+        form.name = "";
+        form.password1 = "";
+        form.password2 = "";
       })
       .catch((error) => {
-        console.log("error", error);
+        // Backend returns 400 with {errors: {field: [messages]}} on
+        // invalid input (taken email, weak password, mismatch, ...).
+        // Surface the first field-level message to the user.
+        const fieldErrors: Record<string, string[]> | undefined =
+          error.response?.data?.errors;
+        const firstMsg: string | undefined = fieldErrors
+          ? Object.values(fieldErrors).flat()[0]
+          : undefined;
+        toastStore.showToast(
+          5000,
+          firstMsg ?? "Something went wrong. Please try again.",
+          "bg-red-300"
+        );
       });
   } else {
     console.log(errors);

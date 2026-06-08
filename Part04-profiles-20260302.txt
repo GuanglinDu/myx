@@ -1,12 +1,12 @@
 Profiles - Build a Full-Stack Social Network with Django and Vue 3 | Part 4/16
 https://www.youtube.com/watch?v=qM8WhgvbZDI&list=PLpyspNLjzwBlobEvnZzyWP8I-ORQcq4IO&index=4
 
-0:00 Make it possible to view a profile
-0:29 Create ProfileView.vue based on FeedView.vue
-1:45 Use a RouterLink to replace the <a> tag for the profile image in App.vue
-4:20 Show only your own posts on your own profile page
-5:35 Remove the profile <div> on the top-left corner in FeedView.vue
-6:20 Make sure the user get only his own feed on his profile page
+00:00 Make it possible to view a profile
+00:29 Create ProfileView.vue based on FeedView.vue
+01:45 Use a RouterLink to replace the <a> tag for the profile image in App.vue
+04:20 Show only your own posts on your own profile page
+05:35 Remove the profile <div> on the top-left corner in FeedView.vue
+06:20 Make sure the user get only his own feed on his profile page
 10:00 Log out to create a new user to test other user's profile
 11:20 Fix correct name on the profile page
 11:50 Hide post when you're visiting someone else's profile

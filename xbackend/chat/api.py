@@ -24,8 +24,15 @@ def conversation_detail(request: Request, id: uuid.UUID) -> JsonResponse:
     we want to be able to fetch conversation details for conversations
     we haven't had with a specific user yet.
     """
-    conversation: Conversation = Conversation.objects.filter(
-        participants__in=list([request.user])).get(pk=id)
+    # A non-participant asking for someone else's conversation, or a
+    # nonexistent id, both end up as DoesNotExist here. Collapse them
+    # into 404 so we don't leak whether a conversation id is valid.
+    try:
+        conversation: Conversation = Conversation.objects.filter(
+            participants__in=list([request.user])).get(pk=id)
+    except Conversation.DoesNotExist:
+        return JsonResponse(
+            {'error': 'Conversation not found'}, status=404)
     serializer: ConversationDetailSerializer = ConversationDetailSerializer(
         conversation, context={'request': request})
     return JsonResponse(serializer.data, safe=False)

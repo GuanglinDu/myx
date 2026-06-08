@@ -26,6 +26,7 @@
 # You must also implement a custom UserManager (Django’s auth system
 # relies on the manager for creating users/superusers).
 import uuid
+from typing import override
 from datetime import datetime
 from django.utils import timezone
 from django.conf import settings
@@ -39,23 +40,29 @@ from django_stubs_ext.db.models.manager import ManyRelatedManager
 
 
 class CustomUserManager(UserManager):
+    @override
     def _create_user(self, name, email, password, **extra_fields) -> "User":
         if not email:
             raise ValueError("You have not provided a valid e-mail address")
         
         email: str = self.normalize_email(email)  # lowercase domain
+        # A *type comment* is used here instead of a direct type
+        # annotation because the User model is not yet fully defined
+        # at this point in the code.
         user: "User" = self.model(email=email, name=name, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
 
         return user
     
+    @override
     def create_user(self, name=None, email=None, password=None,
                     **extra_fields) -> "User":
         extra_fields.setdefault('is_staff', False)
         extra_fields.setdefault('is_superuser', False)
         return self._create_user(name, email, password, **extra_fields)
     
+    @override
     def create_superuser(self, name=None, email=None, password=None,
                          **extra_fields) -> "User":
         extra_fields.setdefault('is_staff', True)

@@ -49,7 +49,7 @@ def me(request: Request):
 
 
 @api_view(['POST'])
-def editme(request: Request) -> JsonResponse:
+def edit_profile(request: Request) -> JsonResponse:
     """Update the logged-in user's name and/or email.
 
     Only fields present in the payload are updated; omitted fields are
@@ -93,10 +93,9 @@ def editme(request: Request) -> JsonResponse:
 @permission_classes([])
 def signup(request: Request) -> JsonResponse:
     data: dict | list = request.data
-    message: str = 'success'
 
     form: SignupForm = SignupForm({
-        'name': data.get('name'),      
+        'name': data.get('name'),
         'email': data.get('email'),
         'password1': data.get('password1'),
         'password2': data.get('password2'),
@@ -108,10 +107,11 @@ def signup(request: Request) -> JsonResponse:
         form.save()
 
         # Sends verification email later!
-    else:
-        message: str = 'error'
+        return JsonResponse({'message': 'success'})
 
-    return JsonResponse({'message': message})
+    # Surface per-field validation errors so the client can show the
+    # user what went wrong (taken email, weak password, mismatch, ...).
+    return JsonResponse({'errors': form.errors}, status=400)
 
 
 @api_view(['POST'])

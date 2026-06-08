@@ -133,10 +133,13 @@ class TestChatAPI:
         # Verify message was created
         assert ConversationMessage.objects.filter(body='Test message').exists()
 
-    @pytest.mark.skip(reason="Backend raises DoesNotExist exception instead of 404")
     def test_cannot_see_other_conversations(
             self, user: User, user2: User, client: APIClient) -> None:
-        """Test that users cannot see other users' conversations."""
+        """Test that users cannot see other users' conversations.
+
+        A non-participant asking for a conversation they're not in
+        should get 404, not 500 — and not leak whether the id is valid.
+        """
         # Create conversation between user2 and another user
         other_user = User.objects.create_user(
             name='Other', email='other@example.com', password='pass123'
@@ -146,5 +149,4 @@ class TestChatAPI:
 
         client.force_authenticate(user=user)
         response = client.get(f'/api/chat/{conv.id}/')
-        # Backend raises DoesNotExist for security check, resulting in 500
-        assert response.status_code == 500
+        assert response.status_code == 404

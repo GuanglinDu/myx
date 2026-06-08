@@ -19,6 +19,9 @@ def post_list(request: Request) -> JsonResponse:
         Q(created_by__in=request.user.friends.all())
     ).order_by('-created_at')
 
+    # https://www.django-rest-framework.org/api-guide/requests/
+    # The preferred request.query_params is a more correctly named
+    # synonym for request.GET.
     # trend: str = request.GET.get('trend', '')         # Django way    
     trend: str = request.query_params.get('trend', '')  # DRF way
     if trend:

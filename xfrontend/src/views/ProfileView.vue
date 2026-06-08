@@ -231,23 +231,20 @@ watch(() => props.id, () => {
           </button>
         </div>
 
-        <!-- Edits the profile) -->
-        <div class="mt-6" v-if="isOwnProfile">
-          <RouterLink to="/profile/edit"
-            class="w-full p-3 bg-blue-600 text-white text-sm
-                   rounded-lg hover:bg-blue-700 text-center"
-            v-if="userStore.user.id === user.id"
+        <!-- Edit profile + Log out (own profile only) -->
+        <div class="flex mt-6 space-x-2" v-if="isOwnProfile">
+          <RouterLink
+            to="/profile/edit"
+            class="flex-1 p-3 bg-blue-600 text-white text-sm rounded-lg
+                   hover:bg-blue-700 text-center"
           >
             Edit profile
           </RouterLink>
-        </div>
 
-        <!-- Log out (only on own profile) -->
-        <div class="mt-6" v-if="isOwnProfile">
           <button
             @click="userStore.logout()"
-            class="w-full p-3 bg-red-500 text-white text-sm
-                   rounded-lg hover:bg-red-600"
+            class="flex-1 p-3 bg-red-500 text-white text-sm rounded-lg
+                   hover:bg-red-600"
           >
             Log out
           </button>
@@ -256,10 +253,10 @@ watch(() => props.id, () => {
         <!-- Creates a conversation to send direct messages (DM) -->
         <button
           @click="sendDirectMessage"
-          class="inline-block mt-2 p-3 bg-purple-600 text-white text-sm
+          class="w-full mt-2 p-3 bg-purple-600 text-white text-sm
                  rounded-lg hover:bg-purple-700 disabled:opacity-50"
         >
-          Send direct messages
+          Send direct messages (DM)
         </button>
       </div>
     </div>
@@ -298,7 +295,7 @@ watch(() => props.id, () => {
         </form>
       </div>
 
-      <!-- 1/2 Start of posts -->
+      <!-- posts -->
       <div
         class="p-4 bg-white border border-gray-200 rounded-lg"
         v-for="post in posts"
@@ -306,7 +303,6 @@ watch(() => props.id, () => {
       >
         <FeedItem :post="post" @post-updated="handlePostUpdated" />
       </div>
-      <!-- 2/2 End of post --> 
     </div>
 
     <!-- (3/3) The main-right column: PeopleYouMayKnow & Trends --> 
