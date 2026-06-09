@@ -87,6 +87,10 @@ async function submitForm(): Promise<void> {
         <p class="mb-6 text-gray-500">
           Update your name and e-mail address. Changes are saved immediately.
         </p>
+
+        <RouterLink to="/profile/editpassword" class="underline">
+          Edit Password
+        </RouterLink>
       </div>
     </div>
 
