@@ -296,3 +296,111 @@ class TestAccountAPI:
             'email': 'test@example.com',
         }, format='json')
         assert response.status_code == 401
+
+
+@pytest.mark.django_db
+class TestEditPasswordAPI:
+    """Tests for the /api/editpassword/ endpoint."""
+
+    def test_editpassword_success(self, user: User,
+                                  client: APIClient) -> None:
+        """Successful change actually rotates the stored password."""
+        client.force_authenticate(user=user)
+        response: Response = client.post('/api/editpassword/', {
+            'currentPassword': 'testpass123',
+            'newPassword': 'newpassword456',
+            'confirmNewPassword': 'newpassword456',
+        }, format='json')
+        assert response.status_code == 200
+        user.refresh_from_db()
+        assert user.check_password('newpassword456') is True
+        assert user.check_password('testpass123') is False
+
+    def test_editpassword_unauthenticated(self, client: APIClient) -> None:
+        """Returns 401 when no user is authenticated."""
+        response: Response = client.post('/api/editpassword/', {
+            'currentPassword': 'testpass123',
+            'newPassword': 'newpassword456',
+            'confirmNewPassword': 'newpassword456',
+        }, format='json')
+        assert response.status_code == 401
+
+    def test_editpassword_wrong_current_password(
+            self, user: User, client: APIClient) -> None:
+        """Rejects the request when currentPassword does not match."""
+        client.force_authenticate(user=user)
+        response: Response = client.post('/api/editpassword/', {
+            'currentPassword': 'wrong-current',
+            'newPassword': 'newpassword456',
+            'confirmNewPassword': 'newpassword456',
+        }, format='json')
+        assert response.status_code == 400
+        user.refresh_from_db()
+        assert user.check_password('testpass123') is True
+
+    def test_editpassword_mismatched_confirmation(
+            self, user: User, client: APIClient) -> None:
+        """Rejects the request when new/confirm passwords differ."""
+        client.force_authenticate(user=user)
+        response: Response = client.post('/api/editpassword/', {
+            'currentPassword': 'testpass123',
+            'newPassword': 'newpassword456',
+            'confirmNewPassword': 'different999',
+        }, format='json')
+        assert response.status_code == 400
+        user.refresh_from_db()
+        assert user.check_password('testpass123') is True
+
+    def test_editpassword_short_new_password(
+            self, user: User, client: APIClient) -> None:
+        """Rejects a new password shorter than 8 characters."""
+        client.force_authenticate(user=user)
+        response: Response = client.post('/api/editpassword/', {
+            'currentPassword': 'testpass123',
+            'newPassword': 'short',
+            'confirmNewPassword': 'short',
+        }, format='json')
+        assert response.status_code == 400
+        user.refresh_from_db()
+        assert user.check_password('testpass123') is True
+
+    def test_editpassword_new_same_as_current(
+            self, user: User, client: APIClient) -> None:
+        """Rejects a new password that equals the current password."""
+        client.force_authenticate(user=user)
+        response: Response = client.post('/api/editpassword/', {
+            'currentPassword': 'testpass123',
+            'newPassword': 'testpass123',
+            'confirmNewPassword': 'testpass123',
+        }, format='json')
+        assert response.status_code == 400
+
+    def test_editpassword_missing_current_password(
+            self, user: User, client: APIClient) -> None:
+        """Rejects the request when currentPassword is missing."""
+        client.force_authenticate(user=user)
+        response: Response = client.post('/api/editpassword/', {
+            'newPassword': 'newpassword456',
+            'confirmNewPassword': 'newpassword456',
+        }, format='json')
+        assert response.status_code == 400
+
+    def test_editpassword_missing_new_password(
+            self, user: User, client: APIClient) -> None:
+        """Rejects the request when newPassword is missing."""
+        client.force_authenticate(user=user)
+        response: Response = client.post('/api/editpassword/', {
+            'currentPassword': 'testpass123',
+            'confirmNewPassword': 'newpassword456',
+        }, format='json')
+        assert response.status_code == 400
+
+    def test_editpassword_missing_confirmation(
+            self, user: User, client: APIClient) -> None:
+        """Rejects the request when confirmNewPassword is missing."""
+        client.force_authenticate(user=user)
+        response: Response = client.post('/api/editpassword/', {
+            'currentPassword': 'testpass123',
+            'newPassword': 'newpassword456',
+        }, format='json')
+        assert response.status_code == 400
