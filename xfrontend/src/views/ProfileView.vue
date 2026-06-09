@@ -157,9 +157,9 @@ watch(() => props.id, () => {
   <div class="max-w-7xl mx-auto grid grid-cols-4 gap-4">
     <!-- (1/3) The main-left profile column: avatar, name, & statistics -->
     <div class="main-left col-span-1">
-      <div class="p-4 bg-white border border-gray-200
-                  text-center rounded-lg">
-        <img :src="avatarDataUri" alt="User Avatar" />
+      <div
+        class="p-4 text-center rounded-lg bg-white border border-gray-200">
+        <img :src="avatarDataUri" alt="User Avatar" class="block mx-auto" />
         
         <!-- The logged-in user's name is {{ userStore.user.name }}, while
              any user's name on his profile page is {{ user.name }}. -->
@@ -235,7 +235,7 @@ watch(() => props.id, () => {
         <div class="flex mt-6 space-x-2" v-if="isOwnProfile">
           <RouterLink
             to="/profile/edit"
-            class="flex-1 p-3 bg-blue-600 text-white text-sm rounded-lg
+            class="p-3 flex-1 bg-blue-600 text-white text-sm rounded-lg
                    hover:bg-blue-700 text-center"
           >
             Edit profile
@@ -243,7 +243,7 @@ watch(() => props.id, () => {
 
           <button
             @click="userStore.logout()"
-            class="flex-1 p-3 bg-red-500 text-white text-sm rounded-lg
+            class="p-3 flex-1 bg-red-500 text-white text-sm rounded-lg
                    hover:bg-red-600"
           >
             Log out

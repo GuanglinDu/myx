@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import { useRouter } from 'vue-router';
-import axios from 'axios';
-import { useUserStore } from '@/stores/user';
-import { useToastStore } from '@/stores/toast';
+import { ref, watch } from "vue";
+import { useRouter } from "vue-router";
+import axios from "axios";
+import { useUserStore } from "@/stores/user";
+import { useToastStore } from "@/stores/toast";
 
 const userStore = useUserStore();
 const toastStore = useToastStore();
@@ -31,25 +31,27 @@ watch(email, (value: string) => {
 
 // If the active user changes (e.g. after a re-login), pull the latest
 // values back into the form.
-watch(() => userStore.user.id, () => {
-  name.value = userStore.user.name;
-  email.value = userStore.user.email;
-});
+watch(
+  () => userStore.user.id,
+  () => {
+    name.value = userStore.user.name;
+    email.value = userStore.user.email;
+  },
+);
 
 async function submitForm(): Promise<void> {
   if (!name.value.trim()) {
-    toastStore.showToast(5000, 'Your name is missing', 'bg-red-300');
+    toastStore.showToast(5000, "Your name is missing", "bg-red-300");
     return;
   }
 
   if (!EMAIL_RE.test(email.value.trim())) {
-    toastStore.showToast(
-      5000, 'Enter a valid e-mail address', 'bg-red-300');
+    toastStore.showToast(5000, "Enter a valid e-mail address", "bg-red-300");
     return;
   }
 
   try {
-    const response = await axios.post('/api/editprofile/', {
+    const response = await axios.post("/api/editprofile/", {
       name: name.value.trim(),
       email: email.value.trim(),
     });
@@ -60,28 +62,27 @@ async function submitForm(): Promise<void> {
       email: response.data.email,
     });
 
-    toastStore.showToast(
-      5000, 'Profile updated', 'bg-emerald-500');
+    toastStore.showToast(5000, "Profile updated", "bg-emerald-500");
     // Navigate to the profile page to show the updated info. This also serves
     // as a confirmation that the update was successful.
-    $router.push({ name: 'profile', params: { id: userStore.user.id } });
+    $router.push({ name: "profile", params: { id: userStore.user.id } });
   } catch (error: unknown) {
     // Avoid relying on axios.isAxiosError so this also works under mocks
     // and in any caller that throws a plain object.
-    const responseError: string | undefined =
-      (error as { response?: { data?: { error?: string } } })
-        ?.response?.data?.error;
-    const message: string = responseError
-      ?? 'Could not update profile. Please try again.';
-    toastStore.showToast(5000, message, 'bg-red-300');
+    const responseError: string | undefined = (
+      error as { response?: { data?: { error?: string } } }
+    )?.response?.data?.error;
+    const message: string =
+      responseError ?? "Could not update profile. Please try again.";
+    toastStore.showToast(5000, message, "bg-red-300");
   }
 }
 </script>
 
 <template>
-  <div class="max-w-7xl mx-auto grid grid-cols-2 gap-4">
+  <div class="mx-auto grid max-w-7xl grid-cols-2 gap-4">
     <div class="main-left">
-      <div class="p-12 bg-white border border-gray-200 rounded-lg">
+      <div class="rounded-lg border border-gray-200 bg-white p-12">
         <h1 class="mb-6 text-2xl">Edit profile</h1>
         <p class="mb-6 text-gray-500">
           Update your name and e-mail address. Changes are saved immediately.
@@ -90,7 +91,7 @@ async function submitForm(): Promise<void> {
     </div>
 
     <div class="main-right">
-      <div class="p-12 bg-white border border-gray-200 rounded-lg">
+      <div class="rounded-lg border border-gray-200 bg-white p-12">
         <form class="space-y-6" @submit.prevent="submitForm">
           <div>
             <label>Name</label><br />
@@ -99,7 +100,7 @@ async function submitForm(): Promise<void> {
               name="name"
               v-model="name"
               placeholder="Enter your full name"
-              class="w-full mt-2 py-4 px-6 border-gray-200 rounded-lg"
+              class="mt-2 w-full rounded-lg border-gray-200 px-6 py-4"
             />
           </div>
 
@@ -110,12 +111,12 @@ async function submitForm(): Promise<void> {
               name="email"
               v-model="email"
               placeholder="Enter your e-mail address"
-              class="w-full mt-2 py-4 px-6 border-gray-200 rounded-lg"
+              class="mt-2 w-full rounded-lg border-gray-200 px-6 py-4"
             />
           </div>
 
           <div>
-            <button class="py-4 px-6 bg-purple-600 text-white rounded-lg">
+            <button class="rounded-lg bg-purple-600 px-6 py-4 text-white">
               Save
             </button>
           </div>
