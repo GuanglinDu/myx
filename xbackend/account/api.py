@@ -89,6 +89,50 @@ def edit_profile(request: Request) -> JsonResponse:
 
 
 @api_view(['POST'])
+def change_password(request: Request) -> JsonResponse:
+    """Update the logged-in user's password.
+
+    Requires the current password for verification and a confirmation
+    field to prevent typos. The new password must be at least 8 characters
+    and must differ from the current password.
+    """
+    user: User = request.user
+    data: dict = request.data
+
+    current_password: str | None = data.get('currentPassword', None)
+    new_password: str | None = data.get('newPassword', None)
+    confirm_new_password: str | None = \
+        data.get('confirmNewPassword', None)
+
+    if not current_password or not new_password or not confirm_new_password:
+        return JsonResponse(
+            {'error': 'All password fields are required'}, status=400)
+
+    if not user.check_password(current_password):
+        return JsonResponse(
+            {'error': 'Current password is incorrect'}, status=400)
+
+    if new_password != confirm_new_password:
+        return JsonResponse(
+            {'error': 'New passwords do not match'}, status=400)
+
+    if len(new_password) < 8:
+        return JsonResponse(
+            {'error': 'New password must be at least 8 characters'},
+            status=400)
+
+    if new_password == current_password:
+        return JsonResponse(
+            {'error': 'New password must differ from the current password'},
+            status=400)
+
+    user.set_password(new_password)
+    user.save()
+
+    return JsonResponse({'message': 'Password updated'})
+
+
+@api_view(['POST'])
 @authentication_classes([])
 @permission_classes([])
 def signup(request: Request) -> JsonResponse:
