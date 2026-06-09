@@ -110,6 +110,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import("@/views/EditProfileView.vue")
   },
   {
+    path: "/profile/editpassword",
+    name: "editpassword",
+    component: () => import("@/views/EditPasswordView.vue")
+  },
+  {
     path: "/profile/:id/friends",
     name: "friends",
     component: () => import("@/views/FriendsView.vue"),
