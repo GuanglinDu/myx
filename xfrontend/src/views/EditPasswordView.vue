@@ -15,7 +15,7 @@ const confirmNewPassword = ref<string>("");
 
 // Client-side checks mirror the backend's password rules so the user gets
 // immediate feedback. The backend re-validates and is the source of truth.
-const MIN_PASSWORD_LENGTH = 8;
+const MIN_PASSWORD_LENGTH: number = 8;
 
 async function submitForm(): Promise<void> {
   if (newPassword.value.length < MIN_PASSWORD_LENGTH) {
@@ -28,11 +28,7 @@ async function submitForm(): Promise<void> {
   }
 
   if (newPassword.value !== confirmNewPassword.value) {
-    toastStore.showToast(
-      5000,
-      "New passwords do not match",
-      "bg-red-300",
-    );
+    toastStore.showToast(5000, "New passwords do not match", "bg-red-300");
     return;
   }
 

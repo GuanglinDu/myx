@@ -89,7 +89,7 @@ def edit_profile(request: Request) -> JsonResponse:
 
 
 @api_view(['POST'])
-def change_password(request: Request) -> JsonResponse:
+def edit_password(request: Request) -> JsonResponse:
     """Update the logged-in user's password.
 
     Requires the current password for verification and a confirmation

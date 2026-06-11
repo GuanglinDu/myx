@@ -9,14 +9,17 @@ All Vue code in this project must adhere strictly to the Vue.js 3 Compostional A
 
 ## Testing
 
-### Unit Tests (Vitest)
+### Unit and integration Tests (Vitest)
+
 ```bash
-npm run test        # Run all unit tests
+npm run test:watch
+npm run test:once
 ```
 
 ### E2E Tests (Playwright)
+
 ```bash
-npm run e2e         # Run Playwright e2e tests
+npm run test:e2e         # Run Playwright e2e tests
 npx playwright test # Same as above
 ```
 

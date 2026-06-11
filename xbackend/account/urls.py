@@ -9,7 +9,7 @@ from . import api
 urlpatterns: list[ URLPattern | URLResolver] = [
     path('me/', api.me, name='me'),
     path('editprofile/', api.edit_profile, name='edit_profile'),
-    path('editpassword/', api.change_password, name='edit_password'),
+    path('editpassword/', api.edit_password, name='edit_password'),
     path('signup/', api.signup, name='signup'),
     path('login/', TokenObtainPairView.as_view(), name='token_obtain'),
     path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),

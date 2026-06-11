@@ -7,8 +7,9 @@
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview",
-    "test": "vitest",
-    "e2e": "playwright"
+    "test:watch": "vitest",
+    "test:once": "vitest run",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@dicebear/collection": "^9.4.2",
@@ -33,6 +34,7 @@
     "tailwindcss": "^3.3.1",
     "typescript": "~5.9.3",
     "vite": "^7.2.4",
+    "vite-tsconfig-paths": "^6.1.1",
     "vitest": "^4.1.6",
     "vue-tsc": "^3.1.4"
   }
