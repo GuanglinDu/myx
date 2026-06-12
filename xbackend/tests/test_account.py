@@ -1,4 +1,5 @@
 import pytest
+from unittest.mock import patch
 from rest_framework.test import APIClient
 from rest_framework.response import Response
 from account.models import User, FriendshipRequest
@@ -296,6 +297,110 @@ class TestAccountAPI:
             'email': 'test@example.com',
         }, format='json')
         assert response.status_code == 401
+
+
+@pytest.mark.django_db
+class TestSignupVerificationEmail:
+    """Tests for the verification email sent during /api/signup/.
+
+    Signup is the entry point of the email-verification flow, so this
+    class verifies the contract between the signup view and the email
+    service: a valid signup triggers exactly one verification email
+    addressed to the new user, carrying an activation URL built from
+    the configured WEBSITE_URL plus the user's email and id.
+    """
+
+    def test_signup_sends_verification_email(
+            self, client: APIClient) -> None:
+        """A successful signup triggers exactly one send_mail call."""
+        with patch('account.api.send_mail') as mock_send_mail:
+            response: Response = client.post('/api/signup/', {
+                'name': 'New User',
+                'email': 'newuser@example.com',
+                'password1': 'newpass123',
+                'password2': 'newpass123',
+            }, format='json')
+
+        assert response.status_code == 200
+        assert mock_send_mail.call_count == 1
+
+    def test_signup_email_recipient_is_new_user(
+            self, client: APIClient) -> None:
+        """The verification email is addressed to the new user."""
+        with patch('account.api.send_mail') as mock_send_mail:
+            response: Response = client.post('/api/signup/', {
+                'name': 'New User',
+                'email': 'newuser@example.com',
+                'password1': 'newpass123',
+                'password2': 'newpass123',
+            }, format='json')
+
+        assert response.status_code == 200
+        _, kwargs = mock_send_mail.call_args
+        assert kwargs['recipient_list'] == ['newuser@example.com']
+
+    def test_signup_email_subject_mentions_verification(
+            self, client: APIClient) -> None:
+        """The subject clearly says this is a verification email."""
+        with patch('account.api.send_mail') as mock_send_mail:
+            response: Response = client.post('/api/signup/', {
+                'name': 'New User',
+                'email': 'newuser@example.com',
+                'password1': 'newpass123',
+                'password2': 'newpass123',
+            }, format='json')
+
+        assert response.status_code == 200
+        _, kwargs = mock_send_mail.call_args
+        assert 'verify' in kwargs['subject'].lower()
+
+    def test_signup_email_message_contains_verification_url(
+            self, client: APIClient) -> None:
+        """The body carries the activation URL with email and id."""
+        with patch('account.api.send_mail') as mock_send_mail:
+            response: Response = client.post('/api/signup/', {
+                'name': 'New User',
+                'email': 'newuser@example.com',
+                'password1': 'newpass123',
+                'password2': 'newpass123',
+            }, format='json')
+
+        assert response.status_code == 200
+        _, kwargs = mock_send_mail.call_args
+        message: str = kwargs['message']
+
+        user: User = User.objects.get(email='newuser@example.com')
+        assert '/activateemail/' in message
+        assert f'email={user.email}' in message
+        assert f'id={user.id}' in message
+
+    def test_signup_marks_user_inactive(self, client: APIClient) -> None:
+        """Newly signed-up users are inactive pending verification."""
+        with patch('account.api.send_mail'):
+            response: Response = client.post('/api/signup/', {
+                'name': 'New User',
+                'email': 'newuser@example.com',
+                'password1': 'newpass123',
+                'password2': 'newpass123',
+            }, format='json')
+
+        assert response.status_code == 200
+        user: User = User.objects.get(email='newuser@example.com')
+        assert user.is_active is False
+
+    def test_signup_failed_signup_does_not_send_email(
+            self, client: APIClient) -> None:
+        """Invalid signup payloads must not trigger any email."""
+        with patch('account.api.send_mail') as mock_send_mail:
+            response: Response = client.post('/api/signup/', {
+                'name': 'New User',
+                'email': 'newuser@example.com',
+                'password1': 'newpass123',
+                'password2': 'differentpass',
+            }, format='json')
+
+        assert response.status_code == 400
+        assert mock_send_mail.call_count == 0
 
 
 @pytest.mark.django_db
