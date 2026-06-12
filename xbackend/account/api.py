@@ -1,7 +1,9 @@
 import re
 import uuid
+from django.conf import settings
 from django.http import JsonResponse
 from django.db.models import QuerySet
+from django.core.mail import send_mail
 from rest_framework.request import Request
 from rest_framework.decorators import (api_view, authentication_classes,
                                        permission_classes)
@@ -150,9 +152,22 @@ def signup(request: Request) -> JsonResponse:
     # form.save() creates and returns a User object with a securely
     # hashed password.
     if form.is_valid():
-        form.save()
+        user: User = form.save()
+        user.is_active = False  # Set to False if you want email verification
+        user.save()
 
-        # Sends verification email later!
+        # Sends verification email to the console!
+        url: str = (f'{settings.WEBSITE_URL}/activateemail/?'
+                    f'email={user.email}&id={user.id}')
+        send_mail(
+            subject='Welcome to X! Please verify your email',
+            message=("Thanks for signing up. Please verify your email by "
+                    f"clicking the link we sent you: {url}"),
+            from_email="noreply@x.com",
+            recipient_list=[user.email],
+            fail_silently=False,
+        )
+
         return JsonResponse({'message': 'success'})
 
     # Surface per-field validation errors so the client can show the
