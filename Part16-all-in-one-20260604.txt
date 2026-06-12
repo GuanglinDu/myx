@@ -38,7 +38,8 @@ https://www.youtube.com/watch?v=sQD0iDwM284&list=PLpyspNLjzwBlobEvnZzyWP8I-ORQcq
 07:43:30 Store the avatar in the user store (Pinia) after adding or changing
 07:46:15 Fix bugs in login and signup
 08:02:15 Change password
-08:15:15 Verify email address at signup
+08:15:15 Verify email address on signup
+08:28:35 Default avatar for user
 *08:30:30 Image attachments (part 10/15)*
 08:52:45 Reset the image uploading button in the profile view
 *08:55:40 Notifications (part 11/15)*

@@ -95,6 +95,8 @@ def edit_password(request: Request) -> JsonResponse:
     Requires the current password for verification and a confirmation
     field to prevent typos. The new password must be at least 8 characters
     and must differ from the current password.
+
+    * See tmp/Serialization-nonserialization-20260612.txt.
     """
     user: User = request.user
     data: dict = request.data

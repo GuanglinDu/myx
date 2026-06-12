@@ -49,7 +49,7 @@ async function submitForm(): Promise<void> {
     });
 
     toastStore.showToast(5000, "Password updated", "bg-emerald-500");
-    // Redirect to the profile page to confirm the change took effect.
+    // Redirects to the profile page to confirm the change took effect.
     $router.push({ name: "profile", params: { id: userStore.user.id } });
   } catch (error: unknown) {
     // Avoid relying on axios.isAxiosError so this also works under mocks
