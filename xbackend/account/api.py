@@ -7,7 +7,8 @@ from django.core.mail import send_mail
 from rest_framework.request import Request
 from rest_framework.decorators import (api_view, authentication_classes,
                                        permission_classes)
-# from notification.utils import create_notification
+from notification.models import Notification                                       
+from notification.utils import create_notification
 from .forms import SignupForm
 from .models import User, FriendshipRequest
 from .serializers import UserSerializer, FriendshipRequestSerializer
@@ -153,24 +154,26 @@ def signup(request: Request) -> JsonResponse:
     # hashed password.
     if form.is_valid():
         user: User = form.save()
-        user.is_active = False  # Set to False if you want email verification
+        user.is_active = False  # Sets to False if you want email verification
         user.save()
+
+        print(f"User {user.email} registered successfully. (ID: {user.id})")
 
         # Sends verification email to the console!
         url: str = (f'{settings.WEBSITE_URL}/activateemail/?'
                     f'email={user.email}&id={user.id}')
         send_mail(
-            subject='Welcome to X! Please verify your email',
+            subject='Welcome to myX! Please verify your email',
             message=("Thanks for signing up. Please verify your email by "
                     f"clicking the link we sent you: {url}"),
-            from_email="noreply@x.com",
+            from_email="noreply@myx.com",
             recipient_list=[user.email],
             fail_silently=False,
         )
 
         return JsonResponse({'message': 'success'})
 
-    # Surface per-field validation errors so the client can show the
+    # Surfaces per-field validation errors so the client can show the
     # user what went wrong (taken email, weak password, mismatch, ...).
     return JsonResponse({'errors': form.errors}, status=400)
 
@@ -218,7 +221,7 @@ def send_friendship_request(request: Request,
         return JsonResponse({'error': 'You already sent a request'}, status=400)
 
     # Create the friendship request if all checks pass
-    FriendshipRequest.objects.create(
+    fsr: FriendshipRequest = FriendshipRequest.objects.create(
         created_for=target_user,
         created_by=user,
         status=FriendshipRequest.SENT
@@ -228,6 +231,10 @@ def send_friendship_request(request: Request,
     # to become friends if the request is accepted.
     user.people_you_may_know.remove(target_user)
     target_user.people_you_may_know.remove(user)
+
+    notification: Notification = create_notification(
+        request=request, type_of_notification='new_friend_request',
+        friendshiprequest_id=fsr.id)
 
     return JsonResponse({'message': 'Friendship request sent'})
 
@@ -257,6 +264,10 @@ def accept_friendship_request(request: Request,
     friendship_request.created_by.friend_count += 1
     friendship_request.created_by.save(update_fields=['friend_count'])
 
+    notification: Notification = create_notification(
+        request=request, type_of_notification='accepted_friend_request',
+        friendshiprequest_id=request_id)
+
     # Delete the friendship request
     friendship_request.delete()
 
@@ -279,9 +290,14 @@ def reject_friendship_request(request: Request,
     except FriendshipRequest.DoesNotExist:
         return JsonResponse({'error': 'Request not found'}, status=404)
 
-    # Update status to rejected and delete
+    # Update status to rejected
     friendship_request.status = FriendshipRequest.REJECTED
     friendship_request.save()
+
+    notification: Notification = create_notification(
+        request=request, type_of_notification='rejected_friend_request',
+        friendshiprequest_id=request_id)
+
     friendship_request.delete()
 
     return JsonResponse({'message': 'Friendship request rejected'})

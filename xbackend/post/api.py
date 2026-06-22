@@ -2,14 +2,16 @@ import uuid
 from django.db.models import Q, QuerySet
 from django.http import JsonResponse
 from rest_framework.request import Request
-from rest_framework.decorators import (api_view)
+from rest_framework.decorators import api_view
 from account.models import User, FriendshipRequest
 from account.serializers import UserSerializer
-from .models import Post, Like, Comment, Trend
+from notification.models import Notification
+from notification.utils import create_notification
+from .models import Post, Like, Comment, Trend, PostAttachment
 from .serializers import (
     PostSerializer, PostDetailSerializer, CommentSerializer, TrendSerializer
 )
-from .forms import PostForm
+from .forms import PostForm, AttachmentForm
 
 
 @api_view(['GET'])
@@ -87,40 +89,45 @@ def post_list_profile(request: Request, id: uuid.UUID) -> JsonResponse:
 
 # Instead of storing post_count, compute it on-the-fly
 # user.post_count = user.posts.count()  # Accesses the reverse FK relation
+# 
+# Appended at 19:44:17 on 20260619 Fri by Guanglin Du.
+# How is an image attached to a post? - Answered by Claude Code.
+# The order matters: the attachment is saved first (so the file exists
+# on disk and has an id), then the Post is saved, and finally the M2M
+# join row is added.
 @api_view(['POST'])
 def post_create(request: Request) -> JsonResponse:
     data: dict | list = request.data
-    # print('data', data)  # cannot show
-
     form: PostForm = PostForm(data)
-    if form.is_valid():
-        post: Post = form.save(commit=False)
-        post.created_by = request.user
-        post.save()
 
-        # Update the author's post_count
-        user: User = request.user
-        user.post_count += 1
-        # This bypasses change detection — it updates exactly what you list,
-        # regardless of whether Django thinks it changed.
-        user.save(update_fields=['post_count'])
-
-        serializer: PostSerializer = PostSerializer(post)
-        return JsonResponse(serializer.data, safe=False)
-    else:
+    if not form.is_valid():
         return JsonResponse({'error': 'Invalid data', 'details': form.errors},
                             status=400, safe=False)
 
-    # These lines were created by Copilot and they work!
-    # message: str = 'success'
-    # serializer: PostSerializer = PostSerializer(data=data)
-    # if serializer.is_valid():
-    #     serializer.save(created_by=request.user)
-    # else:
-    #     message: str = 'error'
+    attachment: PostAttachment = None
+    attachment_form: AttachmentForm = AttachmentForm(files=request.FILES)
 
-    # return JsonResponse({'message': message})
-    # return JsonResponse({'hello': 'hepp'})
+    if attachment_form.is_valid():
+        attachment = attachment_form.save(commit=False)
+        attachment.created_by = request.user
+        attachment.save()
+
+    post: Post = form.save(commit=False)
+    post.created_by = request.user
+    post.save()
+
+    if attachment:
+        post.attachments.add(attachment)
+
+    # Update the author's post_count
+    user: User = request.user
+    user.post_count += 1
+    # This bypasses change detection — it updates exactly what you list,
+    # regardless of whether Django thinks it changed.
+    user.save(update_fields=['post_count'])
+
+    serializer: PostSerializer = PostSerializer(post)
+    return JsonResponse(serializer.data, safe=False)
 
 
 @api_view(['POST'])
@@ -148,6 +155,9 @@ def post_like(request: Request, id: uuid.UUID) -> JsonResponse:
         liked: bool = True
 
     post.save()
+
+    notification: Notification = create_notification(request, 'post_like', id)
+
     return JsonResponse({'liked': liked, 'like_count': post.like_count},
                         safe=False)
 
@@ -189,6 +199,9 @@ def create_comment(request: Request, id: uuid.UUID) -> JsonResponse:
     post.comments.add(comment)
     post.comments_count += 1
     post.save()
+
+    notification: Notification = create_notification(request, 'post_comment',
+                                                     id)
 
     serializer: CommentSerializer = CommentSerializer(comment)
     return JsonResponse(serializer.data, safe=False)
