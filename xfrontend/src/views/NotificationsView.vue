@@ -12,7 +12,7 @@ interface XNotification {
   body: string;
   is_read: boolean;
   type_of_notification: string;
-  post_id: string;
+  post_id: string; // not post
   created_by: User;
   created_for: User;
 }
@@ -85,7 +85,7 @@ async function getNotifications(): Promise<void> {
 }
 
 async function readNotification(notification: XNotification): Promise<void> {
-  console.log("readNotification", notification.id);
+  console.log("readNotification: ", notification.id);
 
   try {
     const response: AxiosResponse = await axios.post(
@@ -97,10 +97,13 @@ async function readNotification(notification: XNotification): Promise<void> {
       notification.type_of_notification == "post_comment"
     ) {
       // Redirects to the post page
-      $router.push({ name: "postview", params: { id: notification.post_id } });
+      await $router.push({
+        name: "postview",
+        params: { id: notification.post_id },
+      });
     } else {
       // Redirects to the friends page
-      $router.push({
+      await $router.push({
         name: "friends",
         params: { id: notification.created_by.id },
       });
