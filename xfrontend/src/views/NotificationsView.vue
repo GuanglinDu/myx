@@ -88,7 +88,11 @@ function extractUserId(createdBy: User | string): string {
   if (typeof createdBy === "string") {
     return createdBy;
   }
-  return createdBy.id;
+  if (createdBy && typeof createdBy.id === "string") {
+    return createdBy.id;
+  }
+  console.error("Invalid created_by:", createdBy);
+  return "";
 }
 
 async function readNotification(notification: XNotification): Promise<void> {
@@ -111,13 +115,19 @@ async function readNotification(notification: XNotification): Promise<void> {
         params: { id: postId },
       });
     } else {
+      const userId = extractUserId(notification.created_by);
+      if (!userId) {
+        console.error(
+          "Missing created_by id for notification", notification.id);
+        return;
+      }
       await $router.push({
         name: "friends",
-        params: { id: extractUserId(notification.created_by) },
+        params: { id: userId },
       });
     }
   } catch (error) {
-    console.error("Error accepting request:", error);
+    console.error("Error in readNotification:", error);
   }
 }
 
