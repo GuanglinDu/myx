@@ -84,28 +84,36 @@ async function getNotifications(): Promise<void> {
   }
 }
 
+function extractUserId(createdBy: User | string): string {
+  if (typeof createdBy === "string") {
+    return createdBy;
+  }
+  return createdBy.id;
+}
+
 async function readNotification(notification: XNotification): Promise<void> {
   console.log("readNotification: ", notification.id);
 
   try {
-    const response: AxiosResponse = await axios.post(
-      `/api/notifications/read/${notification.id}/`,
-    );
+    await axios.post(`/api/notifications/read/${notification.id}/`);
 
     if (
       notification.type_of_notification == "post_like" ||
       notification.type_of_notification == "post_comment"
     ) {
-      // Redirects to the post page
+      const postId = notification.post_id;
+      if (!postId) {
+        console.error("Missing post_id for notification", notification.id);
+        return;
+      }
       await $router.push({
         name: "postview",
-        params: { id: notification.post_id },
+        params: { id: postId },
       });
     } else {
-      // Redirects to the friends page
       await $router.push({
         name: "friends",
-        params: { id: notification.created_by.id },
+        params: { id: extractUserId(notification.created_by) },
       });
     }
   } catch (error) {
