@@ -124,4 +124,52 @@ describe('LoginView', () => {
     expect(axios.default.post).toHaveBeenCalled();
     expect(axios.default.post).toHaveBeenCalledWith('/api/login/', expect.any(Object));
   });
+
+  it('shows backend detail message on login failure', async () => {
+    const axios = await import('axios');
+    (axios.default.post as any).mockRejectedValueOnce({
+      response: { data: { detail: 'Custom error from backend.' } },
+    });
+
+    const wrapper = mount(LoginView, {
+      global: {
+        stubs: {
+          RouterLink: { template: '<a><slot /></a>' },
+        },
+      },
+    });
+
+    await wrapper.find('input[type="email"]').setValue('test@example.com');
+    await wrapper.find('input[type="password"]').setValue('password123');
+    await wrapper.find('form').trigger('submit.prevent');
+
+    await new Promise((resolve) => setTimeout(resolve, 50));
+
+    expect(wrapper.find('.bg-red-300').text()).toContain(
+      'Custom error from backend.',
+    );
+  });
+
+  it('shows fallback message when no detail in response', async () => {
+    const axios = await import('axios');
+    (axios.default.post as any).mockRejectedValueOnce(new Error('Network error'));
+
+    const wrapper = mount(LoginView, {
+      global: {
+        stubs: {
+          RouterLink: { template: '<a><slot /></a>' },
+        },
+      },
+    });
+
+    await wrapper.find('input[type="email"]').setValue('test@example.com');
+    await wrapper.find('input[type="password"]').setValue('password123');
+    await wrapper.find('form').trigger('submit.prevent');
+
+    await new Promise((resolve) => setTimeout(resolve, 50));
+
+    expect(wrapper.find('.bg-red-300').text()).toContain(
+      'Invalid email or password.',
+    );
+  });
 });

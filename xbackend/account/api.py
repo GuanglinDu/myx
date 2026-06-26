@@ -99,7 +99,7 @@ def edit_password(request: Request) -> JsonResponse:
     field to prevent typos. The new password must be at least 8 characters
     and must differ from the current password.
 
-    * See tmp/Serialization-nonserialization-20260612.txt.
+    See history/Serialization-nonserialization-20260612.txt.
     """
     user: User = request.user
     data: dict = request.data
@@ -394,3 +394,10 @@ def friends(request: Request, user_id: uuid.UUID) -> JsonResponse:
         'friendshipRequests': FriendshipRequestSerializer(
             friendshipRequests, many=True).data
     }, safe=False)
+
+
+@api_view(['GET'])
+def friend_suggestions(request: Request) -> JsonResponse:
+    serializer: UserSerializer = UserSerializer(
+        request.user.people_you_may_know.all(), many=True)
+    return JsonResponse(serializer.data, safe=False)

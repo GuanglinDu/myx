@@ -1,5 +1,5 @@
 export interface User {
-  id: string; // Python uuid.UUID as string
+  id: string; // Python uuid.UUID
   name: string;
   email: string;
   avatar: string;
@@ -8,12 +8,17 @@ export interface User {
   is_active: boolean;
   is_superuser: boolean;
   is_staff: boolean;
-};
+}
+
+export interface Attachment {
+  id: string;
+  image: string;
+}
 
 export interface Post {
   id: string;
   body: string;
-  attachments: string[];
+  attachments: Attachment[];
   like_count: number;
   liked: boolean;
   comments: Comment[];
@@ -21,7 +26,7 @@ export interface Post {
   created_at: string;
   created_at_formatted: string;
   created_by: User;
-};
+}
 
 export interface Comment {
   id: string;
@@ -29,13 +34,13 @@ export interface Comment {
   created_at: string;
   created_at_formatted: string;
   created_by: User;
-};
+}
 
 export interface FriendshipRequest {
   id: string;
-  status: 'sent' | 'accepted' | 'rejected';
+  status: "sent" | "accepted" | "rejected";
   created_by: User;
-};
+}
 
 export interface Conversation {
   id: string;
@@ -48,5 +53,6 @@ export interface Conversation {
     body: string;
     sent_to: User;
     created_at_formatted: string;
-    created_by: User }[];
-};
+    created_by: User;
+  }[];
+}

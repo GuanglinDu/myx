@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { onMounted } from 'vue';
-import { useRoute } from 'vue-router';
-import axios from 'axios';
-import { createAvatar } from '@dicebear/core';
-import { adventurer } from '@dicebear/collection';
-import PeopleYouMayKnow from '@/components/PeopleYouMayKnow.vue';
-import TrendsComponent from '@/components/TrendsComponent.vue';
-import type { User, FriendshipRequest } from '@/types/custom_types';
+import { ref } from "vue";
+import { onMounted } from "vue";
+import { useRoute } from "vue-router";
+import axios, { type AxiosResponse } from "axios";
+import { createAvatar } from "@dicebear/core";
+import { adventurer } from "@dicebear/collection";
+import PeopleYouMayKnow from "@/components/PeopleYouMayKnow.vue";
+import TrendsComponent from "@/components/TrendsComponent.vue";
+import type { User, FriendshipRequest } from "@/types/custom_types";
 
 const $route = useRoute();
 
@@ -24,13 +24,15 @@ function getAvatarUri(userId: string): string {
 
 async function getFriends(): Promise<void> {
   try {
-    const response = await axios.get(`/api/friends/${$route.params.id}/`);
-    console.log('data', response.data);
+    const response: AxiosResponse = await axios.get(
+      `/api/friends/${$route.params.id}/`,
+    );
+    console.log("data", response.data);
     friendshipRequests.value = response.data.friendshipRequests;
     friends.value = response.data.friends;
     user.value = response.data.user;
   } catch (error) {
-    console.error('Error fetching friends:', error);
+    console.error("Error fetching friends:", error);
   }
 }
 
@@ -38,10 +40,10 @@ async function acceptRequest(requestId: string): Promise<void> {
   try {
     await axios.post(`/api/friends/accept/${requestId}/`);
     friendshipRequests.value = friendshipRequests.value.filter(
-      r => r.id !== requestId
+      (r) => r.id !== requestId,
     );
   } catch (error) {
-    console.error('Error accepting request:', error);
+    console.error("Error accepting request:", error);
   }
 }
 
@@ -49,10 +51,10 @@ async function rejectRequest(requestId: string): Promise<void> {
   try {
     await axios.post(`/api/friends/reject/${requestId}/`);
     friendshipRequests.value = friendshipRequests.value.filter(
-      r => r.id !== requestId
+      (r) => r.id !== requestId,
     );
   } catch (error) {
-    console.error('Error rejecting request:', error);
+    console.error("Error rejecting request:", error);
   }
 }
 
@@ -62,29 +64,23 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="max-w-7xl mx-auto grid grid-cols-4 gap-4">
+  <div class="mx-auto grid max-w-7xl grid-cols-4 gap-4">
     <!-- (1/3) The main-left profile column.
          The logged-in user: avatar, name, & statistics -->
     <div class="main-left col-span-1">
-      <div class="p-4 bg-white border border-gray-200
-                  text-center rounded-lg">
-        <img
-          :src="getAvatarUri(user.id)"
-          alt="avatar"
-          class="rounded-full"
-        />
-        
-        <p><strong>{{ user.name }}</strong></p>
+      <div class="rounded-lg border border-gray-200 bg-white p-4 text-center">
+        <img :src="getAvatarUri(user.id)" alt="avatar" class="rounded-full" />
 
-        <div class="mt-6 flex space-x-8 justify-around">
+        <p>
+          <strong>{{ user.name }}</strong>
+        </p>
+
+        <div class="mt-6 flex justify-around space-x-8">
           <p class="text-xs text-gray-500">
             {{ user.friend_count || 0 }} friends
           </p>
-          <p class="text-xs text-gray-500">
-            {{ user.post_count || 0 }} posts
-          </p>
+          <p class="text-xs text-gray-500">{{ user.post_count || 0 }} posts</p>
         </div>
-
       </div>
     </div>
 
@@ -105,20 +101,19 @@ onMounted(() => {
       <!-- Pending friendship requests -->
       <div
         v-if="friendshipRequests.length"
-        class="p-4 bg-white border border-gray-200 rounded-lg"
+        class="rounded-lg border border-gray-200 bg-white p-4"
       >
-        <h2 class="text-lg font-semibold mb-4">Pending Requests</h2>
+        <h2 class="mb-4 text-lg font-semibold">Pending Requests</h2>
         <div
           v-for="request in friendshipRequests"
           :key="request.id"
-          class="p-4 border-b border-gray-100 last:border-0 flex items-center
-                 justify-between"
+          class="flex items-center justify-between border-b border-gray-100 p-4 last:border-0"
         >
           <div class="flex items-center space-x-3">
             <img
               :src="getAvatarUri(request.created_by.id)"
               alt="avatar"
-              class="w-12 h-12 rounded-full"
+              class="h-12 w-12 rounded-full"
             />
             <div>
               <RouterLink
@@ -133,14 +128,13 @@ onMounted(() => {
           <div class="flex space-x-2">
             <button
               @click="acceptRequest(request.id)"
-              class="px-3 py-1 bg-green-600 text-white text-xs rounded-lg
-                   hover:bg-green-700"
+              class="rounded-lg bg-green-600 px-3 py-1 text-xs text-white hover:bg-green-700"
             >
               Accept
             </button>
             <button
               @click="rejectRequest(request.id)"
-              class="px-3 py-1 bg-red-500 text-white text-xs rounded-lg hover:bg-red-600"
+              class="rounded-lg bg-red-500 px-3 py-1 text-xs text-white hover:bg-red-600"
             >
               Reject
             </button>
@@ -151,11 +145,10 @@ onMounted(() => {
       <!-- Friends list -->
       <div
         v-if="friends.length"
-        class="p-4 bg-white border border-gray-200 rounded-lg
-               grid grid-cols-4 gap-4"
+        class="grid grid-cols-4 gap-4 rounded-lg border border-gray-200 bg-white p-4"
       >
         <div
-          class="p-4 text-center bg-gray-100 rounded-lg"
+          class="rounded-lg bg-gray-100 p-4 text-center"
           v-for="friend in friends"
           :key="friend.id"
         >
@@ -176,7 +169,7 @@ onMounted(() => {
       </div>
     </div>
 
-    <!-- (3/3) The main-right column: PeopleYouMayKnow & Trends --> 
+    <!-- (3/3) The main-right column: PeopleYouMayKnow & Trends -->
     <div class="main-right col-span-1 space-y-4">
       <PeopleYouMayKnow />
       <TrendsComponent />

@@ -30,6 +30,8 @@ ALLOWED_HOSTS: list[str] = []
 # Optional: Allow credentials if using cookies/sessions
 CORS_ALLOW_CREDENTIALS: bool = True
 
+WEBSITE_URL: str = 'http://127.0.0.1:8001'
+
 # 5/6. Optional: Allow specific HTTP methods (for preflight requests)
 # Preflight requests (OPTIONS) are blocked if methods aren't allowed
 CORS_ALLOW_METHODS: list[str] = [
@@ -63,10 +65,12 @@ REST_FRAMEWORK: dict[str, tuple[str, ...]] = {
     )
 }
 
-SIMPLE_JWT: dict[str, timedelta | bool] = {
+SIMPLE_JWT: dict[str, timedelta | bool | str] = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=30),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=180),
     'ROTATE_REFRESH_TOKENS': False,
+    'TOKEN_OBTAIN_SERIALIZER':
+        'account.serializers.CustomTokenObtainPairSerializer',
 }
 
 CORS_ALLOWED_ORIGINS: list[str] = [
@@ -82,6 +86,12 @@ CSRF_TRUSTED_ORIGINS: list[str] = [
 # Tells Django to use our custom user model instead of the built-in one
 AUTH_USER_MODEL = 'account.User'
 
+# For development, we can use the console email backend which prints
+# emails to the console instead of sending them. In production, you
+# would switch to an actual email backend (e.g., SMTP) and configure it
+# with your email service provider's settings.
+EMAIL_BACKEND: str = 'django.core.mail.backends.console.EmailBackend'
+
 # https://github.com/jazzband/django-silk
 INSTALLED_APPS: list[str] = [
     'django.contrib.admin',
@@ -90,15 +100,16 @@ INSTALLED_APPS: list[str] = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_extensions',
-    'rest_framework',
-    'rest_framework_simplejwt',
-    'corsheaders',
+    'django_extensions',         # django-extensions
+    'rest_framework',            # djangorestframework
+    'rest_framework_simplejwt',  # djangorestframework-simplejwt
+    'corsheaders',               # django-cors-headers
     'silk',
     'account',
     'post',
     'search',
     'chat',
+    'notification',
 ]
 
 MIDDLEWARE: list[str] = [
@@ -173,8 +184,15 @@ USE_TZ: bool = True
 STATIC_URL: str = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-MEDIA_URL: str = 'media/'
+# The absolute filesystem path to the folder that holds user-uploaded
+# files by an ImageFieldFile object, which depnends on the *pillow*
+# library. In development, you can serve media files using Django's
+# built-in static file serving. In production, you should configure
+# your web server (e.g., Nginx) to serve media files directly from
+# this directory.
 MEDIA_ROOT: PosixPath | WindowsPath = os.path.join(BASE_DIR, 'media')
+# The URL that handles the media served from MEDIA_ROOT.
+MEDIA_URL: str = 'media/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

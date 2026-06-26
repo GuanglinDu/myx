@@ -12,9 +12,9 @@ interface XNotification {
   body: string;
   is_read: boolean;
   type_of_notification: string;
-  post_id: string; // not post
+  post_id: string | null; // not post
   created_by: User;
-  created_for: User;
+  created_for_id: string | null;
 }
 
 const $router = useRouter();
@@ -39,7 +39,7 @@ async function fetchRequests(): Promise<void> {
       `/api/friends/${userStore.user.id}/requests/`,
     );
     requests.value = response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching requests:", error);
   } finally {
     isLoading.value = false;
@@ -50,7 +50,7 @@ async function acceptRequest(requestId: string): Promise<void> {
   try {
     await axios.post(`/api/friends/accept/${requestId}/`);
     requests.value = requests.value.filter((r) => r.id !== requestId);
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error accepting request:", error);
   }
 }
@@ -78,21 +78,10 @@ async function getNotifications(): Promise<void> {
     const response: AxiosResponse = await axios.get(`/api/notifications/`);
 
     console.log(response.data);
-    notifications.value = response.data;
+    notifications.value = response.data; // raw JSON array
   } catch (error) {
     console.error("Error getting notifications", error);
   }
-}
-
-function extractUserId(createdBy: User | string): string {
-  if (typeof createdBy === "string") {
-    return createdBy;
-  }
-  if (createdBy && typeof createdBy.id === "string") {
-    return createdBy.id;
-  }
-  console.error("Invalid created_by:", createdBy);
-  return "";
 }
 
 async function readNotification(notification: XNotification): Promise<void> {
@@ -105,25 +94,14 @@ async function readNotification(notification: XNotification): Promise<void> {
       notification.type_of_notification == "post_like" ||
       notification.type_of_notification == "post_comment"
     ) {
-      const postId = notification.post_id;
-      if (!postId) {
-        console.error("Missing post_id for notification", notification.id);
-        return;
-      }
-      await $router.push({
+      $router.push({
         name: "postview",
-        params: { id: postId },
+        params: { id: notification.post_id },
       });
     } else {
-      const userId = extractUserId(notification.created_by);
-      if (!userId) {
-        console.error(
-          "Missing created_by id for notification", notification.id);
-        return;
-      }
-      await $router.push({
+      $router.push({
         name: "friends",
-        params: { id: userId },
+        params: { id: notification.created_for_id },
       });
     }
   } catch (error) {

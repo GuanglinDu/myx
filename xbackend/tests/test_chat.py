@@ -3,6 +3,7 @@ from rest_framework.test import APIClient
 from rest_framework.response import Response
 from account.models import User
 from chat.models import Conversation, ConversationMessage
+from notification.utils import create_notification
 
 
 @pytest.fixture

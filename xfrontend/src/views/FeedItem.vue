@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { createAvatar } from '@dicebear/core';
-import { adventurer } from '@dicebear/collection';
-import type { Post } from '@/types/custom_types';
-import axios from 'axios';
+import { computed, ref } from "vue";
+import { createAvatar } from "@dicebear/core";
+import { adventurer } from "@dicebear/collection";
+import type { Post } from "@/types/custom_types";
+import axios from "axios";
 
 const isLiking = ref<boolean>(false);
 const $props = defineProps<{
@@ -12,7 +12,7 @@ const $props = defineProps<{
 
 // Emits event to parent to refresh posts
 const emit = defineEmits<{
-  (e: 'postUpdated', post: Post): void;
+  (e: "postUpdated", post: Post): void;
 }>();
 
 // Generates the avatar as a Data URI
@@ -20,7 +20,7 @@ const avatarDataUri = computed(() =>
   createAvatar(adventurer, {
     seed: $props.post.created_by.id,
     size: 128,
-  }).toDataUri()
+  }).toDataUri(),
 );
 
 // Handles the like-button click
@@ -29,17 +29,15 @@ async function toggleLike(): Promise<void> {
 
   isLiking.value = true;
   try {
-    const response = await axios.post(
-      `/api/posts/${$props.post.id}/like/`
-    );
+    const response = await axios.post(`/api/posts/${$props.post.id}/like/`);
     const { liked, like_count } = response.data;
-    emit('postUpdated', {
+    emit("postUpdated", {
       ...$props.post,
       liked,
       like_count: like_count,
     });
   } catch (error) {
-    console.error('Failed to toggle like:', error);
+    console.error("Failed to toggle like:", error);
   } finally {
     isLiking.value = false;
   }
@@ -49,7 +47,7 @@ async function toggleLike(): Promise<void> {
 <template>
   <!-- The avatar, name, & the time elapsed since the post was published. -->
   <div class="mb-6 flex justify-between">
-    <div class="flex space-x-1 justify-between">
+    <div class="flex justify-between space-x-1">
       <img
         :src="avatarDataUri"
         alt="User Avatar"
@@ -68,6 +66,17 @@ async function toggleLike(): Promise<void> {
     <p class="text-gray-600">{{ post.created_at_formatted }} ago</p>
   </div>
 
+  <!-- Attachment images -->
+  <div v-if="post.attachments && post.attachments.length > 0" class="mt-4">
+    <img
+      v-for="att in post.attachments"
+      :key="att.id"
+      :src="att.image"
+      alt="Post image"
+      class="h-auto max-w-full rounded-lg"
+    />
+  </div>
+
   <!-- The textual body -->
   <p>{{ post.body }}</p>
 
@@ -75,10 +84,7 @@ async function toggleLike(): Promise<void> {
     <div class="flex space-x-6">
       <!-- Count of likes -->
       <div class="flex items-center space-x-2">
-        <button
-          @click="toggleLike"
-          class="focus:outline-none"
-        >
+        <button @click="toggleLike" class="focus:outline-none">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             :fill="post.liked ? 'currentColor' : 'none'"
@@ -95,7 +101,7 @@ async function toggleLike(): Promise<void> {
             />
           </svg>
         </button>
-        <span class="text-gray-500 text-xs">{{ post.like_count }}</span>
+        <span class="text-xs text-gray-500">{{ post.like_count }}</span>
       </div>
 
       <!-- Count of comments -->
@@ -115,8 +121,8 @@ async function toggleLike(): Promise<void> {
           />
         </svg>
         <RouterLink
-          :to="{ name: 'postview', params: {id: post.id} }"
-          class="text-gray-500 text-xs"
+          :to="{ name: 'postview', params: { id: post.id } }"
+          class="text-xs text-gray-500"
         >
           {{ post.comments_count }} comments
         </RouterLink>

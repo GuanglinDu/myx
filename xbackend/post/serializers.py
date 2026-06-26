@@ -12,6 +12,8 @@ class PostAttachmentSerializer(serializers.ModelSerializer):
 
 class PostSerializer(serializers.ModelSerializer):
     created_by: UserSerializer = UserSerializer(read_only=True)
+    attachments: PostAttachmentSerializer = PostAttachmentSerializer(
+        many=True, read_only=True)
     liked: serializers.SerializerMethodField
 
     def get_liked(self, obj: Post) -> bool:

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import axios from 'axios';
-import { useToastStore } from '@/stores/toast';
+import axios from "axios";
+import { useToastStore } from "@/stores/toast";
 
 const toastStore = useToastStore();
 
@@ -46,8 +46,8 @@ function submitForm(): void {
       .then((response) => {
         toastStore.showToast(
           5000,
-          "The user is registered. Please log in.",
-          "bg-emerald-500"
+          "The user is registered. Please acitvate your account by clicking the link in the verification email.",
+          "bg-emerald-500",
         );
 
         form.email = "";
@@ -67,48 +67,49 @@ function submitForm(): void {
         toastStore.showToast(
           5000,
           firstMsg ?? "Something went wrong. Please try again.",
-          "bg-red-300"
+          "bg-red-300",
         );
       });
   } else {
     console.log(errors);
 
-    let msg: string = errors[0] ?? 'Something wrong!';
-    toastStore.showToast(
-      5000,
-      msg,
-      "bg-red-300"
-    );
+    let msg: string = errors[0] ?? "Something wrong!";
+    toastStore.showToast(5000, msg, "bg-red-300");
   }
 }
 </script>
 
 <template>
-  <div class="max-w-7xl mx-auto grid grid-cols-2 gap-4">
+  <div class="mx-auto grid max-w-7xl grid-cols-2 gap-4">
     <div class="main-left">
-      <div class="p-12 bg-white border border-gray-200 rounded-lg">
+      <div class="rounded-lg border border-gray-200 bg-white p-12">
         <h1 class="mb-6 text-2xl">Sign up</h1>
         <p class="mb-6 text-gray-500">
-        This is the sign up page based on the tutorial "Build a Full-Stack Social Network with Django and Vue 3: From Idea to Launch".            
+          This is the sign up page based on the tutorial "Build a Full-Stack
+          Social Network with Django and Vue 3: From Idea to Launch".
         </p>
 
         <p class="font-bold">
-          Already have an account? <RouterLink :to="{'name': 'login'}" class="underline">Click here</RouterLink> to log in.
+          Already have an account?
+          <RouterLink :to="{ name: 'login' }" class="underline"
+            >Click here</RouterLink
+          >
+          to log in.
         </p>
       </div>
     </div>
 
     <div class="main-right">
-      <div class="p-12 bg-white border border-gray-200 rounded-lg">
+      <div class="rounded-lg border border-gray-200 bg-white p-12">
         <form class="space-y-6" @submit.prevent="submitForm">
           <div>
             <label>Name</label><br />
             <input
               type="text"
               name="name"
-              v-model="form.name"              
+              v-model="form.name"
               placeholder="Enter your full name"
-              class="w-full mt-2 py-4 px-6 border-gray-200 rounded-lg"
+              class="mt-2 w-full rounded-lg border-gray-200 px-6 py-4"
             />
           </div>
 
@@ -117,12 +118,12 @@ function submitForm(): void {
             <input
               type="email"
               name="email"
-              v-model="form.email"          
+              v-model="form.email"
               placeholder="Enter your e-mail address"
-              class="w-full mt-2 py-4 px-6 border-gray-200 rounded-lg"
+              class="mt-2 w-full rounded-lg border-gray-200 px-6 py-4"
             />
           </div>
-          
+
           <div>
             <label>Password</label><br />
             <input
@@ -130,7 +131,7 @@ function submitForm(): void {
               name="password1"
               v-model="form.password1"
               placeholder="Enter your password"
-              class="w-full mt-2 py-4 px-6 border-gray-200 rounded-lg"
+              class="mt-2 w-full rounded-lg border-gray-200 px-6 py-4"
             />
           </div>
 
@@ -139,20 +140,20 @@ function submitForm(): void {
             <input
               type="password"
               name="password2"
-              v-model="form.password2"                    
+              v-model="form.password2"
               placeholder="Repeat your password"
-              class="w-full mt-2 py-4 px-6 border-gray-200 rounded-lg"
+              class="mt-2 w-full rounded-lg border-gray-200 px-6 py-4"
             />
           </div>
 
           <template v-if="errors.length > 0">
-            <div class="bg-red-300 text-white rounded-lg p-6">
+            <div class="rounded-lg bg-red-300 p-6 text-white">
               <p v-for="error in errors" :key="error">{{ error }}</p>
             </div>
           </template>
 
           <div>
-            <button class="py-4 px-6 bg-purple-600 text-white rounded-lag">
+            <button class="rounded-lag bg-purple-600 px-6 py-4 text-white">
               Sign up
             </button>
           </div>

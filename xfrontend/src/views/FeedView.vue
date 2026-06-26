@@ -108,7 +108,7 @@ onUnmounted(() => {
               placeholder="What are you curious about? - FeedView.vue"
             />
           </div>
-
+          <!-- The image preview  -->
           <div v-if="imagePreviewUrl" class="px-4 pb-2">
             <img
               :src="imagePreviewUrl"

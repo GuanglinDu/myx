@@ -1,51 +1,52 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
-import axios, { type AxiosResponse } from 'axios';
-import { createAvatar } from '@dicebear/core';
-import { adventurer } from '@dicebear/collection';
-import type { Conversation, User } from '@/types/custom_types';
-import { useUserStore } from '@/stores/user';
+import { computed, onMounted, ref } from "vue";
+import axios, { type AxiosResponse } from "axios";
+import { createAvatar } from "@dicebear/core";
+import { adventurer } from "@dicebear/collection";
+import type { Conversation, User } from "@/types/custom_types";
+import { useUserStore } from "@/stores/user";
 
 const userStore = useUserStore();
 const conversations = ref<Conversation[]>([]);
 const activeConversation = ref<Conversation | null>(null);
 // The other participant in the conversation
 const participant = ref<User | null>(null);
-const body = ref<string>('');
+const body = ref<string>("");
 
 // Generates the avatar as a Data URI
 const avatarDataUri = computed(() =>
   createAvatar(adventurer, {
     seed: participant.value?.id,
     size: 128,
-  }).toDataUri()
+  }).toDataUri(),
 );
 
 // Fetches conversations
 function getConversations(): void {
-  console.log('Fetching conversations...');
+  console.log("Fetching conversations...");
 
   axios
-    .get('/api/chat/')
+    .get("/api/chat/")
     .then((response: AxiosResponse) => {
-      console.log('Conversations:', response.data);
+      console.log("Conversations:", response.data);
 
       conversations.value = response.data;
 
       if (conversations.value.length > 0) {
         activeConversation.value = conversations.value[0] ?? null;
-        participant.value = activeConversation.value?.participants.find(
-          (p) => p.id !== userStore.user.id
-        ) ?? null;
+        participant.value =
+          activeConversation.value?.participants.find(
+            (p) => p.id !== userStore.user.id,
+          ) ?? null;
       }
 
-      console.log('Active Conversation:', activeConversation.value);
-      console.log('Participant:', participant.value);
+      console.log("Active Conversation:", activeConversation.value);
+      console.log("Participant:", participant.value);
 
       getMessages();
     })
-    .catch(error => {
-      console.error('Error fetching conversations:', error);
+    .catch((error) => {
+      console.error("Error fetching conversations:", error);
     });
 }
 
@@ -53,18 +54,20 @@ function getConversations(): void {
 function getMessages(): void {
   if (!activeConversation.value) return;
 
-  console.log('Fetching messages for conversation:',
-              activeConversation.value.id);
+  console.log(
+    "Fetching messages for conversation:",
+    activeConversation.value.id,
+  );
 
   axios
     .get(`/api/chat/${activeConversation.value.id}/`)
     .then((response: AxiosResponse) => {
-      console.log('Messages:', response.data);
+      console.log("Messages:", response.data);
 
       activeConversation.value = response.data;
     })
-    .catch(error => {
-      console.error('Error fetching messages:', error);
+    .catch((error) => {
+      console.error("Error fetching messages:", error);
     });
 }
 
@@ -72,31 +75,30 @@ function getMessages(): void {
 function submitForm(): void {
   if (!activeConversation.value) return;
 
-  console.log('Submitting message to conversation:',
-              activeConversation.value.id);
+  console.log(
+    "Submitting message to conversation:",
+    activeConversation.value.id,
+  );
 
   axios
     .post(`/api/chat/${activeConversation.value.id}/send/`, {
       body: body.value,
     })
     .then((response: AxiosResponse) => {
-      console.log('Message sent:', response.data);
+      // console.log('Message sent:', response.data);
       // Appends the new message to the active conversation's message array
       // instead of refetching all messages from the DB for better performance.
       activeConversation.value!.messages.push(response.data);
-      body.value = '';      
+      body.value = "";
     })
-    .catch(error => {
-      console.error('Error sending message:', error);
+    .catch((error) => {
+      console.error("Error sending message:", error);
     });
 }
 
 function setActiveConversation(conversationId: string): void {
-  console.log('Setting active conversation to ID:', conversationId);
-
-  const conversation = conversations.value.find(
-    (c) => c.id === conversationId
-  );
+  // console.log('Setting active conversation to ID:', conversationId);
+  const conversation = conversations.value.find((c) => c.id === conversationId);
   if (conversation) {
     activeConversation.value = conversation;
     getMessages();
@@ -109,7 +111,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="max-w-7xl mx-auto grid grid-cols-4 gap-4">
+  <div class="mx-auto grid max-w-7xl grid-cols-4 gap-4">
     <!-- Conversation list on the left 1 column -->
     <div class="main-left col-span-1">
       <div class="space-y-4">
@@ -139,40 +141,40 @@ onMounted(() => {
                 class="text-xs font-bold"
                 v-if="participant.id !== userStore.user.id"
               >
-                {{ participant.name }}              
+                {{ participant.name }}
               </p>
             </template>
           </div>
           <span class="text-xs text-gray-500">
-            {{conversation.modified_at_formatted}} ago
+            {{ conversation.modified_at_formatted }} ago
           </span>
-        </div>      
+        </div>
       </div>
     </div>
 
     <!-- Messages on the right 3 columns -->
     <div class="main-center col-span-3 space-y-2">
-      <div class="bg-white border border-gray-200 rounded-lg">
-        <div class="flex flex-col flex-grow p-4">
+      <div class="rounded-lg border border-gray-200 bg-white">
+        <div class="flex flex-grow flex-col p-4">
           <template
             v-for="message in activeConversation?.messages"
             :key="message.id"
           >
-            <!-- Messages you sent: v-if -->          
+            <!-- Messages you sent: v-if -->
             <div
-              class="flex mt-2 space-x-3 max-w-md ml-auto justify-end"
+              class="ml-auto mt-2 flex max-w-md justify-end space-x-3"
               v-if="message.created_by.id == userStore.user.id"
             >
-              <div class="bg-blue-600 text-white p-3 rounded-l-lg
-                          rounded-br-lg"
+              <div
+                class="rounded-l-lg rounded-br-lg bg-blue-600 p-3 text-white"
               >
                 <p class="text-sm">{{ message.body }}</p>
               </div>
-              <span class="text-xs text-gray-500 leading-none">
+              <span class="text-xs leading-none text-gray-500">
                 {{ message.created_at_formatted }} ago
               </span>
 
-              <div class="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300">
+              <div class="h-10 w-10 flex-shrink-0 rounded-full bg-gray-300">
                 <img
                   src="@/assets/Brian-40x40px.png"
                   class="w-[40px] rounded-full"
@@ -181,45 +183,47 @@ onMounted(() => {
             </div>
 
             <!-- Messages you received: v-else -->
-            <div class="flex w-full mt-2 space-x-3 max-w-md" v-else>
-              <div class="flex-shrink-0 h-10 w-10 rounded-full">
+            <div class="mt-2 flex w-full max-w-md space-x-3" v-else>
+              <div class="h-10 w-10 flex-shrink-0 rounded-full">
                 <img
                   src="@/assets/Adrian-40x40px.png"
                   class="w-[40px] rounded-full"
                 />
               </div>
 
-              <div class="flex mt-2 space-x-3 max-w-md ml-auto">
-                <div class="bg-gray-300 text-black p-3 rounded-l-lg
-                            rounded-br-lg">
+              <div class="ml-auto mt-2 flex max-w-md space-x-3">
+                <div
+                  class="rounded-l-lg rounded-br-lg bg-gray-300 p-3 text-black"
+                >
                   <p class="text-sm">{{ message.body }}</p>
                 </div>
 
-                <span class="text-xs text-gray-500 leading-none">
+                <span class="text-xs leading-none text-gray-500">
                   {{ message.created_at_formatted }} ago
                 </span>
               </div>
-            </div>          
+            </div>
           </template>
-        </div>       
+        </div>
       </div>
 
       <!-- Creates and sends messages -->
-      <div class="bg-white border border-gray-200 rounded-lg">
+      <div class="rounded-lg border border-gray-200 bg-white">
         <form @submit.prevent="submitForm" method="POST">
           <div class="p-4">
             <textarea
               v-model="body"
-              class="p-4 w-full bg-gray-100 rounded-lg"
+              class="w-full rounded-lg bg-gray-100 p-4"
               placeholder="What do you want to say?"
             />
           </div>
 
           <!-- The Send button -->
-          <div class="p-4 border-t border-gray-100 flex justify-between">
-            <button type="submit"
-              class="inline-block py-4 px-6 bg-purple-600 text-white
-                     rounded-lg">
+          <div class="flex justify-between border-t border-gray-100 p-4">
+            <button
+              type="submit"
+              class="inline-block rounded-lg bg-purple-600 px-6 py-4 text-white"
+            >
               Send
             </button>
           </div>

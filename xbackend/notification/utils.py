@@ -1,11 +1,13 @@
+import uuid
 from rest_framework.request import Request
-from .models import Notification
 from account.models import User, FriendshipRequest
 from post.models import Post
+from .models import Notification
 
 
 def create_notification(request: Request, type_of_notification: str,
-                        post_id=None, friendshiprequest_id=None) -> Notification:
+                        post_id: uuid.UUID = None,
+                        friendshiprequest_id: uuid.UUID = None) -> Notification:
     post: Post | None = None
     if post_id is not None:
         post = Post.objects.get(pk=post_id)

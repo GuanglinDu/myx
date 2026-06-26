@@ -24,4 +24,6 @@ urlpatterns: list[ URLPattern | URLResolver] = [
     path('friends/<uuid:user_id>/requests/', api.get_friendship_requests,
           name='get_friendship_requests'),
     path('friends/<uuid:user_id>/', api.friends, name='friends'),
+    path('friends/suggested/', api.friend_suggestions,
+         name='friend_suggestions'),
 ]

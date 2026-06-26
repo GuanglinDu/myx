@@ -125,4 +125,45 @@ describe('FeedItem', () => {
     const axios = await import('axios');
     expect(axios.default.post).toHaveBeenCalledWith('/api/posts/123/like/');
   });
+
+  it('renders attachment image when post has attachments', () => {
+    const postWithImage: Post = {
+      ...mockPost,
+      attachments: [
+        { id: 'att-1', image: '/media/post_attachments/test.png' },
+      ],
+    };
+
+    const wrapper = mount(FeedItem, {
+      props: { post: postWithImage },
+      global: {
+        stubs: {
+          RouterLink: true,
+        },
+      },
+    });
+
+    const images = wrapper.findAll('img');
+    // One for avatar + one for attachment
+    expect(images.length).toBeGreaterThanOrEqual(2);
+    const postImage = images.find(
+      img => img.attributes('src') === '/media/post_attachments/test.png',
+    );
+    expect(postImage).toBeTruthy();
+  });
+
+  it('does not render attachment image when post has no attachments', () => {
+    const wrapper = mount(FeedItem, {
+      props: { post: mockPost },
+      global: {
+        stubs: {
+          RouterLink: true,
+        },
+      },
+    });
+
+    const images = wrapper.findAll('img');
+    // Only the avatar image -- no attachment image
+    expect(images.length).toBe(1);
+  });
 });

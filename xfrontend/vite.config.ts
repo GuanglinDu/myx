@@ -17,6 +17,12 @@ export default defineConfig(({ mode }) => {
       port: parseInt(env.VITE_PORT || "5174"),
       // host: 'localhost', // optional
       // open: true         // optional: auto-opens the brwoser
+      proxy: {
+        "/media": {
+          target: "http://127.0.0.1:8001",
+          changeOrigin: true,
+        },
+      },
     },
     test: {
       globals: true,

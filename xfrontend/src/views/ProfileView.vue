@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
-import { onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import axios, { type AxiosResponse } from 'axios';
-import { createAvatar } from '@dicebear/core';
-import { adventurer } from '@dicebear/collection';
-import PeopleYouMayKnow from '@/components/PeopleYouMayKnow.vue';
-import TrendsComponent from '@/components/TrendsComponent.vue';
-import FeedItem from './FeedItem.vue';
-import { useUserStore } from '@/stores/user';
-import type { Post, User } from '@/types/custom_types';
+import { ref, computed, watch } from "vue";
+import { onMounted } from "vue";
+import { useRouter } from "vue-router";
+import axios, { type AxiosResponse } from "axios";
+import { createAvatar } from "@dicebear/core";
+import { adventurer } from "@dicebear/collection";
+import PeopleYouMayKnow from "@/components/PeopleYouMayKnow.vue";
+import TrendsComponent from "@/components/TrendsComponent.vue";
+import FeedItem from "./FeedItem.vue";
+import { useUserStore } from "@/stores/user";
+import type { Post, User } from "@/types/custom_types";
 
 const userStore = useUserStore();
 const $router = useRouter();
@@ -19,15 +19,16 @@ const $router = useRouter();
 // viewed. We will access this UUID via props. So props.id gives you the UUID
 // of the user whose profile is being viewed.
 const props = defineProps({
-  id: { type: String, required: true }
+  id: { type: String, required: true },
 });
 
 const user = ref<User>({} as User);
 const posts = ref<Post[]>([]);
-const body = ref<string>('');
-const friendshipStatus =
-  ref<'none' | 'pending' | 'request_sent' | 'friends' | 'self'>('none');
-const requestId = ref<string>('');
+const body = ref<string>("");
+const friendshipStatus = ref<
+  "none" | "pending" | "request_sent" | "friends" | "self"
+>("none");
+const requestId = ref<string>("");
 const isSendingRequest = ref<boolean>(false);
 const isProcessingRequest = ref<boolean>(false);
 
@@ -36,23 +37,23 @@ const isOwnProfile = computed(() => {
 });
 
 // Generates the avatar as a Data URI
-const avatarDataUri = computed(() => 
+const avatarDataUri = computed(() =>
   createAvatar(adventurer, {
     seed: props.id,
     size: 128,
-  }).toDataUri()
+  }).toDataUri(),
 );
 
 async function getFeed(): Promise<void> {
   try {
     const response = await axios.get(`/api/posts/profile/${props.id}/`);
-    console.log('data', response.data);
+    // console.log("data", response.data);
     posts.value = response.data.posts;
     user.value = response.data.user;
-    friendshipStatus.value = response.data.friendship_status || 'none';
-    requestId.value = response.data.request_id || '';
+    friendshipStatus.value = response.data.friendship_status || "none";
+    requestId.value = response.data.request_id || "";
   } catch (error) {
-    console.error('Error fetching feed:', error);
+    console.error("Error fetching feed:", error);
   }
 }
 
@@ -60,14 +61,14 @@ async function getFeed(): Promise<void> {
 // UUID of the user whose profile we want to display. This id is passed via
 // the route parameters. See src/router/index.ts for the route definition.
 async function sendFriendshipRequest(): Promise<void> {
-  if (isSendingRequest.value || friendshipStatus.value !== 'none') return;
+  if (isSendingRequest.value || friendshipStatus.value !== "none") return;
 
   isSendingRequest.value = true;
   try {
     await axios.post(`/api/friends/send/${props.id}/`);
-    friendshipStatus.value = 'request_sent';
+    friendshipStatus.value = "request_sent";
   } catch (error) {
-    console.error('Error sending friendship request:', error);
+    console.error("Error sending friendship request:", error);
   } finally {
     isSendingRequest.value = false;
   }
@@ -79,9 +80,9 @@ async function acceptFriendshipRequest(): Promise<void> {
   isProcessingRequest.value = true;
   try {
     await axios.post(`/api/friends/accept/${requestId.value}/`);
-    friendshipStatus.value = 'friends';
+    friendshipStatus.value = "friends";
   } catch (error) {
-    console.error('Error accepting friendship request:', error);
+    console.error("Error accepting friendship request:", error);
   } finally {
     isProcessingRequest.value = false;
   }
@@ -93,25 +94,30 @@ async function rejectFriendshipRequest(): Promise<void> {
   isProcessingRequest.value = true;
   try {
     await axios.post(`/api/friends/reject/${requestId.value}/`);
-    friendshipStatus.value = 'none';
-    requestId.value = '';
+    friendshipStatus.value = "none";
+    requestId.value = "";
   } catch (error) {
-    console.error('Error rejecting friendship request:', error);
+    console.error("Error rejecting friendship request:", error);
   } finally {
     isProcessingRequest.value = false;
   }
 }
 
 async function submitForm(): Promise<void> {
-  console.log('submitForm:', body.value);
+  console.log("submitForm:", body.value);
   try {
-    const response = await axios.post('/api/posts/create/',
-                                      { body: body.value });
-    console.log('Post created:', response.data);
+    const response = await axios.post(
+      "/api/posts/create/",
+      { body: body.value },
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      },
+    );
+    console.log("Post created:", response.data);
     posts.value.unshift(response.data);
-    body.value = '';
+    body.value = "";
   } catch (error) {
-    console.error('Error creating post:', error);
+    console.error("Error creating post:", error);
   }
 }
 
@@ -126,55 +132,57 @@ function sendDirectMessage(): void {
   // For simplicity, we'll just navigate to the chat page with this user.
   // In a real app, you might want to create a conversation first if it doesn't
   // exist.
-  console.log('Send direct message to user ID:', props.id);
+  console.log("Send direct message to user ID:", props.id);
 
   axios
     .get(`/api/chat/${props.id}/get-or-create/`) // user id of the recipient
     .then((response: AxiosResponse) => {
-      console.log('Conversation created or retrieved:', response.data);
+      console.log("Conversation created or retrieved:", response.data);
 
       const conversationId = response.data.id;
       // Navigate to the chat page for this conversation
       // window.location.href = `/chat/${conversationId}`; // error-prone
 
-      $router.push({ name: 'chat', params: { id: conversationId } });
-    }).
-    catch (error => {
-      console.error('Error creating or retrieving conversation:', error);
+      $router.push({ name: "chat", params: { id: conversationId } });
     })
+    .catch((error) => {
+      console.error("Error creating or retrieving conversation:", error);
+    });
 }
 
 onMounted(() => {
   getFeed();
 });
 
-watch(() => props.id, () => {
-  getFeed();
-});
+watch(
+  () => props.id,
+  () => {
+    getFeed();
+  },
+);
 </script>
 
 <template>
-  <div class="max-w-7xl mx-auto grid grid-cols-4 gap-4">
+  <div class="mx-auto grid max-w-7xl grid-cols-4 gap-4">
     <!-- (1/3) The main-left profile column: avatar, name, & statistics -->
     <div class="main-left col-span-1">
-      <div
-        class="p-4 text-center rounded-lg bg-white border border-gray-200">
-        <img :src="avatarDataUri" alt="User Avatar" class="block mx-auto" />
-        
-        <!-- The logged-in user's name is {{ userStore.user.name }}, while
-             any user's name on his profile page is {{ user.name }}. -->
-        <p><strong>{{ user.name }}</strong></p>
+      <div class="rounded-lg border border-gray-200 bg-white p-4 text-center">
+        <img :src="avatarDataUri" alt="User Avatar" class="mx-auto block" />
 
-        <div class="mt-6 flex space-x-8 justify-around">
+        <!-- The logged-in user's name is {{ userStore.user.name }}, while
+          any user's name on his profile page is {{ user.name }}. -->
+        <p>
+          <strong>{{ user.name }}</strong>
+        </p>
+
+        <div class="mt-6 flex justify-around space-x-8">
           <RouterLink
-            :to="{name: 'friends', params: {id: user.id}}"
+            :to="{ name: 'friends', params: { id: user.id } }"
             class="text-xs text-gray-500"
           >
             {{ user.friend_count || 0 }} friends
           </RouterLink>
-          <p class="text-xs text-gray-500">
-            {{ user.post_count || 0 }} posts
-          </p>
+          <p class="text-xs text-gray-500">{{ user.post_count || 0 }} posts</p>
         </div>
 
         <!-- Sends friend request -->
@@ -184,37 +192,36 @@ watch(() => props.id, () => {
             v-if="friendshipStatus === 'none'"
             @click="sendFriendshipRequest"
             :disabled="isSendingRequest"
-            class="inline-block p-3 bg-purple-600 text-white text-sm
-                   rounded-lg hover:bg-purple-700 disabled:opacity-50"
+            class="inline-block rounded-lg bg-purple-600 p-3 text-sm text-white hover:bg-purple-700 disabled:opacity-50"
           >
-            {{ isSendingRequest ? 'Sending...' : 'Send friendship request' }}
+            {{ isSendingRequest ? "Sending..." : "Send friendship request" }}
           </button>
 
           <!-- If request already sent -->
           <button
             v-else-if="friendshipStatus === 'request_sent'"
             disabled
-            class="inline-block p-3 bg-gray-400 text-white text-sm
-                   rounded-lg cursor-not-allowed"
+            class="inline-block cursor-not-allowed rounded-lg bg-gray-400 p-3 text-sm text-white"
           >
             Request sent
           </button>
 
           <!-- If pending request from them -->
-          <div v-else-if="friendshipStatus === 'pending'" class="flex space-x-2">
+          <div
+            v-else-if="friendshipStatus === 'pending'"
+            class="flex space-x-2"
+          >
             <button
               @click="acceptFriendshipRequest"
               :disabled="isProcessingRequest"
-              class="flex-1 p-3 bg-green-600 text-white text-sm
-                     rounded-lg hover:bg-green-700 disabled:opacity-50"
+              class="flex-1 rounded-lg bg-green-600 p-3 text-sm text-white hover:bg-green-700 disabled:opacity-50"
             >
-              {{ isProcessingRequest ? 'Processing...' : 'Accept' }}
+              {{ isProcessingRequest ? "Processing..." : "Accept" }}
             </button>
             <button
               @click="rejectFriendshipRequest"
               :disabled="isProcessingRequest"
-              class="flex-1 p-3 bg-red-500 text-white text-sm
-                     rounded-lg hover:bg-red-600 disabled:opacity-50"
+              class="flex-1 rounded-lg bg-red-500 p-3 text-sm text-white hover:bg-red-600 disabled:opacity-50"
             >
               Reject
             </button>
@@ -224,27 +231,24 @@ watch(() => props.id, () => {
           <button
             v-else-if="friendshipStatus === 'friends'"
             disabled
-            class="inline-block p-3 bg-green-600 text-white text-sm
-                   rounded-lg cursor-not-allowed"
+            class="inline-block cursor-not-allowed rounded-lg bg-green-600 p-3 text-sm text-white"
           >
             Friends
           </button>
         </div>
 
         <!-- Edit profile + Log out (own profile only) -->
-        <div class="flex mt-6 space-x-2" v-if="isOwnProfile">
+        <div class="mt-6 flex space-x-2" v-if="isOwnProfile">
           <RouterLink
             to="/profile/edit"
-            class="p-3 flex-1 bg-blue-600 text-white text-sm rounded-lg
-                   hover:bg-blue-700 text-center"
+            class="flex-1 rounded-lg bg-blue-600 p-3 text-center text-sm text-white hover:bg-blue-700"
           >
             Edit profile
           </RouterLink>
 
           <button
             @click="userStore.logout()"
-            class="p-3 flex-1 bg-red-500 text-white text-sm rounded-lg
-                   hover:bg-red-600"
+            class="flex-1 rounded-lg bg-red-500 p-3 text-sm text-white hover:bg-red-600"
           >
             Log out
           </button>
@@ -253,8 +257,7 @@ watch(() => props.id, () => {
         <!-- Creates a conversation to send direct messages (DM) -->
         <button
           @click="sendDirectMessage"
-          class="w-full mt-2 p-3 bg-purple-600 text-white text-sm
-                 rounded-lg hover:bg-purple-700 disabled:opacity-50"
+          class="mt-2 w-full rounded-lg bg-purple-600 p-3 text-sm text-white hover:bg-purple-700 disabled:opacity-50"
         >
           Send direct messages (DM)
         </button>
@@ -266,29 +269,30 @@ watch(() => props.id, () => {
       <!-- (2.1/3) The text area for images & posts -->
       <div
         v-if="userStore.user.id === user.id"
-        class="bg-white border border-gray-200 rounded-lg"
+        class="rounded-lg border border-gray-200 bg-white"
       >
         <!-- (2.1.1/3) The textarea element -->
         <form @submit.prevent="submitForm" method="POST">
           <div class="p-4">
             <textarea
               v-model="body"
-              class="p-4 w-full bg-gray-100 rounded-lg"
+              class="w-full rounded-lg bg-gray-100 p-4"
               placeholder="What are you curious about? - ProfileView.vue"
             />
           </div>
 
           <!-- (2.1.2/3) The Attach image and Post buttons -->
-          <div class="p-4 border-t border-gray-100 flex justify-between">
-            <a href="#"
-              class="inline-block py-4 px-6 bg-gray-600 text-white
-                      rounded-lg">
+          <div class="flex justify-between border-t border-gray-100 p-4">
+            <label
+              class="inline-block rounded-lg bg-gray-600 px-6 py-4 text-white"
+            >
+              <input type="file" ref="file" />
               Attach image
-            </a>
+            </label>
 
             <button
-              class="inline-block py-4 px-6 bg-purple-600 text-white
-                     rounded-lg">
+              class="inline-block rounded-lg bg-purple-600 px-6 py-4 text-white"
+            >
               Post
             </button>
           </div>
@@ -297,15 +301,15 @@ watch(() => props.id, () => {
 
       <!-- posts -->
       <div
-        class="p-4 bg-white border border-gray-200 rounded-lg"
+        class="rounded-lg border border-gray-200 bg-white p-4"
         v-for="post in posts"
-        :key="post.id"      
+        :key="post.id"
       >
         <FeedItem :post="post" @post-updated="handlePostUpdated" />
       </div>
     </div>
 
-    <!-- (3/3) The main-right column: PeopleYouMayKnow & Trends --> 
+    <!-- (3/3) The main-right column: PeopleYouMayKnow & Trends -->
     <div class="main-right col-span-1 space-y-4">
       <PeopleYouMayKnow />
       <TrendsComponent />

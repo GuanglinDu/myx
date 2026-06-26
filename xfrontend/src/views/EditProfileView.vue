@@ -119,11 +119,9 @@ async function submitForm(): Promise<void> {
             />
           </div>
 
-          <div>
-            <button class="rounded-lg bg-purple-600 px-6 py-4 text-white">
-              Save
-            </button>
-          </div>
+          <button class="rounded-lg bg-purple-600 px-6 py-4 text-white">
+            Save
+          </button>
         </form>
       </div>
     </div>

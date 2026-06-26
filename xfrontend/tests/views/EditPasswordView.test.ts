@@ -4,9 +4,8 @@ import { setActivePinia, createPinia } from "pinia";
 import EditPasswordView from "@/views/EditPasswordView.vue";
 import { useUserStore } from "@/stores/user";
 
-/* What does vi do in EditPasswordView.test.ts?
-   Read the Q&A from Claude Code below.
-*/
+// What does vi do in EditPasswordView.test.ts?
+// Read What-does-vi-do-in-Vue-integration-tests-20260611.txt.
 // Mock vue-router so navigation can be observed.
 const routerPush = vi.fn();
 vi.mock("vue-router", async () => {
@@ -171,73 +170,3 @@ describe("EditPasswordView", () => {
     expect(routerPush).not.toHaveBeenCalled();
   });
 });
-
-/** Appended at 16:02:12 on 20260611 Thu by Guanglin Du.
-
-What does vi do in EditPasswordView.test.ts?
-
-  Thought for 10s, read 1 file
-Loaded C:\Users\Guanglin\.claude\rules\typescript\coding-style.md
-Loaded C:\Users\Guanglin\.claude\rules\typescript\hooks.md
-Loaded C:\Users\Guanglin\.claude\rules\typescript\patterns.md
-Loaded C:\Users\Guanglin\.claude\rules\typescript\security.md
-Loaded C:\Users\Guanglin\.claude\rules\typescript\testing.md
-Loaded xfrontend\CLAUDE.md
-
-vi is the global mocking/spying helper from Vitest (imported from "vitest" on line 1). It's used throughout this file to create and control mocks so the component can be tested in isolation. Here's each role it plays in EditPasswordView.test.ts:
-
-1. Creating mock functions — vi.fn()
-
-const routerPush = vi.fn();
-const axiosPost = vi.fn();
-
-These are empty mock functions with call tracking. routerPush replaces Vue Router's navigation; axiosPost replaces the real axios.post so the test never hits the network.
-
-2. Module mocking — vi.mock(...)
-
-vi.mock("vue-router", async () => { ... });
-vi.mock("axios", () => ({ ... }));
-
-vi.mock is hoisted by Vitest — it intercepts the module system so any import "vue-router" or import "axios" inside the component gets the fake version instead of the real one. The factory is called lazily, but it must not reference outer-scope variables (they're reset at hoist time), which is why vi.importActual is used to keep the rest of vue-router intact:
-
-const actual = await vi.importActual("vue-router");
-return { ...actual, useRouter: () => ({ push: routerPush }) };
-
-3. Spying on existing methods — vi.spyOn(...)
-
-const showToastSpy = vi.spyOn(toastModule.useToastStore(), "showToast");
-
-spyOn wraps an existing method (here, the Pinia toast store's showToast) so you can assert on how it was called — toHaveBeenCalledWith(...) — without replacing the implementation.
-
-4. Resetting state between tests — vi.clearAllMocks()
-
-beforeEach(() => {
-  vi.clearAllMocks();
-  axiosPost.mockReset();
-});
-
-- vi.clearAllMocks() wipes call history from every mock created via vi.fn() / vi.spyOn().
-- mockReset() on axiosPost does that plus removes any implementations like the mockResolvedValue set in earlier tests, so each test starts clean.
-
-Summary table
-
-┌──────────────────────────┬─────────────────────────────────────────────────────────────────────────────────────────────┐
-│           API            │                                    Purpose in this file                                     │
-├──────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────────┤
-│ vi.fn()                  │ Create a trackable fake function (router push, axios.post)                                  │
-├──────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────────┤
-│ vi.mock(module, factory) │ Replace whole modules (vue-router, axios) with fakes                                        │
-├──────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────────┤
-│ vi.importActual(module)  │ Inside a mock factory, get the real module so you can keep most of it and override one part │
-├──────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────────┤
-│ vi.spyOn(obj, method)    │ Watch an existing method (toast store's showToast) and assert on its calls                  │
-├──────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────────┤
-│ vi.clearAllMocks()       │ Reset call history on all mocks before each test                                            │
-└──────────────────────────┴─────────────────────────────────────────────────────────────────────────────────────────────┘
-
-The end result: the test file can drive EditPasswordView through its form submission, validate, axios call, toast notification, and router redirect — all without a real backend, router, or Pinia store running.
-
-What is an SUT call in Vue.js? - Google AI Overview
-
-In Vue.js testing, an SUT (System Under Test) is simply the specific Vue component or composable you are actively testing. It defines the boundaries of your test, isolating the component from its external dependencies (like Vuex, Pinia, or API endpoints).
-*/

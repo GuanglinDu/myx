@@ -1,8 +1,24 @@
+import io
 import pytest
+from PIL import Image
+from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework.test import APIClient
 from rest_framework.response import Response
 from account.models import User
-from post.models import Post, Like, Trend
+from post.models import Post, Like, Trend, PostAttachment
+
+
+def _create_test_image() -> SimpleUploadedFile:
+    """Create a small valid PNG image for testing uploads."""
+    buf: io.BytesIO = io.BytesIO()
+    img: Image.Image = Image.new('RGB', (1, 1), color='red')
+    img.save(buf, format='PNG')
+    buf.seek(0)
+    return SimpleUploadedFile(
+        name='test.png',
+        content=buf.read(),
+        content_type='image/png',
+    )
 
 
 @pytest.fixture
@@ -162,6 +178,88 @@ class TestPostAPI:
         client.force_authenticate(user=user)
         response: Response = client.delete(f'/api/posts/{post.id}/delete/')
         assert response.status_code == 403
+
+    # ── Post image attachment tests ──────────────────────────────────────
+
+    def test_post_create_with_image_attachment(
+            self, user: User, client: APIClient) -> None:
+        """Test creating a post with an image file creates a PostAttachment
+        and links it to the post.
+        """
+        image: SimpleUploadedFile = _create_test_image()
+        client.force_authenticate(user=user)
+        response: Response = client.post(
+            '/api/posts/create/',
+            {'body': 'Post with image', 'image': image},
+            format='multipart',
+        )
+        assert response.status_code == 200
+        data: dict = response.json()
+        assert data['body'] == 'Post with image'
+
+        # Verify a PostAttachment was created and linked
+        attachment_count: int = PostAttachment.objects.count()
+        assert attachment_count == 1
+        attachment: PostAttachment = PostAttachment.objects.first()
+        assert attachment.created_by == user
+        assert data['attachments'] is not None
+        assert str(attachment.id) in str(data['attachments'])
+
+    def test_post_create_without_image_still_succeeds(
+            self, user: User, client: APIClient) -> None:
+        """Test creating a post without an image still works."""
+        client.force_authenticate(user=user)
+        response: Response = client.post('/api/posts/create/', {
+            'body': 'No image post'
+        }, format='multipart')
+        assert response.status_code == 200
+        data: dict = response.json()
+        assert data['body'] == 'No image post'
+        assert data['attachments'] is not None
+
+    def test_post_list_returns_attachment_objects(
+            self, user: User, client: APIClient) -> None:
+        """Test feed endpoint returns attachment objects (not just UUIDs)
+        with id and image fields.
+        """
+        post: Post = Post.objects.create(body='Feed post', created_by=user)
+        attachment: PostAttachment = PostAttachment.objects.create(
+            image='post_attachments/test.png', created_by=user,
+        )
+        post.attachments.add(attachment)
+
+        client.force_authenticate(user=user)
+        response: Response = client.get('/api/posts/')
+        assert response.status_code == 200
+        data: list = response.json()
+        assert len(data) == 1
+        attrs: list = data[0]['attachments']
+        assert len(attrs) == 1
+        assert isinstance(attrs[0], dict)
+        assert 'id' in attrs[0]
+        assert 'image' in attrs[0]
+
+    def test_post_detail_returns_attachment_objects(
+            self, user: User, client: APIClient) -> None:
+        """Test post detail endpoint returns attachment objects with id and
+        image fields.
+        """
+        post: Post = Post.objects.create(
+            body='Detail post', created_by=user)
+        attachment: PostAttachment = PostAttachment.objects.create(
+            image='post_attachments/test.png', created_by=user,
+        )
+        post.attachments.add(attachment)
+
+        client.force_authenticate(user=user)
+        response: Response = client.get(f'/api/posts/{post.id}/')
+        assert response.status_code == 200
+        data: dict = response.json()['post']
+        attrs: list = data['attachments']
+        assert len(attrs) == 1
+        assert isinstance(attrs[0], dict)
+        assert 'id' in attrs[0]
+        assert 'image' in attrs[0]
 
 
 @pytest.mark.django_db

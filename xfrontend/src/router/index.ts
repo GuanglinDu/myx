@@ -99,6 +99,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import("@/views/PostView.vue"),
   },
   {
+    path: "/notifications",
+    name: "notifications",
+    component: () => import("@/views/NotificationsView.vue"),
+  },
+  {
     path: "/profile/:id",
     name: "profile",
     component: () => import("@/views/ProfileView.vue"),
@@ -107,12 +112,12 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/profile/edit",
     name: "editprofile",
-    component: () => import("@/views/EditProfileView.vue")
+    component: () => import("@/views/EditProfileView.vue"),
   },
   {
     path: "/profile/editpassword",
     name: "editpassword",
-    component: () => import("@/views/EditPasswordView.vue")
+    component: () => import("@/views/EditPasswordView.vue"),
   },
   {
     path: "/profile/:id/friends",
@@ -129,10 +134,7 @@ const routes: Array<RouteRecordRaw> = [
     name: "trendview",
     component: () => import("@/views/TrendView.vue"),
   },
-  { path: "/:pathMatch(.*)*",
-    name: "NotFound",
-    component: NotFoundView
-  },
+  { path: "/:pathMatch(.*)*", name: "NotFound", component: NotFoundView },
 ];
 
 // (2/2) Creates the router instance which has
@@ -148,7 +150,7 @@ const routes: Array<RouteRecordRaw> = [
 // manually? - Google AI Overview
 // Using Hash Mode
 // If you cannot configure the server, you can use Hash Mode
-//  (createWebHashHistory()). 
+//  (createWebHashHistory()).
 // How it works:
 // This adds a # to the URL (e.g., example.com/#/user/1). The browser
 // does not send the part after # to the server, so the server always
@@ -172,4 +174,3 @@ export default router;
 // import { userRoute, useRouter } from 'vue-router';
 // const $route = useRoute();
 // const $router = useRouter();
-

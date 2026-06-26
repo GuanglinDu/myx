@@ -509,3 +509,64 @@ class TestEditPasswordAPI:
             'newPassword': 'newpassword456',
         }, format='json')
         assert response.status_code == 400
+
+@pytest.mark.django_db
+class TestLoginAPI:
+    """Tests for the /api/login/ endpoint.
+
+    The login endpoint uses a custom serializer that pre-checks whether
+    the user exists and is active, returning a distinguishable error
+    for inactive accounts.
+    """
+
+    def test_login_success_active_user(
+            self, user: User, client: APIClient) -> None:
+        """An active user with correct credentials gets JWT tokens."""
+        response: Response = client.post('/api/login/', {
+            'email': 'test@example.com',
+            'password': 'testpass123',
+        }, format='json')
+        assert response.status_code == 200
+        data: dict = response.json()
+        assert 'access' in data
+        assert 'refresh' in data
+
+    def test_login_inactive_user(
+            self, client: APIClient) -> None:
+        """Inactive users get a specific activation-needed error."""
+        User.objects.create_user(
+            name='Inactive User',
+            email='inactive@example.com',
+            password='testpass123',
+            is_active=False,
+        )
+        response: Response = client.post('/api/login/', {
+            'email': 'inactive@example.com',
+            'password': 'testpass123',
+        }, format='json')
+        assert response.status_code == 401
+        data: dict = response.json()
+        assert data['code'] == 'user_inactive'
+        assert 'not activated' in data['detail'].lower()
+
+    def test_login_wrong_password(
+            self, user: User, client: APIClient) -> None:
+        """Wrong password returns a generic credentials error."""
+        response: Response = client.post('/api/login/', {
+            'email': 'test@example.com',
+            'password': 'wrongpass123',
+        }, format='json')
+        assert response.status_code == 401
+        data: dict = response.json()
+        assert 'Invalid email or password' in data['detail']
+
+    def test_login_nonexistent_email(
+            self, client: APIClient) -> None:
+        """Non-existent email returns the same generic error."""
+        response: Response = client.post('/api/login/', {
+            'email': 'nobody@example.com',
+            'password': 'testpass123',
+        }, format='json')
+        assert response.status_code == 401
+        data: dict = response.json()
+        assert 'Invalid email or password' in data['detail']

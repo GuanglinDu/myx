@@ -20,8 +20,11 @@ Before using:
  - python manage.py migrate
  - python manage.py collectstatic
 """
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path, URLPattern, URLResolver
+from account.views import activate_email
 
 # URL concatenation
 urlpatterns: list[ URLPattern | URLResolver] = [
@@ -30,6 +33,13 @@ urlpatterns: list[ URLPattern | URLResolver] = [
     path('api/posts/', include('post.urls')),
     path('api/search/', include('search.urls')),
     path('api/chat/', include('chat.urls')),
+    path('api/notifications/', include('notification.urls')),
+    path('activateemail/', activate_email, name='activate_email'),
 ]
 
 urlpatterns += [path('silk/', include('silk.urls', namespace='silk'))]
+
+# Serve media files in development
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)

@@ -77,13 +77,18 @@ class User(AbstractBaseUser, PermissionsMixin):
                                      editable=False)
     email: str = models.EmailField(unique=True)
     name: str = models.CharField(max_length=255, blank=True, default='')
+    # The uploaded avatar image will be stored in MEDIA_ROOT/avatars/filename.
+    # The upload_to parameter determines the subfolder inside your
+    # /media/ directory where images will go.
+    # ImageField depends on the pillow library.
     avatar: ImageFieldFile = models.ImageField(upload_to='avatars', blank=True,
                                                null=True)
     friends: "ManyRelatedManager[User]" = models.ManyToManyField('self')
     friend_count: int = models.IntegerField(default=0)
 
-    people_you_may_know: "ManyRelatedManager[User]" = \
+    people_you_may_know: "ManyRelatedManager[User]" = (
         models.ManyToManyField('self')
+    )
 
     post_count: int = models.IntegerField(default=0)
 
@@ -105,6 +110,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     # Required fields for createsuperuser (excluds USERNAME_FIELD and password)
     REQUIRED_FIELDS: list[str] = []
 
+    # This method is not used in the frontend. Instead, dicebear is used.
     def get_avatar(self) -> str:
         if self.avatar:
             return settings.WEBSITE_URL + self.avatar.url

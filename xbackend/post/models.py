@@ -5,6 +5,8 @@ from datetime import datetime
 from django_stubs_ext.db.models.manager import ManyRelatedManager
 from django.utils.timesince import timesince
 from django.db import models
+from django.db.models.fields.files import ImageFieldFile
+from xbackend import settings
 from account.models import User
 
 
@@ -34,10 +36,21 @@ class Like(models.Model):
 class PostAttachment(models.Model):
     id: uuid.UUID = models.UUIDField(
         primary_key=True, default=uuid.uuid4, editable=False)
-    image: str = models.ImageField(upload_to='post_attachments')
+    # The uploaded image will be stored in MEDIA_ROOT/post_attachments/filename.
+    # The upload_to parameter determines the subfolder inside your
+    # /media/ directory where images will go.
+    # ImageField depends on the pillow library.
+    image: ImageFieldFile = models.ImageField(upload_to='post_attachments')
     created_by: User = models.ForeignKey(
         'account.User', related_name='post_attachments',
          on_delete=models.CASCADE)
+    
+    # Claude Code uses self.image directly without touching this.
+    def get_image(self) -> str:
+        if self.image:
+            return settings.WEBSITE_URL + self.image.url
+        else:
+            return ''
 
 
 # django.db.models.fields.related_descriptors.

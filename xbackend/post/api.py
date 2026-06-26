@@ -44,38 +44,43 @@ def post_detail(request: Request, id: uuid.UUID) -> JsonResponse:
 
 @api_view(['GET'])
 def post_list_profile(request: Request, id: uuid.UUID) -> JsonResponse:
+    """The id arg is the user's UUID"""
     user: User = User.objects.get(pk=id)
     posts: QuerySet[Post] = Post.objects.filter(created_by__id=id)
     posts_serializer: PostSerializer = PostSerializer(posts, many=True)
     user_serializer: UserSerializer = UserSerializer(user)
 
-    # Determine friendship status if user is authenticated
+    # Determines friendship status if user is authenticated
     friendship_status: str = 'none'
-    request_id: str = ''
+    request_id: str = ''  # UUID
     if request.user.is_authenticated:
         if str(request.user.id) == str(id):
-            friendship_status = 'self'
+            friendship_status = 'self'     # Both are yourself
         elif request.user.friends.filter(pk=id).exists():
-            friendship_status = 'friends'
+            friendship_status = 'friends'  # Are already friends
         else:
-            # Check if they sent us a request
-            pending_request: FriendshipRequest | None = \
-                    FriendshipRequest.objects.filter(
-                created_for=request.user,
-                created_by=user,
-                status=FriendshipRequest.SENT
-            ).first()
+            # Check if they sent us a request (Note the line continuation!)
+            pending_request: FriendshipRequest | None = (
+                FriendshipRequest.objects.filter(
+                    created_for=request.user,
+                    created_by=user,
+                    status=FriendshipRequest.SENT
+                ).first()
+            )
+
             if pending_request:
                 friendship_status = 'pending'
                 request_id = str(pending_request.id)
             else:
                 # Check if we sent them a request
-                sent_request: FriendshipRequest | None = \
-                        FriendshipRequest.objects.filter(
-                    created_for=user,
-                    created_by=request.user,
-                    status=FriendshipRequest.SENT
-                ).first()
+                sent_request: FriendshipRequest | None = (
+                    FriendshipRequest.objects.filter(
+                        created_for=user,
+                        created_by=request.user,
+                        status=FriendshipRequest.SENT
+                    ).first()
+                )
+
                 if sent_request:
                     friendship_status = 'request_sent'
 
@@ -200,8 +205,8 @@ def create_comment(request: Request, id: uuid.UUID) -> JsonResponse:
     post.comments_count += 1
     post.save()
 
-    notification: Notification = create_notification(request, 'post_comment',
-                                                     id)
+    notification: Notification = create_notification(
+        request, 'post_comment', id)
 
     serializer: CommentSerializer = CommentSerializer(comment)
     return JsonResponse(serializer.data, safe=False)
