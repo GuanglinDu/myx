@@ -82,6 +82,11 @@ function handlePostUpdated(updatedPost: Post): void {
   }
 }
 
+function handlePostDeleted(id: string): void {
+  console.log("FeedView.vue - handlePostDeleted: ", id);
+  posts.value = posts.value.filter((p) => p.id !== id);
+}
+
 onMounted(() => {
   getFeed();
 });
@@ -160,7 +165,11 @@ onUnmounted(() => {
         v-for="post in posts"
         :key="post.id"
       >
-        <FeedItem :post="post" @post-updated="handlePostUpdated" />
+        <FeedItem
+          :post="post"
+          @post-updated="handlePostUpdated"
+          @postDeleted="handlePostDeleted"
+        />
       </div>
     </div>
 

@@ -15,4 +15,5 @@ urlpatterns: list[ URLPattern | URLResolver] = [
     path('<uuid:id>/delete/', api.post_delete, name='post_delete'),
     path('<uuid:id>/like/', api.post_like, name='post_like'),
     path('<uuid:id>/comment/', api.create_comment, name='create_comment'),
+    path('<uuid:id>/delete/', api.post_delete, name='post_delete'),
 ]

@@ -249,3 +249,11 @@ def trends_list(request: Request) -> JsonResponse:
     # trends: QuerySet[Trend] = Trend.objects.all().order_by('-occurences')[:10]
     serializer: TrendSerializer = TrendSerializer(trends, many=True)
     return JsonResponse(serializer.data, safe=False)
+
+
+@api_view(['DELETE'])
+def post_delete(request: Request, id: uuid.UUID):
+    post: Post = Post.objects.filter(created_by=request.user).get(pk=id);
+    # TODO: No post found.
+    post.delete()
+    return JsonResponse({'message': 'Post deleted!'})

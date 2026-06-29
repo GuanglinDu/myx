@@ -117,7 +117,7 @@ onMounted(() => {
 
 <template>
   <div class="relative">
-    <!-- Notification bell icon -->
+    <!-- Notification bell icon. The SVG icon is from heroicons.com. -->
     <button
       @click="toggleDropdown"
       class="relative text-black hover:text-purple-600"

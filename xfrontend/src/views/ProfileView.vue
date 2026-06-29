@@ -128,6 +128,11 @@ function handlePostUpdated(updatedPost: Post): void {
   }
 }
 
+function handlePostDeleted(id: string): void {
+  console.log("ProfileView.vue - handlePostDeleted: ", id);
+  posts.value = posts.value.filter((p) => p.id !== id);
+}
+
 function sendDirectMessage(): void {
   // For simplicity, we'll just navigate to the chat page with this user.
   // In a real app, you might want to create a conversation first if it doesn't
@@ -299,13 +304,17 @@ watch(
         </form>
       </div>
 
-      <!-- posts -->
+      <!-- posts: @post-updated = @postUpdated -->
       <div
         class="rounded-lg border border-gray-200 bg-white p-4"
         v-for="post in posts"
         :key="post.id"
       >
-        <FeedItem :post="post" @post-updated="handlePostUpdated" />
+        <FeedItem
+          :post="post"
+          @post-updated="handlePostUpdated"
+          @postDeleted="handlePostDeleted"
+        />
       </div>
     </div>
 

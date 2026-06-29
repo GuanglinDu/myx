@@ -43,7 +43,7 @@ window.addEventListener("unhandledrejection", (event) => {
           <a href="#" class="text-xl">xfrontend</a>
         </div>
 
-        <!-- The home menu. The SVG source: http://heroicons.com -->
+        <!-- The home menu. The SVG icon is from heroicons.com. -->
         <div
           class="menu-center flex space-x-12"
           v-if="userStore.user.isAuthenticated"
