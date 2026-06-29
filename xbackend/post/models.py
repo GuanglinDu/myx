@@ -42,7 +42,7 @@ class PostAttachment(models.Model):
     # ImageField depends on the pillow library.
     image: ImageFieldFile = models.ImageField(upload_to='post_attachments')
     created_by: User = models.ForeignKey(
-        'account.User', related_name='post_attachments',
+        User, related_name='post_attachments',
          on_delete=models.CASCADE)
     
     # Claude Code uses self.image directly without touching this.
@@ -84,6 +84,9 @@ class Post(models.Model):
     comments: "ManyRelatedManager[Comment]" = models.ManyToManyField(
         Comment, blank=True)
     comments_count: int = models.IntegerField(default=0)
+
+    reported_by_users: "ManyRelatedManager[User]" = models.ManyToManyField(
+        User, blank=True)
 
     created_at: datetime = models.DateTimeField(auto_now_add=True)
     created_by: User = models.ForeignKey(

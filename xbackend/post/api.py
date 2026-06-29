@@ -252,8 +252,16 @@ def trends_list(request: Request) -> JsonResponse:
 
 
 @api_view(['DELETE'])
-def post_delete(request: Request, id: uuid.UUID):
+def post_delete(request: Request, id: uuid.UUID) -> JsonResponse:
     post: Post = Post.objects.filter(created_by=request.user).get(pk=id);
     # TODO: No post found.
     post.delete()
     return JsonResponse({'message': 'Post deleted!'})
+
+
+@api_view(['POST'])
+def post_report(request: Request, id: uuid.UUID) -> JsonResponse:
+    post: Post = Post.objects.get(pk=id);
+    post.reported_by_users.add(request.user)
+    post.save()
+    return JsonResponse({'message': 'Post reported!'})

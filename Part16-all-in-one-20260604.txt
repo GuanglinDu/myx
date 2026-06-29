@@ -47,12 +47,15 @@ https://www.youtube.com/watch?v=sQD0iDwM284&list=PLpyspNLjzwBlobEvnZzyWP8I-ORQcq
  - 09:03:50 Create a function to create notifications
  - 09:15:38 Load notifications on the notification page (backend APIs)
  - 09:19:38 Make it possible to click a notification (NotificationsView.vue)
-*09:40:25 Friend suggestions (part 12/15)*
+09:40:25 Friend suggestions (part 12/15)
  - 09:41:55 Create the script to create people you may know
  - 09:51:10 Create the API to get the friend suggestions
  - 09:53:07 Modify PeopleYouMayKnow.vue
  - 09:57:10 Hide the Send Friendship Request button if you're already friends
-*10:02:25 Privacy (part 13/15)*
+10:02:25 Privacy (part 13/15)
  - 10:36:00 The .env file
-*10:41:30 Delete/Report posts (part 14/15)*
-*11:02:45 Deploying Django and Vue (part 15/15)*
+10:41:30 Delete/Report posts (part 14/15)
+ - 10:49:00 Update the parent views, FeedView.vue and ProfileView.vue
+ - 10:55:35 Report a post 
+ - 11:01:46 Fix the event-emitting bug
+11:02:45 Deploying Django and Vue (part 15/15)

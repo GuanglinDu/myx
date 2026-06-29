@@ -72,6 +72,19 @@ async function deletePost(): Promise<void> {
     console.error("Failed to delete the post:", error);
   }
 }
+
+async function reportPost(): Promise<void> {
+  try {
+    const response: AxiosResponse = await axios.post(
+      `/api/posts/${$props.post.id}/report/`,
+    );
+
+    console.log("FeedItem.vue - reportPost: ", response.data);
+    toastStore.showToast(5000, "The post was reported", "bg-emerald-500");
+  } catch (error: any) {
+    console.error("Failed to report the post:", error);
+  }
+}
 </script>
 
 <template>
@@ -203,7 +216,7 @@ async function deletePost(): Promise<void> {
         <span class="text-xs text-red-500">Delete post</span>
       </div>
 
-      <div class="flex items-center space-x-2">
+      <div class="flex items-center space-x-2" @click="reportPost">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
